@@ -115,7 +115,8 @@ public class RegexMultiSingleValueCellExtractorTest {
         try {
             assertEquals(CellReflector.getLabelAsString(mostRecent), "event");
             assertEquals(CellReflector.getValueAsString(mostRecent), "e3");
-            assertEquals(CellReflector.getAuxiliaryValue(mostRecent, "ts"), 333333l);
+            long time = CellReflector.getAuxiliaryValue(Long.class, mostRecent, "ts");
+            assertEquals(time , 333333l);
         } catch (Exception e){
             fail();
         }

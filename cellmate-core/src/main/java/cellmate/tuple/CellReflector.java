@@ -1,7 +1,5 @@
 package cellmate.tuple;
 
-import cellmate.exception.NullDataForLabelValueException;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
@@ -12,33 +10,27 @@ import java.lang.reflect.Field;
  */
 public class CellReflector {
 
-    public static String getLabelAsString(Object obj)
-        throws NullDataForLabelValueException {
+    public static String getLabelAsString(Object obj) {
         Field field = getLabelField(obj);
         return asString(field, obj);
     }
 
-    public static String getValueAsString(Object obj)
-        throws NullDataForLabelValueException {
+    public static String getValueAsString(Object obj) {
         Field field  = getValueField(obj);
         return asString(field, obj);
     }
 
-    public static int getValueAsInt(Object obj)
-        throws NullDataForLabelValueException {
+    public static int getValueAsInt(Object obj) {
         Field field = getValueField(obj);
         return asInt(field, obj);
     }
 
-    public static byte[] getValueAsBytes(Object obj)
-        throws NullDataForLabelValueException {
+    public static byte[] getValueAsBytes(Object obj) {
         Field field = getValueField(obj);
         try {
             field.setAccessible(true);
             Object res = field.get(obj);
-            if(res == null)
-                throw new NullDataForLabelValueException("found null for data/value");
-            return (byte[])res;
+            return res == null ? null : (byte[])res;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (ClassCastException e) {
@@ -46,8 +38,7 @@ public class CellReflector {
         }
     }
 
-    public static long getValueAsLong(Object obj)
-        throws NullDataForLabelValueException {
+    public static long getValueAsLong(Object obj){
         Field field = getValueField(obj);
         return asLong(field, obj);
     }
@@ -57,20 +48,10 @@ public class CellReflector {
         return asInstance(clazz, field, obj);
     }
 
-    @SuppressWarnings(value="unchecked")
-    public static <T> T getAuxiliaryValue(Object obj, String name)
+    public static <T> T getAuxiliaryValue(Class<T> clazz, Object obj, String name)
         throws ClassCastException{
         Field field = getNamedAuxiliaryField(obj, name);
-        try {
-            field.setAccessible(true);
-            T result = (T)field.get(obj);
-            if(result == null){
-                throw new RuntimeException("Found auxiliary field (" + name + ") for instance, but value was null");
-            }
-            return result;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return asInstance(clazz, field, obj);
     }
 
     private static Field getNamedAuxiliaryField(Object obj,
@@ -104,33 +85,27 @@ public class CellReflector {
         }  catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }  catch(ClassCastException e){
-            throw new RuntimeException("Unable to cast to parameterized type for asInstance ",e);
+            throw new RuntimeException("Unable to cast to parameterized type " + clazz.getName(),e);
         }
     }
 
-    private static String asString(Field field, Object obj)
-        throws NullDataForLabelValueException {
+    private static String asString(Field field, Object obj) {
         return (String)getAs(String.class, field, obj);
     }
 
-    private static int asInt(Field field, Object obj)
-        throws NullDataForLabelValueException {
+    private static int asInt(Field field, Object obj) {
         return (Integer)getAs(Integer.class, field, obj);
     }
 
-    private static long asLong(Field field, Object obj)
-        throws NullDataForLabelValueException {
+    private static long asLong(Field field, Object obj) {
         return (Long)getAs(Long.class, field, obj);
     }
 
-    private static Object getAs(Class type, Field field, Object obj)
-        throws NullDataForLabelValueException {
+    private static Object getAs(Class type, Field field, Object obj) {
         try{
             field.setAccessible(true);
             Object res = field.get(obj);
-            if(res == null)
-                throw new NullDataForLabelValueException("found null for data/value");
-            return type.cast(res);
+            return res == null ? null : type.cast(res);
         } catch (ClassCastException e) {
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {

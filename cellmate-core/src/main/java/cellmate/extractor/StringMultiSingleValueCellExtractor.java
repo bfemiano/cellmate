@@ -1,6 +1,5 @@
 package cellmate.extractor;
 
-import cellmate.exception.NullDataForLabelValueException;
 import cellmate.tuple.CellReflector;
 
 import java.util.ArrayList;
@@ -21,12 +20,9 @@ public class StringMultiSingleValueCellExtractor
     public <T> List<T> matchLabel(List<T> tuples, String label) {
         List<T> values = new ArrayList<T>();
         for(T tuple : tuples) {
-            try {
-                if(CellReflector.getLabelAsString(tuple).equals(label))
-                    values.add(tuple);
-            } catch (NullDataForLabelValueException e) {
-                continue;
-            }
+            String tLabel = CellReflector.getLabelAsString(tuple);
+            if(tLabel.equals(label))
+                values.add(tuple);
         }
         return values;
     }
@@ -37,7 +33,7 @@ public class StringMultiSingleValueCellExtractor
         T maxT = null;
         long max = Long.MIN_VALUE;
         for(T t : tuples){
-            long ts = (Long)CellReflector.getAuxiliaryValue(t, "ts");
+            long ts = CellReflector.getAuxiliaryValue(Long.class, t, "ts");
             if(ts> max) {
                 maxT = t;
                 max = ts;
@@ -49,12 +45,8 @@ public class StringMultiSingleValueCellExtractor
     public <T> List<T> regexMatchLabel(List<T> tuples, String regex) {
         List<T> values = new ArrayList<T>();
         for(T tuple : tuples) {
-            try {
-                if(Pattern.matches(regex, CellReflector.getLabelAsString(tuple)))
-                    values.add(tuple);
-            } catch (NullDataForLabelValueException e) {
-                continue;
-            }
+            if(Pattern.matches(regex, CellReflector.getLabelAsString(tuple)))
+                values.add(tuple);
         }
         return values;
     }
@@ -76,12 +68,7 @@ public class StringMultiSingleValueCellExtractor
         if(isEmpty(values))
             throw new NoSuchElementException("No matching values found for regex: " + label);
         for(T match : values) {
-            try {
-                matching.add(CellReflector.getValueAsInt(match));
-            } catch (NullDataForLabelValueException e) {
-                throw new IllegalArgumentException("tuple value for field " +
-                        " was empty (" + match + ")");
-            }
+            matching.add(CellReflector.getValueAsInt(match));
         }
         return matching;
     }
@@ -93,12 +80,7 @@ public class StringMultiSingleValueCellExtractor
         if(isEmpty(values))
             throw new NoSuchElementException("No matching values found for regex: " + label);
         for(T match : values) {
-            try {
-                matching.add(CellReflector.getValueAsString(match));
-            } catch (NullDataForLabelValueException e) {
-                throw new IllegalArgumentException("tuple value for field " +
-                        " was empty (" + match + ")");
-            }
+            matching.add(CellReflector.getValueAsString(match));
         }
         return matching;
     }
@@ -110,12 +92,7 @@ public class StringMultiSingleValueCellExtractor
         if(isEmpty(values))
             throw new NoSuchElementException("No matching values found for label: " + label);
         for(T match : values) {
-            try {
-                matching.add(CellReflector.getValueAsLong(match));
-            } catch (NullDataForLabelValueException e) {
-                throw new IllegalArgumentException("cell value was null " +
-                        "(" + match + ")");
-            }
+            matching.add(CellReflector.getValueAsLong(match));
         }
         return matching;
     }
@@ -128,11 +105,7 @@ public class StringMultiSingleValueCellExtractor
             throw new IllegalArgumentException("Too many matching values for " + field);
         if(isEmpty(values))
             throw new NoSuchElementException("No matching value for " + field);
-        try {
-            return CellReflector.getValueAsString(values.get(0));
-        } catch (NullDataForLabelValueException e) {
-            throw new IllegalArgumentException("cell value was null", e);
-        }
+        return CellReflector.getValueAsString(values.get(0));
     }
 
     public <T> double getDoubleSingleValue(List<T> tuples, String field)
@@ -180,10 +153,6 @@ public class StringMultiSingleValueCellExtractor
             throw new IllegalArgumentException("Too many matching values for " + field);
         if(isEmpty(values))
             throw new NoSuchElementException("No matching value for " + field);
-        try {
-            return CellReflector.getValueAsString(values.get(0));
-        } catch (NullDataForLabelValueException e) {
-            throw new IllegalArgumentException("cell value was null", e);
-        }
+        return CellReflector.getValueAsString(values.get(0));
     }
 }

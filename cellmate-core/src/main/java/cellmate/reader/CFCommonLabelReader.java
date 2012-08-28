@@ -11,8 +11,7 @@ import java.util.*;
  * Date: 8/27/12
  * Time: 12:14 AM
  */
-public class CFCommonLabelReader<I,
-                                 C>
+public class CFCommonLabelReader<I,C>
         implements DBResultReader<I, C> {
 
     private List<ColFamGroup> colFamsToApplyConstantLabel = Collections.emptyList();

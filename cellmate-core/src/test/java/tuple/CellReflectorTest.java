@@ -1,6 +1,5 @@
 package tuple;
 
-import cellmate.exception.NullDataForLabelValueException;
 import cellmate.tuple.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -26,37 +25,31 @@ public class CellReflectorTest {
     @Test
     public void label(){
         String label = null;
-        try {
-            label = CellReflector.getLabelAsString(tuple1);
-        } catch (NullDataForLabelValueException e) {
-            fail();
-        }
+        label = CellReflector.getLabelAsString(tuple1);
+        assertNotNull(label);
         assertEquals(label, "l");
     }
 
     @Test
     public void valueStr() {
         String value = null;
-        try {
-            value = CellReflector.getValueAsString(tuple1);
-        } catch (NullDataForLabelValueException e) {
-            fail();
-        }
+        value = CellReflector.getValueAsString(tuple1);
+        assertNotNull(value);
         assertEquals(value, "v");
     }
 
     @Test
     public void aux(){
-        Long auxVal = CellReflector.getAuxiliaryValue(tuple1, "ts");
-        assertEquals(auxVal, new Long(0l));
+        long auxVal;
+        auxVal = CellReflector.getAuxiliaryValue(Long.class, tuple1, "ts");
+        assertEquals(auxVal, 0l);
 
-        auxVal = CellReflector.getAuxiliaryValue(tupleWithAux, "ts");
-        assertEquals(auxVal, new Long(111l));
+        auxVal = CellReflector.getAuxiliaryValue(Long.class, tupleWithAux, "ts");
+        assertEquals(auxVal, 111l);
 
         CellWithConflictingAuxFields auxCell = new CellWithConflictingAuxFields("l", "v");
-        String auxValStr = CellReflector.getAuxiliaryValue(auxCell, "aux2");
+        String auxValStr = CellReflector.getAuxiliaryValue(String.class, auxCell, "aux2");
         assertEquals(auxValStr, "blah");
-
     }
 
     @Test
@@ -97,11 +90,8 @@ public class CellReflectorTest {
     public void valueBytes() {
         CellWithByteValueTuple tuple = new CellWithByteValueTuple("l", "v".getBytes());
         byte [] value = new byte[0];
-        try {
-            value = CellReflector.getValueAsBytes(tuple);
-        } catch (NullDataForLabelValueException e) {
-            fail();
-        }
+        value = CellReflector.getValueAsBytes(tuple);
+        assertNotNull(value);
         assertEquals(value, "v".getBytes());
     }
 
@@ -109,20 +99,14 @@ public class CellReflectorTest {
     public void valueLongAndInt(){
         IntValueTuple tuple = new IntValueTuple("l", 1);
         int value = 0;
-        try {
-            value = CellReflector.getValueAsInt(tuple);
-        } catch (NullDataForLabelValueException e) {
-            fail();
-        }
+        value = CellReflector.getValueAsInt(tuple);
         assertEquals(value, 1);
 
         LongValueTuple tuple2 = new LongValueTuple("l", 1l);
+        assertNotNull(tuple2);
         long valueLong = 0;
-        try {
-            valueLong = CellReflector.getValueAsLong(tuple2);
-        } catch (NullDataForLabelValueException e) {
-            fail();
-        }
+        valueLong = CellReflector.getValueAsLong(tuple2);
+        assertNotNull(valueLong);
         assertEquals(valueLong, 1l);
     }
 
@@ -198,10 +182,11 @@ public class CellReflectorTest {
     public void invalidCellAuxInstanceCast() {
         try {
             CellTuple tuple = new CellTuple("l", "v", 111l);
-            CellWithCustomClassValue.ValueMockClass ts = CellReflector.getAuxiliaryValue(tuple, "ts");
+            CellWithCustomClassValue.ValueMockClass ts = CellReflector.getAuxiliaryValue(CellWithCustomClassValue.ValueMockClass.class, tuple, "ts");
             fail("Return should throw class cast exception for mismatch types");
-        }  catch (ClassCastException e){
-            assertTrue(true);
+        }  catch (RuntimeException e){
+            assertEquals(e.getCause().getClass(), ClassCastException.class);
+            assertTrue(e.getMessage().contains("Unable to cast to parameterized type"));
         } catch (Exception e){
             fail();
         }
@@ -209,52 +194,40 @@ public class CellReflectorTest {
 
     @Test
     public void nullAuxValue() {
-       try {
+        try {
             CellWithConflictingAuxFields tuple = new CellWithConflictingAuxFields("l", "v");
-            String aux3 = CellReflector.getAuxiliaryValue(tuple, "aux3");
-            fail("aux3 is null");
-        }  catch (RuntimeException e){
-            assertTrue(e.getMessage().contains("Found auxiliary field (aux3) for instance, but value was null"));
-        } catch (Exception e){
+            String aux3 = CellReflector.getAuxiliaryValue(String.class, tuple, "aux3");
+            assertNull(aux3);
+        }  catch (Exception e){
             fail();
         }
     }
 
     @Test
     public void nullDataAtValueOrLabel() {
-        try {
-            CellTuple tuple = new CellTuple("l", null);
-            CellReflector.getValueAsString(tuple);
-            fail("null data");
-        } catch (NullDataForLabelValueException e) {
-            assertTrue(e.getMessage().contains("found null for data/value"));
-        }
+        CellTuple tuple = new CellTuple("l", null);
+        String value = CellReflector.getValueAsString(tuple);
+        assertNull(value);
 
-        try {
-            CellTuple tuple = new CellTuple(null, "v");
-            CellReflector.getLabelAsString(tuple);
-            fail("null data");
-        } catch (NullDataForLabelValueException e) {
-            assertTrue(e.getMessage().contains("found null for data/value"));
-        }
+        tuple = new CellTuple(null, "v");
+        String label= CellReflector.getLabelAsString(tuple);
+        assertNull(label);
 
-        try {
-            byte[] v = null;
-            CellWithByteValueTuple tuple = new CellWithByteValueTuple("l", v);
-            CellReflector.getValueAsBytes(tuple);
-            fail("null data");
-        } catch (NullDataForLabelValueException e) {
-            assertTrue(e.getMessage().contains("found null for data/value"));
-        }
+        byte[] v = null;
+        CellWithByteValueTuple tuple2 = new CellWithByteValueTuple("l", v);
+        byte[] byteValue = CellReflector.getValueAsBytes(tuple2);
+        assertNull(byteValue);
     }
 
     @Test
     public void conflictingAuxNames() {
         CellWithConflictingAuxFields tuple = new CellWithConflictingAuxFields("l", "v");
         try {
-            CellReflector.getAuxiliaryValue(tuple, "aux1");
+            CellReflector.getAuxiliaryValue(String.class, tuple, "aux1");
         } catch (RuntimeException e){
             assertTrue(e.getMessage().contains("Too many auxiliary fields with matching name"));
+        } catch (Exception e){
+            fail();
         }
     }
 
@@ -262,9 +235,11 @@ public class CellReflectorTest {
     public void lookingForNonexistantAux(){
         CellWithConflictingAuxFields tuple = new CellWithConflictingAuxFields("l", "v");
         try {
-            CellReflector.getAuxiliaryValue(tuple, "aux4");
+            CellReflector.getAuxiliaryValue(String.class, tuple, "aux4");
         } catch (RuntimeException e){
             assertTrue(e.getMessage().contains("No field matching given annotation name "));
+        } catch (Exception e){
+            fail();
         }
     }
 
