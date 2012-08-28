@@ -8,8 +8,8 @@ import cellmate.tuple.RowIDTuples;
  * Date: 8/28/12
  * Time: 2:04 AM
  */
-public interface TupleWriter<CTYPE extends Cell> {
+public interface TupleWriter<C> {
 
-    public void write(RowIDTuples<CTYPE> record)
+    public void write(RowIDTuples<C> record)
         throws RuntimeException;
 }

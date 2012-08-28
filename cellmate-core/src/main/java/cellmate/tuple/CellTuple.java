@@ -5,10 +5,16 @@ package cellmate.tuple;
  * Date: 8/26/12
  * Time: 10:57 AM
  */
-public class CellTuple implements Cell {
+@Cell
+public class CellTuple {
 
-    private String label;
+    @Label
+    public String label;
+
+    @Value
     private String value;
+
+    @CellAuxilaryField(name="ts")
     private long timestamp;
 
     public CellTuple(String label, String value, long timestamp) {
@@ -20,18 +26,6 @@ public class CellTuple implements Cell {
     public CellTuple(String label, String value) {
         this.label = label;
         this.value = value;
-    }
-
-    public String getLabel() {
-        return label;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
     }
 
     @Override

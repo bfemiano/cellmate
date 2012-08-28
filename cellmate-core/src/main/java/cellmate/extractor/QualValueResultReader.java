@@ -14,20 +14,20 @@ import java.util.List;
  * Date: 8/27/12
  * Time: 11:08 PM
  */
-public class QualValueResultReader<RESULT, CTYPE extends Cell>
-        implements DBResultReader<RESULT, CTYPE> {
-     private TupleResultParser<RESULT, CTYPE> cellTupleBuilder;
+public class QualValueResultReader<I, C>
+        implements DBResultReader<I, C> {
+     private TupleResultParser<I, C> cellTupleBuilder;
 
-    public QualValueResultReader(TupleResultParser<RESULT, CTYPE> parser) {
+    public QualValueResultReader(TupleResultParser<I, C> parser) {
         this.cellTupleBuilder = parser;
     }
 
-    public List<RowIDTuples<CTYPE>> read(Iterable<RESULT> iter, int maxResultsPerQuery) {
-        List<RowIDTuples<CTYPE>> results = new ArrayList<RowIDTuples<CTYPE>>();
-        RowIDTuples<CTYPE> result = null;
-        Iterator<RESULT> itar = iter.iterator();
+    public List<RowIDTuples<C>> read(Iterable<I> iter, int maxResultsPerQuery) {
+        List<RowIDTuples<C>> results = new ArrayList<RowIDTuples<C>>();
+        RowIDTuples<C> result = null;
+        Iterator<I> itar = iter.iterator();
         for(int i = 0; i < maxResultsPerQuery & itar.hasNext(); i++){
-            RESULT record = itar.next();
+            I record = itar.next();
             if(i == 0)
                 result = cellTupleBuilder.buildRowIDTuple(record);
             if(!cellTupleBuilder.rowIDsEqual(record, result.getRowId())) {

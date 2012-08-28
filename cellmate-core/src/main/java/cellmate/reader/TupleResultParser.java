@@ -9,17 +9,17 @@ import cellmate.tuple.RowIDTuples;
  * Date: 8/27/12
  * Time: 2:28 PM
  */
-public interface TupleResultParser<RESULT, CTYPE extends Cell> {
+public interface TupleResultParser<I, C> {
 
-    public RowIDTuples<CTYPE> buildRowIDTuple(RESULT record)
+    public RowIDTuples<C> buildRowIDTuple(I record)
             throws IllegalArgumentException;
 
-    public boolean rowIDsEqual(RESULT record, String id)
+    public boolean rowIDsEqual(I record, String id)
             throws IllegalArgumentException;
 
-    public CTYPE getTuple(RESULT record);
+    public C getTuple(I record);
 
-    public CTYPE getTuple(RESULT record, ColFamGroup[] group);
+    public C getTuple(I record, ColFamGroup[] group);
 
-    public CTYPE getTuple(String label, String value);
+    public C getTuple(String label, String value);
 }

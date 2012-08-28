@@ -10,8 +10,7 @@ import java.util.List;
  * Date: 8/27/12
  * Time: 12:15 AM
  */
-public interface DBResultReader<RESULT,
-                                CTYPE extends Cell> {
+public interface DBResultReader<I, C> {
 
-    public Iterable<RowIDTuples<CTYPE>> read(Iterable<RESULT> items, int maxResultsPerQuery);
+    public Iterable<RowIDTuples<C>> read(Iterable<I> items, int maxResultsPerQuery);
 }

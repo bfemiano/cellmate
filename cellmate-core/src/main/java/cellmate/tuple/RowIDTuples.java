@@ -13,9 +13,10 @@ import java.util.List;
  * Date: 8/25/12
  * Time: 1:31 PM
  */
-public class RowIDTuples<CTYPE extends Cell> implements Iterable<CTYPE>{
+@Container
+public class RowIDTuples<C> implements Iterable<C>{
 
-    List<CTYPE> pairs = new ArrayList<CTYPE>();
+    List<C> pairs = new ArrayList<C>();
 
     private String rowId;
 
@@ -23,18 +24,19 @@ public class RowIDTuples<CTYPE extends Cell> implements Iterable<CTYPE>{
         this.rowId = rowId;
     }
 
-    public void addCellTuple(CTYPE pair) {
+    public void addCellTuple(C pair) {
         pairs.add(pair);
     }
 
-    public List<CTYPE> getInternalList() {
+    public List<C> getInternalList() {
        return pairs;
     }
 
-    public Iterator<CTYPE> iterator() {
+    public Iterator<C> iterator() {
         return pairs.iterator();
     }
 
+    @Group
     public String getRowId() {
         return rowId;
     }

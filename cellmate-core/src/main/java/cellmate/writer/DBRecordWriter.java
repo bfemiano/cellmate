@@ -9,10 +9,9 @@ package cellmate.writer;
 import cellmate.tuple.Cell;
 import cellmate.tuple.RowIDTuples;
 
-public interface DBRecordWriter<RECORD,
-                            CTYPE extends Cell>  {
+public interface DBRecordWriter<C>  {
 
-    public void write(Iterable<RowIDTuples<CTYPE>> items)
+    public void write(Iterable<RowIDTuples<C>> items)
             throws RuntimeException;
 
 }
