@@ -1,12 +1,17 @@
 package cellmate.tuple;
 
+import cellmate.tuple.cell.Cell;
+import cellmate.tuple.cell.CellAuxilaryField;
+import cellmate.tuple.cell.Label;
+import cellmate.tuple.cell.Value;
+
 /**
  * User: bfemiano
  * Date: 8/26/12
  * Time: 10:57 AM
  */
 @Cell
-public class CellTuple {
+public final class StringValueTuple {
 
     @Label
     public String label;
@@ -17,13 +22,13 @@ public class CellTuple {
     @CellAuxilaryField(name="ts")
     private long timestamp;
 
-    public CellTuple(String label, String value, long timestamp) {
+    public StringValueTuple(String label, String value, long timestamp) {
         this.label = label;
         this.value = value;
         this.timestamp = timestamp;
     }
 
-    public CellTuple(String label, String value) {
+    public StringValueTuple(String label, String value) {
         this.label = label;
         this.value = value;
     }
@@ -33,11 +38,11 @@ public class CellTuple {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        CellTuple cellTuple = (CellTuple) o;
+        StringValueTuple stringValueTuple = (StringValueTuple) o;
 
-        if (timestamp != cellTuple.timestamp) return false;
-        if (label != null ? !label.equals(cellTuple.label) : cellTuple.label != null) return false;
-        if (value != null ? !value.equals(cellTuple.value) : cellTuple.value != null) return false;
+        if (timestamp != stringValueTuple.timestamp) return false;
+        if (label != null ? !label.equals(stringValueTuple.label) : stringValueTuple.label != null) return false;
+        if (value != null ? !value.equals(stringValueTuple.value) : stringValueTuple.value != null) return false;
 
         return true;
     }

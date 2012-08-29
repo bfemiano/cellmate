@@ -1,9 +1,7 @@
 package cellmate.reader;
 
-import cellmate.tuple.Cell;
-import cellmate.tuple.RowIDTuples;
-
-import java.util.List;
+import cellmate.tuple.TupleBag;
+import com.google.common.collect.ImmutableList;
 
 /**
  * User: bfemiano
@@ -12,5 +10,7 @@ import java.util.List;
  */
 public interface DBResultReader<I, C> {
 
-    public Iterable<RowIDTuples<C>> read(Iterable<I> items, int maxResultsPerQuery);
+    public ImmutableList<TupleBag<C>> read(Iterable<I> items, int maxResultsPerQuery);
+
+    public ImmutableList<TupleBag<C>> read(Iterable<I> items);
 }

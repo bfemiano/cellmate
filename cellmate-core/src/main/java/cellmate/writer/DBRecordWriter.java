@@ -6,12 +6,11 @@ package cellmate.writer;
  * Time: 1:59 AM
  */
 
-import cellmate.tuple.Cell;
-import cellmate.tuple.RowIDTuples;
+import cellmate.tuple.TupleBag;
 
 public interface DBRecordWriter<C>  {
 
-    public void write(Iterable<RowIDTuples<C>> items)
+    public void write(Iterable<TupleBag<C>> items)
             throws RuntimeException;
 
 }

@@ -13,15 +13,18 @@ import java.util.List;
  * Date: 8/25/12
  * Time: 1:31 PM
  */
-@Container
-public class RowIDTuples<C> implements Iterable<C>{
+public class TupleBag<C> implements Iterable<C>{
 
     List<C> pairs = new ArrayList<C>();
 
-    private String rowId;
+    private String bagLabel;
 
-    public RowIDTuples(String rowId) {
-        this.rowId = rowId;
+    public TupleBag(String bagLabel) {
+        this.bagLabel = bagLabel;
+    }
+
+    public TupleBag() {
+
     }
 
     public void addCellTuple(C pair) {
@@ -36,8 +39,7 @@ public class RowIDTuples<C> implements Iterable<C>{
         return pairs.iterator();
     }
 
-    @Group
-    public String getRowId() {
-        return rowId;
+    public String getBagLabel() {
+        return bagLabel;
     }
 }

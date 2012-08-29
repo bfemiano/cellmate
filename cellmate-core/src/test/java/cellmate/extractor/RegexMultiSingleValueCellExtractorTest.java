@@ -1,7 +1,10 @@
 package cellmate.extractor;
 
 import cellmate.tuple.*;
-import cellmate.extractor.StringMultiSingleValueCellExtractor;
+import cellmate.tuple.cell.Cell;
+import cellmate.tuple.cell.CellReflector;
+import cellmate.tuple.cell.Label;
+import cellmate.tuple.cell.Value;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -17,11 +20,11 @@ import static org.testng.Assert.*;
  */
 public class RegexMultiSingleValueCellExtractorTest {
 
-    RowIDTuples<CellTuple> row1Tuples;
-    RowIDTuples<CellTuple> row2Tuples;
+    TupleBag<StringValueTuple> row1TupleBag;
+    TupleBag<StringValueTuple> row2TupleBag;
     private StringMultiSingleValueCellExtractor extractorSingle =
             new StringMultiSingleValueCellExtractor();
-    private RowIDTuples<CellTuple> row3Tuples;
+    private TupleBag<StringValueTuple> row3TupleBag;
 
     @Cell
     public class LongValueTuple {
@@ -51,66 +54,66 @@ public class RegexMultiSingleValueCellExtractorTest {
 
     @BeforeClass
     public void hydrateTuple(){
-        row1Tuples = new RowIDTuples<CellTuple>("fakeId1");
-        CellTuple tuple1 = new CellTuple("name", "brian");
-        CellTuple tuple2 = new CellTuple("event", "234211213");
-        CellTuple tuple3 = new CellTuple("event", "234111200");
-        CellTuple tuple4 = new CellTuple("edge", "191");
-        CellTuple tuple5 = new CellTuple("edge", "192");
-        CellTuple tuple6 = new CellTuple("chk_t", "00-33-11");
-        CellTuple tuple7 = new CellTuple("ckk_d", "2012-08-22", 238124123l);
-        CellTuple tuple8 = new CellTuple("loc", "21911", 238124123l);
-        CellTuple tuple9 = new CellTuple("lat", "11.22");
-        CellTuple tuple10 = new CellTuple("lon", "33.44");
+        row1TupleBag = new TupleBag<StringValueTuple>("fakeId1");
+        StringValueTuple tuple1 = new StringValueTuple("name", "brian");
+        StringValueTuple tuple2 = new StringValueTuple("event", "234211213");
+        StringValueTuple tuple3 = new StringValueTuple("event", "234111200");
+        StringValueTuple tuple4 = new StringValueTuple("edge", "191");
+        StringValueTuple tuple5 = new StringValueTuple("edge", "192");
+        StringValueTuple tuple6 = new StringValueTuple("chk_t", "00-33-11");
+        StringValueTuple tuple7 = new StringValueTuple("ckk_d", "2012-08-22", 238124123l);
+        StringValueTuple tuple8 = new StringValueTuple("loc", "21911", 238124123l);
+        StringValueTuple tuple9 = new StringValueTuple("lat", "11.22");
+        StringValueTuple tuple10 = new StringValueTuple("lon", "33.44");
 
-        row1Tuples.addCellTuple(tuple1);
-        row1Tuples.addCellTuple(tuple2);
-        row1Tuples.addCellTuple(tuple3);
-        row1Tuples.addCellTuple(tuple4);
-        row1Tuples.addCellTuple(tuple5);
-        row1Tuples.addCellTuple(tuple6);
-        row1Tuples.addCellTuple(tuple7);
-        row1Tuples.addCellTuple(tuple8);
-        row1Tuples.addCellTuple(tuple9);
-        row1Tuples.addCellTuple(tuple10);
+        row1TupleBag.addCellTuple(tuple1);
+        row1TupleBag.addCellTuple(tuple2);
+        row1TupleBag.addCellTuple(tuple3);
+        row1TupleBag.addCellTuple(tuple4);
+        row1TupleBag.addCellTuple(tuple5);
+        row1TupleBag.addCellTuple(tuple6);
+        row1TupleBag.addCellTuple(tuple7);
+        row1TupleBag.addCellTuple(tuple8);
+        row1TupleBag.addCellTuple(tuple9);
+        row1TupleBag.addCellTuple(tuple10);
 
-        row2Tuples = new RowIDTuples<CellTuple>("fakeId2");
-        tuple1 = new CellTuple("name", "brian");
-        tuple4 = new CellTuple("trylong", "error");
-        tuple5 = new CellTuple("edge", "192");
-        tuple6 = new CellTuple("edge", "error");
-        tuple7 = new CellTuple("chk_t", "00-33-11");
-        tuple8 = new CellTuple("chk_t", "00-33-11");
-        tuple9 = new CellTuple("chk_d", "2012-08-22", 238124123l);
-        tuple10 = new CellTuple("loc", "21911", 238124123l);
-        CellTuple tuple11 = new CellTuple("trydouble", "error");
-        row2Tuples.addCellTuple(tuple1);
-        row2Tuples.addCellTuple(tuple2);
-        row2Tuples.addCellTuple(tuple3);
-        row2Tuples.addCellTuple(tuple4);
-        row2Tuples.addCellTuple(tuple5);
-        row2Tuples.addCellTuple(tuple6);
-        row2Tuples.addCellTuple(tuple7);
-        row2Tuples.addCellTuple(tuple8);
-        row2Tuples.addCellTuple(tuple9);
-        row2Tuples.addCellTuple(tuple10);
-        row2Tuples.addCellTuple(tuple11);
+        row2TupleBag = new TupleBag<StringValueTuple>("fakeId2");
+        tuple1 = new StringValueTuple("name", "brian");
+        tuple4 = new StringValueTuple("trylong", "error");
+        tuple5 = new StringValueTuple("edge", "192");
+        tuple6 = new StringValueTuple("edge", "error");
+        tuple7 = new StringValueTuple("chk_t", "00-33-11");
+        tuple8 = new StringValueTuple("chk_t", "00-33-11");
+        tuple9 = new StringValueTuple("chk_d", "2012-08-22", 238124123l);
+        tuple10 = new StringValueTuple("loc", "21911", 238124123l);
+        StringValueTuple tuple11 = new StringValueTuple("trydouble", "error");
+        row2TupleBag.addCellTuple(tuple1);
+        row2TupleBag.addCellTuple(tuple2);
+        row2TupleBag.addCellTuple(tuple3);
+        row2TupleBag.addCellTuple(tuple4);
+        row2TupleBag.addCellTuple(tuple5);
+        row2TupleBag.addCellTuple(tuple6);
+        row2TupleBag.addCellTuple(tuple7);
+        row2TupleBag.addCellTuple(tuple8);
+        row2TupleBag.addCellTuple(tuple9);
+        row2TupleBag.addCellTuple(tuple10);
+        row2TupleBag.addCellTuple(tuple11);
 
-        row3Tuples = new RowIDTuples<CellTuple>("fakeId3");
-        row3Tuples.addCellTuple(new CellTuple("event", "e1", 111111l));
-        row3Tuples.addCellTuple(new CellTuple("event", "e2", 222222l));
-        row3Tuples.addCellTuple(new CellTuple("event", "e3", 333333l));
+        row3TupleBag = new TupleBag<StringValueTuple>("fakeId3");
+        row3TupleBag.addCellTuple(new StringValueTuple("event", "e1", 111111l));
+        row3TupleBag.addCellTuple(new StringValueTuple("event", "e2", 222222l));
+        row3TupleBag.addCellTuple(new StringValueTuple("event", "e3", 333333l));
     }
 
     @Test
     public void tupleCounts() {
-        assertEquals(row1Tuples.getInternalList().size(), 10);
-        assertEquals(row2Tuples.getInternalList().size(), 11);
+        assertEquals(row1TupleBag.getInternalList().size(), 10);
+        assertEquals(row2TupleBag.getInternalList().size(), 11);
     }
 
     @Test
     public void testMostRecentTimestamp() {
-        CellTuple mostRecent = extractorSingle.getMostRecentTimestamp(row3Tuples.getInternalList());
+        StringValueTuple mostRecent = extractorSingle.getMostRecentTimestamp(row3TupleBag.getInternalList());
         assertNotNull(mostRecent);
         try {
             assertEquals(CellReflector.getLabelAsString(mostRecent), "event");
@@ -124,7 +127,7 @@ public class RegexMultiSingleValueCellExtractorTest {
 
     @Test
     public void exactString() {
-        List<CellTuple> tuples = extractorSingle.matchLabel(row1Tuples.getInternalList(), "name");
+        List<StringValueTuple> tuples = extractorSingle.matchLabel(row1TupleBag.getInternalList(), "name");
         assertNotNull(tuples);
         assertEquals(tuples.size(), 1);
         try {
@@ -137,7 +140,7 @@ public class RegexMultiSingleValueCellExtractorTest {
 
     @Test
     public void regexString() {  //startsWith 'l'
-        List<CellTuple> tuples = extractorSingle.regexMatchLabel(row1Tuples.getInternalList(), "^[l]+[a-zA-Z]+");
+        List<StringValueTuple> tuples = extractorSingle.regexMatchLabel(row1TupleBag.getInternalList(), "^[l]+[a-zA-Z]+");
         assertNotNull(tuples);
         assertEquals(tuples.size(), 3);
 
@@ -145,7 +148,7 @@ public class RegexMultiSingleValueCellExtractorTest {
         boolean foundLon = false;
         boolean foundLoc = false;
         try {
-            for(CellTuple tuple : tuples) {
+            for(StringValueTuple tuple : tuples) {
                 if(CellReflector.getLabelAsString(tuple).equals("lat"))
                     foundLat = true;
                 if(CellReflector.getLabelAsString(tuple).equals("lon"))
@@ -162,7 +165,7 @@ public class RegexMultiSingleValueCellExtractorTest {
     @Test
     public void exactDouble() {
         try {
-            double lat = extractorSingle.getDoubleSingleValue(row1Tuples.getInternalList(), "lat");
+            double lat = extractorSingle.getDoubleSingleValue(row1TupleBag.getInternalList(), "lat");
             assertEquals(lat, 11.22);
         } catch (NoSuchElementException e) {
             fail("failed to find lat");
@@ -174,7 +177,7 @@ public class RegexMultiSingleValueCellExtractorTest {
     @Test
     public void exactInt() {
         try {
-            int loc = extractorSingle.getIntSingleValue(row1Tuples.getInternalList(), "loc");
+            int loc = extractorSingle.getIntSingleValue(row1TupleBag.getInternalList(), "loc");
             assertEquals(loc, 21911);
         } catch (NoSuchElementException e) {
             fail("failed to find loc");
@@ -186,7 +189,7 @@ public class RegexMultiSingleValueCellExtractorTest {
     @Test
     public void exactLong() {
         try {
-            long loc = extractorSingle.getLongSingleValue(row1Tuples.getInternalList(), "loc");
+            long loc = extractorSingle.getLongSingleValue(row1TupleBag.getInternalList(), "loc");
             assertEquals(loc, 21911l);
         } catch (NoSuchElementException e) {
             fail("failed to find loc");
@@ -198,7 +201,7 @@ public class RegexMultiSingleValueCellExtractorTest {
     @Test
     public void exactBytes() {
         try {
-            byte[] loc = extractorSingle.getByteSingleValue(row1Tuples.getInternalList(), "loc");
+            byte[] loc = extractorSingle.getByteSingleValue(row1TupleBag.getInternalList(), "loc");
             assertEquals(loc, "21911".getBytes());
         } catch (NoSuchElementException e) {
             fail("failed to find loc");
@@ -210,7 +213,7 @@ public class RegexMultiSingleValueCellExtractorTest {
     @Test
     public void stringList() {
         try {
-            List<String> items = extractorSingle.getStringList(row1Tuples.getInternalList(), "event");
+            List<String> items = extractorSingle.getStringList(row1TupleBag.getInternalList(), "event");
             assertNotNull(items);
             assertEquals(items.size(), 2);
             boolean found1 = false;
@@ -232,13 +235,13 @@ public class RegexMultiSingleValueCellExtractorTest {
     @Test
     public void intList() {
         try {
-            RowIDTuples<IntValueTuple> tuples = new RowIDTuples<IntValueTuple>("fake4id");
+            TupleBag<IntValueTuple> tupleBag = new TupleBag<IntValueTuple>("fake4id");
             IntValueTuple tuple = new IntValueTuple("edge", 191);
             IntValueTuple tuple2 = new IntValueTuple("edge", 192);
-            tuples.addCellTuple(tuple);
-            tuples.addCellTuple(tuple2);
+            tupleBag.addCellTuple(tuple);
+            tupleBag.addCellTuple(tuple2);
 
-            List<Integer> items = extractorSingle.getIntList(tuples.getInternalList(), "edge");
+            List<Integer> items = extractorSingle.getIntList(tupleBag.getInternalList(), "edge");
             assertNotNull(items);
             assertEquals(items.size(), 2);
             boolean found1 = false;
@@ -261,13 +264,13 @@ public class RegexMultiSingleValueCellExtractorTest {
     @Test
     public void longList() {
         try {
-            RowIDTuples<LongValueTuple> tuples = new RowIDTuples<LongValueTuple>("fake4id");
+            TupleBag<LongValueTuple> tupleBag = new TupleBag<LongValueTuple>("fake4id");
             LongValueTuple tuple = new LongValueTuple("event", 234211213l);
             LongValueTuple tuple2 = new LongValueTuple("event", 234111200l);
-            tuples.addCellTuple(tuple);
-            tuples.addCellTuple(tuple2);
+            tupleBag.addCellTuple(tuple);
+            tupleBag.addCellTuple(tuple2);
 
-            List<Long> items = extractorSingle.getLongList(tuples.getInternalList(), "event");
+            List<Long> items = extractorSingle.getLongList(tupleBag.getInternalList(), "event");
             assertNotNull(items);
             assertEquals(items.size(), 2);
             boolean found1 = false;
@@ -290,7 +293,7 @@ public class RegexMultiSingleValueCellExtractorTest {
     public void castToLongError() {
         String msg = "row2 contains an event with an invalid long value, and should have thrown an error";
         try {
-            extractorSingle.getLongSingleValue(row2Tuples.getInternalList(), "trylong");
+            extractorSingle.getLongSingleValue(row2TupleBag.getInternalList(), "trylong");
             fail(msg);
         }  catch (NoSuchElementException e) {
             fail(msg);
@@ -303,7 +306,7 @@ public class RegexMultiSingleValueCellExtractorTest {
     public void castToDouble() {
         String msg = "row2 contains a lon with an invalid double value, and should have thrown an error";
         try {
-            extractorSingle.getDoubleSingleValue(row2Tuples.getInternalList(), "trydouble");
+            extractorSingle.getDoubleSingleValue(row2TupleBag.getInternalList(), "trydouble");
             fail(msg);
         }  catch (NoSuchElementException e) {
             fail(msg);

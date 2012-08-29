@@ -1,4 +1,4 @@
-package cellmate.tuple;
+package cellmate.tuple.cell;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -6,8 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * User: bfemiano
  * Date: 8/28/12
- * Time: 12:23 PM
+ * Time: 1:49 PM
  */
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Group {
+public @interface CellAuxilaryField {
+
+    String name();
 }

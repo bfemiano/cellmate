@@ -1,4 +1,4 @@
-package cellmate.tuple;
+package cellmate.tuple.cell;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

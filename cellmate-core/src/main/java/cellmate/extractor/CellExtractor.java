@@ -1,7 +1,5 @@
 package cellmate.extractor;
 
-import cellmate.tuple.Cell;
-
 import java.util.List;
 
 /**

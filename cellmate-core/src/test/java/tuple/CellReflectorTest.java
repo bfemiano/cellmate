@@ -1,6 +1,7 @@
 package tuple;
 
 import cellmate.tuple.*;
+import cellmate.tuple.cell.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -13,13 +14,13 @@ import static org.testng.Assert.*;
  */
 public class CellReflectorTest {
 
-    CellTuple tuple1;
-    CellTuple tupleWithAux;
+    StringValueTuple tuple1;
+    StringValueTuple tupleWithAux;
 
     @BeforeClass
     public void setup(){
-        tuple1 = new CellTuple("l", "v");
-        tupleWithAux = new CellTuple("l", "v", 111l);
+        tuple1 = new StringValueTuple("l", "v");
+        tupleWithAux = new StringValueTuple("l", "v", 111l);
     }
 
     @Test
@@ -181,7 +182,7 @@ public class CellReflectorTest {
     @Test
     public void invalidCellAuxInstanceCast() {
         try {
-            CellTuple tuple = new CellTuple("l", "v", 111l);
+            StringValueTuple tuple = new StringValueTuple("l", "v", 111l);
             CellWithCustomClassValue.ValueMockClass ts = CellReflector.getAuxiliaryValue(CellWithCustomClassValue.ValueMockClass.class, tuple, "ts");
             fail("Return should throw class cast exception for mismatch types");
         }  catch (RuntimeException e){
@@ -205,11 +206,11 @@ public class CellReflectorTest {
 
     @Test
     public void nullDataAtValueOrLabel() {
-        CellTuple tuple = new CellTuple("l", null);
+        StringValueTuple tuple = new StringValueTuple("l", null);
         String value = CellReflector.getValueAsString(tuple);
         assertNull(value);
 
-        tuple = new CellTuple(null, "v");
+        tuple = new StringValueTuple(null, "v");
         String label= CellReflector.getLabelAsString(tuple);
         assertNull(label);
 

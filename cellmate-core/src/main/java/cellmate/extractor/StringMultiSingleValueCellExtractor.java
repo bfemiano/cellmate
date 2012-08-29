@@ -1,6 +1,6 @@
 package cellmate.extractor;
 
-import cellmate.tuple.CellReflector;
+import cellmate.tuple.cell.CellReflector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,6 @@ public class StringMultiSingleValueCellExtractor
         }
         return values;
     }
-
-
 
     public <T> T getMostRecentTimestamp(List<T> tuples) {
         T maxT = null;
