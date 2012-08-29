@@ -9,8 +9,6 @@ import cellmate.tuple.TupleBag;
  */
 public class BasicLabelValueDBResultReader<I,C> extends TupleBagDBResultReader<I, C> {
 
-    private TupleBuilder<I, C> tupleBuilder;
-
     public BasicLabelValueDBResultReader(TupleBuilder<I, C> builder){
         this.tupleBuilder = builder;
     }

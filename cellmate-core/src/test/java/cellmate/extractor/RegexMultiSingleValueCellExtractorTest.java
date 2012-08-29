@@ -22,8 +22,8 @@ public class RegexMultiSingleValueCellExtractorTest {
 
     TupleBag<StringValueTuple> row1TupleBag;
     TupleBag<StringValueTuple> row2TupleBag;
-    private StringMultiSingleValueCellExtractor extractorSingle =
-            new StringMultiSingleValueCellExtractor();
+    private SingleMultiValueCellExtractor extractorSingle =
+            new SingleMultiValueCellExtractor();
     private TupleBag<StringValueTuple> row3TupleBag;
 
     @Cell

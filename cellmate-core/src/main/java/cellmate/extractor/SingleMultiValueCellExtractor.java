@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * Date: 8/25/12
  * Time: 1:41 PM
  */
-public class StringMultiSingleValueCellExtractor
+public class SingleMultiValueCellExtractor
         implements CellExtractor {
 
     public <T> List<T> matchLabel(List<T> tuples, String label) {
