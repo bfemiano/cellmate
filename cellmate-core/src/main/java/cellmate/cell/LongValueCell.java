@@ -1,26 +1,23 @@
-package cellmate.tuple;
+package cellmate.cell;
 
-import cellmate.tuple.cell.Cell;
-import cellmate.tuple.cell.Label;
-import cellmate.tuple.cell.Value;
-
-import java.util.Arrays;
+import com.google.common.annotations.Beta;
 
 /**
  * User: bfemiano
  * Date: 8/28/12
- * Time: 9:24 PM
+ * Time: 9:23 PM
  */
+@Beta
 @Cell
-public final class ByteValueTyple {
+public final class LongValueCell {
 
     @Label
     private String label;
 
     @Value
-    private byte[] value;
+    private long value;
 
-    public ByteValueTyple(String label, byte[] value) {
+    public LongValueCell(String label, long value) {
         this.label = label;
         this.value = value;
     }
@@ -30,10 +27,10 @@ public final class ByteValueTyple {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ByteValueTyple that = (ByteValueTyple) o;
+        LongValueCell that = (LongValueCell) o;
 
+        if (value != that.value) return false;
         if (label != null ? !label.equals(that.label) : that.label != null) return false;
-        if (!Arrays.equals(value, that.value)) return false;
 
         return true;
     }
@@ -41,7 +38,7 @@ public final class ByteValueTyple {
     @Override
     public int hashCode() {
         int result = label != null ? label.hashCode() : 0;
-        result = 31 * result + (value != null ? Arrays.hashCode(value) : 0);
+        result = 31 * result + (int) (value ^ (value >>> 32));
         return result;
     }
 }

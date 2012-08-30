@@ -1,17 +1,17 @@
-package cellmate.tuple;
+package cellmate.cell;
 
-import cellmate.tuple.cell.Cell;
-import cellmate.tuple.cell.CellAuxilaryField;
-import cellmate.tuple.cell.Label;
-import cellmate.tuple.cell.Value;
+import com.google.common.annotations.Beta;
+
+import java.util.Arrays;
 
 /**
  * User: bfemiano
  * Date: 8/26/12
  * Time: 10:57 AM
  */
+@Beta
 @Cell
-public final class StringValueTuple {
+public final class StringValueCell {
 
     @Label
     public String label;
@@ -22,13 +22,13 @@ public final class StringValueTuple {
     @CellAuxilaryField(name="ts")
     private long timestamp;
 
-    public StringValueTuple(String label, String value, long timestamp) {
+    public StringValueCell(String label, String value, long timestamp) {
         this.label = label;
         this.value = value;
         this.timestamp = timestamp;
     }
 
-    public StringValueTuple(String label, String value) {
+    public StringValueCell(String label, String value) {
         this.label = label;
         this.value = value;
     }
@@ -38,11 +38,11 @@ public final class StringValueTuple {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StringValueTuple stringValueTuple = (StringValueTuple) o;
+        StringValueCell cell = (StringValueCell) o;
 
-        if (timestamp != stringValueTuple.timestamp) return false;
-        if (label != null ? !label.equals(stringValueTuple.label) : stringValueTuple.label != null) return false;
-        if (value != null ? !value.equals(stringValueTuple.value) : stringValueTuple.value != null) return false;
+        if (timestamp != cell.timestamp) return false;
+        if (label != null ? !label.equals(cell.label) : cell.label != null) return false;
+        if (value != null ? !value.equals(cell.value) : cell.value != null) return false;
 
         return true;
     }

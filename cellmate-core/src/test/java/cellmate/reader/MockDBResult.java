@@ -8,13 +8,24 @@ package cellmate.reader;
 public final class MockDBResult {
 
     private String id;
+    private String colfam;
     private String qual;
     private String val;
+    private long timestamp;
 
-    public MockDBResult(String id, String qual, String val) {
+    public MockDBResult(String id, String colfam, String qual, String val) {
         this.id = id;
+        this.colfam = colfam;
         this.qual = qual;
         this.val = val;
+    }
+
+    public MockDBResult(String id, String colfam, String qual, String val, long timestamp) {
+        this.id = id;
+        this.colfam = colfam;
+        this.qual = qual;
+        this.val = val;
+        this.timestamp = timestamp;
     }
 
     public String getId() {
@@ -27,5 +38,13 @@ public final class MockDBResult {
 
     public String getVal() {
         return val;
+    }
+
+    public String getColfam() {
+        return colfam;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 }

@@ -1,24 +1,23 @@
-package cellmate.tuple;
+package cellmate.cell;
 
-import cellmate.tuple.cell.Cell;
-import cellmate.tuple.cell.Label;
-import cellmate.tuple.cell.Value;
+import com.google.common.annotations.Beta;
 
 /**
  * User: bfemiano
  * Date: 8/28/12
- * Time: 9:23 PM
+ * Time: 9:25 PM
  */
+@Beta
 @Cell
-public final class LongValueTuple {
+public final class IntValueCell {
 
     @Label
     private String label;
 
     @Value
-    private long value;
+    private int value;
 
-    public LongValueTuple(String label, long value) {
+    public IntValueCell(String label, int value) {
         this.label = label;
         this.value = value;
     }
@@ -28,7 +27,7 @@ public final class LongValueTuple {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        LongValueTuple that = (LongValueTuple) o;
+        IntValueCell that = (IntValueCell) o;
 
         if (value != that.value) return false;
         if (label != null ? !label.equals(that.label) : that.label != null) return false;
@@ -39,7 +38,7 @@ public final class LongValueTuple {
     @Override
     public int hashCode() {
         int result = label != null ? label.hashCode() : 0;
-        result = 31 * result + (int) (value ^ (value >>> 32));
+        result = 31 * result + value;
         return result;
     }
 }

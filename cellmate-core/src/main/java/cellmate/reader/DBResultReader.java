@@ -1,6 +1,7 @@
 package cellmate.reader;
 
-import cellmate.tuple.TupleBag;
+import cellmate.cell.Tuple;
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -8,9 +9,12 @@ import com.google.common.collect.ImmutableList;
  * Date: 8/27/12
  * Time: 12:15 AM
  */
-public interface DBResultReader<I, C> {
+@Beta
+public interface DBResultReader<D, C> {
 
-    public ImmutableList<TupleBag<C>> read(Iterable<I> items, int maxResultsPerQuery);
+    public ImmutableList<Tuple<C>> read(Iterable<D> dbItems, int maxResultsPerQuery);
 
-    public ImmutableList<TupleBag<C>> read(Iterable<I> items);
+    public ImmutableList<Tuple<C>> read(Iterable<D> dbItems);
+
+    public Tuple<C> addCells(D record, Tuple<C> tuple);
 }

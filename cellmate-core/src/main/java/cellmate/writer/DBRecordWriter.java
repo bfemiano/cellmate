@@ -6,14 +6,13 @@ package cellmate.writer;
  * Time: 1:59 AM
  */
 
-import cellmate.tuple.TupleBag;
+import cellmate.cell.Tuple;
+import com.google.common.annotations.Beta;
 
-public interface DBRecordWriter<C, D>  {
+@Beta
+public interface DBRecordWriter<D,C>  {
 
-    public void write(Iterable<TupleBag<C>> items);
+    public D getFromTuple(D dbItem, Tuple<C> tuple);
 
-    public void applyWrite(D item);
-
-    public D getDBItem(TupleBag<C> bag);
-
+    public void write(D dbItem);
 }

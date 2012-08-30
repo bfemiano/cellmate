@@ -1,7 +1,6 @@
 package tuple;
 
-import cellmate.tuple.*;
-import cellmate.tuple.cell.*;
+import cellmate.cell.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -14,19 +13,24 @@ import static org.testng.Assert.*;
  */
 public class CellReflectorTest {
 
-    StringValueTuple tuple1;
-    StringValueTuple tupleWithAux;
+    StringValueCell cell1;
+    StringValueCell cellWithAux;
 
     @BeforeClass
     public void setup(){
-        tuple1 = new StringValueTuple("l", "v");
-        tupleWithAux = new StringValueTuple("l", "v", 111l);
+        cell1 = new StringValueCell("l", "v");
+        cellWithAux = new StringValueCell("l", "v", 111l);
+    }
+
+    @Test
+    public void hasNamedAuxValue() {
+        assertTrue(CellReflector.hasNamedAuxiliaryField(cellWithAux, "ts"));
     }
 
     @Test
     public void label(){
         String label = null;
-        label = CellReflector.getLabelAsString(tuple1);
+        label = CellReflector.getLabelAsString(cell1);
         assertNotNull(label);
         assertEquals(label, "l");
     }
@@ -34,7 +38,7 @@ public class CellReflectorTest {
     @Test
     public void valueStr() {
         String value = null;
-        value = CellReflector.getValueAsString(tuple1);
+        value = CellReflector.getValueAsString(cell1);
         assertNotNull(value);
         assertEquals(value, "v");
     }
@@ -42,10 +46,10 @@ public class CellReflectorTest {
     @Test
     public void aux(){
         long auxVal;
-        auxVal = CellReflector.getAuxiliaryValue(Long.class, tuple1, "ts");
+        auxVal = CellReflector.getAuxiliaryValue(Long.class, cell1, "ts");
         assertEquals(auxVal, 0l);
 
-        auxVal = CellReflector.getAuxiliaryValue(Long.class, tupleWithAux, "ts");
+        auxVal = CellReflector.getAuxiliaryValue(Long.class, cellWithAux, "ts");
         assertEquals(auxVal, 111l);
 
         CellWithConflictingAuxFields auxCell = new CellWithConflictingAuxFields("l", "v");
@@ -56,8 +60,8 @@ public class CellReflectorTest {
     @Test
     public void invalidCast() {
         try {
-            CellReflector.getValueAsLong(tuple1);
-            fail("value of tuple should not have cast to long");
+            CellReflector.getValueAsLong(cell1);
+            fail("value of cell should not have cast to long");
         } catch (RuntimeException e){
             assertTrue(e.getCause().getClass().equals(ClassCastException.class));
         } catch (Exception e){
@@ -65,8 +69,8 @@ public class CellReflectorTest {
         }
 
         try {
-            CellReflector.getValueAsInt(tuple1);
-            fail("value of tuple should not have cast to int");
+            CellReflector.getValueAsInt(cell1);
+            fail("value of cell should not have cast to int");
         } catch (RuntimeException e){
             assertTrue(e.getCause().getClass().equals(ClassCastException.class));
         } catch (Exception e){
@@ -76,9 +80,9 @@ public class CellReflectorTest {
 
     @Test
     public void checkCellPresent() {
-        MissingCellAnnTuple tuple = new MissingCellAnnTuple("l", "v");
+        MissingCellAnnotationCell tupleCellAnnotation = new MissingCellAnnotationCell("l", "v");
         try {
-            CellReflector.getLabelAsString(tuple);
+            CellReflector.getLabelAsString(tupleCellAnnotation);
             fail("cell is missing annotation");
         } catch (RuntimeException e){
             assertTrue(e.getMessage().contains("Class is not annotated as a cell"));
@@ -89,7 +93,7 @@ public class CellReflectorTest {
 
     @Test
     public void valueBytes() {
-        CellWithByteValueTuple tuple = new CellWithByteValueTuple("l", "v".getBytes());
+        CellWithByteValue tuple = new CellWithByteValue("l", "v".getBytes());
         byte [] value = new byte[0];
         value = CellReflector.getValueAsBytes(tuple);
         assertNotNull(value);
@@ -98,12 +102,12 @@ public class CellReflectorTest {
 
     @Test
     public void valueLongAndInt(){
-        IntValueTuple tuple = new IntValueTuple("l", 1);
+        IntValueCell tuple = new IntValueCell("l", 1);
         int value = 0;
         value = CellReflector.getValueAsInt(tuple);
         assertEquals(value, 1);
 
-        LongValueTuple tuple2 = new LongValueTuple("l", 1l);
+        LongValueCell tuple2 = new LongValueCell("l", 1l);
         assertNotNull(tuple2);
         long valueLong = 0;
         valueLong = CellReflector.getValueAsLong(tuple2);
@@ -114,8 +118,8 @@ public class CellReflectorTest {
     @Test
     public void missingLabelAndValue() {
         try {
-            MissingLabelAndValueTuple tuple = new MissingLabelAndValueTuple("l", "v");
-            CellReflector.getLabelAsString(tuple);
+            MissingLabelAndValueCell cell = new MissingLabelAndValueCell("l", "v");
+            CellReflector.getLabelAsString(cell);
             fail("no label annotation was applied");
         } catch (RuntimeException e){
             assertTrue(e.getMessage().contains("No field found in cell class"));
@@ -124,8 +128,8 @@ public class CellReflectorTest {
         }
 
         try {
-            MissingLabelAndValueTuple tuple = new MissingLabelAndValueTuple("l", "v");
-            CellReflector.getValueAsString(tuple);
+            MissingLabelAndValueCell cell = new MissingLabelAndValueCell("l", "v");
+            CellReflector.getValueAsString(cell);
             fail("no value annotation was applied");
         } catch (RuntimeException e){
             assertTrue(e.getMessage().contains("No field found in cell class"));
@@ -137,8 +141,8 @@ public class CellReflectorTest {
     @Test
     public void tooManyLabelsValues() {
         try {
-            TooManyLabelValueTuple tuple = new TooManyLabelValueTuple("l", "v".getBytes());
-            CellReflector.getLabelAsString(tuple);
+            TooManyLabelValueCell cell = new TooManyLabelValueCell("l", "v".getBytes());
+            CellReflector.getLabelAsString(cell);
             fail("should throw error. multiple labels were applied");
         } catch (RuntimeException e){
             assertTrue(e.getMessage().contains("More than one field found with annotation"));
@@ -147,8 +151,8 @@ public class CellReflectorTest {
         }
 
         try {
-            TooManyLabelValueTuple tuple = new TooManyLabelValueTuple("l", "v".getBytes());
-            CellReflector.getValueAsString(tuple);
+            TooManyLabelValueCell cell = new TooManyLabelValueCell("l", "v".getBytes());
+            CellReflector.getValueAsString(cell);
             fail("should throw error. multiple values were applied");
         } catch (RuntimeException e){
             assertTrue(e.getMessage().contains("More than one field found with annotation"));
@@ -182,8 +186,8 @@ public class CellReflectorTest {
     @Test
     public void invalidCellAuxInstanceCast() {
         try {
-            StringValueTuple tuple = new StringValueTuple("l", "v", 111l);
-            CellWithCustomClassValue.ValueMockClass ts = CellReflector.getAuxiliaryValue(CellWithCustomClassValue.ValueMockClass.class, tuple, "ts");
+            StringValueCell cell = new StringValueCell("l", "v", 111l);
+            CellWithCustomClassValue.ValueMockClass ts = CellReflector.getAuxiliaryValue(CellWithCustomClassValue.ValueMockClass.class, cell, "ts");
             fail("Return should throw class cast exception for mismatch types");
         }  catch (RuntimeException e){
             assertEquals(e.getCause().getClass(), ClassCastException.class);
@@ -206,17 +210,17 @@ public class CellReflectorTest {
 
     @Test
     public void nullDataAtValueOrLabel() {
-        StringValueTuple tuple = new StringValueTuple("l", null);
-        String value = CellReflector.getValueAsString(tuple);
+        StringValueCell cell = new StringValueCell("l", null);
+        String value = CellReflector.getValueAsString(cell);
         assertNull(value);
 
-        tuple = new StringValueTuple(null, "v");
-        String label= CellReflector.getLabelAsString(tuple);
+        cell = new StringValueCell(null, "v");
+        String label= CellReflector.getLabelAsString(cell);
         assertNull(label);
 
         byte[] v = null;
-        CellWithByteValueTuple tuple2 = new CellWithByteValueTuple("l", v);
-        byte[] byteValue = CellReflector.getValueAsBytes(tuple2);
+        CellWithByteValue a2 = new CellWithByteValue("l", v);
+        byte[] byteValue = CellReflector.getValueAsBytes(a2);
         assertNull(byteValue);
     }
 
@@ -246,21 +250,21 @@ public class CellReflectorTest {
 
 
     @Cell
-    public class CellWithByteValueTuple {
+    public class CellWithByteValue {
         @Label
         private String label;
 
         @Value
         private byte[] value;
 
-        public CellWithByteValueTuple(String label, byte[] value) {
+        public CellWithByteValue(String label, byte[] value) {
             this.label = label;
             this.value = value;
         }
     }
 
     @Cell
-    public class TooManyLabelValueTuple {
+    public class TooManyLabelValueCell {
         @Label
         private String label;
 
@@ -273,7 +277,7 @@ public class CellReflectorTest {
         @Value
         private byte[] value2;
 
-        public TooManyLabelValueTuple(String label, byte[] value) {
+        public TooManyLabelValueCell(String label, byte[] value) {
             this.label = label;
             this.value = value;
         }
@@ -340,52 +344,26 @@ public class CellReflectorTest {
         }
     }
 
-    public class MissingCellAnnTuple {
+    public class MissingCellAnnotationCell {
 
         @Label
         private String label;
         @Value
         private String value;
 
-        public MissingCellAnnTuple(String label, String value) {
+        public MissingCellAnnotationCell(String label, String value) {
             this.label = label;
             this.value = value;
         }
     }
 
     @Cell
-    public class MissingLabelAndValueTuple {
+    public class MissingLabelAndValueCell {
 
         private String label;
         private String value;
 
-        public MissingLabelAndValueTuple(String label, String value) {
-            this.label = label;
-            this.value = value;
-        }
-    }
-
-    @Cell
-    public class LongValueTuple {
-        @Label
-        private String label;
-        @Value
-        private long value;
-
-        public LongValueTuple(String label, long value) {
-            this.label = label;
-            this.value = value;
-        }
-    }
-
-    @Cell
-    public class IntValueTuple {
-        @Label
-        private String label;
-        @Value
-        private int value;
-
-        public IntValueTuple(String label, int value) {
+        public MissingLabelAndValueCell(String label, String value) {
             this.label = label;
             this.value = value;
         }

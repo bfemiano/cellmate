@@ -1,4 +1,6 @@
-package cellmate.tuple.cell;
+package cellmate.cell;
+
+import com.google.common.annotations.Beta;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -8,7 +10,10 @@ import java.lang.reflect.Field;
  * Date: 8/28/12
  * Time: 12:44 PM
  */
-public class CellReflector {
+@Beta
+public final class CellReflector {
+
+    private CellReflector(){}
 
     public static String getLabelAsString(Object obj) {
         Field field = getLabelField(obj);
@@ -52,6 +57,10 @@ public class CellReflector {
         throws ClassCastException{
         Field field = getNamedAuxiliaryField(obj, name);
         return asInstance(clazz, field, obj);
+    }
+
+    public static boolean hasNamedAuxiliaryField(Object obj, String name){
+        return (getNamedAuxiliaryField(obj, name) != null);
     }
 
     private static Field getNamedAuxiliaryField(Object obj,
@@ -119,7 +128,6 @@ public class CellReflector {
     }
 
     private static Field getValueField(Object obj) {
-        Class<?> clz = obj.getClass();
         return getSingleMatchingField(obj, Value.class);
     }
 
