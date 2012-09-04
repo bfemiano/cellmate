@@ -1,8 +1,11 @@
 package tuple;
 
 import cellmate.cell.*;
+import com.sun.jdi.DoubleValue;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Type;
 
 import static org.testng.Assert.*;
 
@@ -93,18 +96,18 @@ public class CellReflectorTest {
 
     @Test
     public void valueBytes() {
-        CellWithByteValue tuple = new CellWithByteValue("l", "v".getBytes());
-        byte [] value = new byte[0];
-        value = CellReflector.getValueAsBytes(tuple);
+        CellWithByteValue cell = new CellWithByteValue("l", "v".getBytes());
+        byte [] value = {};
+        value = CellReflector.getValueAsBytes(cell);
         assertNotNull(value);
         assertEquals(value, "v".getBytes());
     }
 
     @Test
     public void valueLongAndInt(){
-        IntValueCell tuple = new IntValueCell("l", 1);
+        IntValueCell cell = new IntValueCell("l", 1);
         int value = 0;
-        value = CellReflector.getValueAsInt(tuple);
+        value = CellReflector.getValueAsInt(cell);
         assertEquals(value, 1);
 
         LongValueCell tuple2 = new LongValueCell("l", 1l);
@@ -113,6 +116,13 @@ public class CellReflectorTest {
         valueLong = CellReflector.getValueAsLong(tuple2);
         assertNotNull(valueLong);
         assertEquals(valueLong, 1l);
+    }
+
+    @Test
+    public void valueDouble(){
+        DoubleValueCell cell = new DoubleValueCell("l", 22.22d);
+        double value = CellReflector.getValueAsDouble(cell);
+        assertEquals(value, 22.22d);
     }
 
     @Test
@@ -177,9 +187,35 @@ public class CellReflectorTest {
             String value =  CellReflector.getValueAsInstance(String.class, tuple);
             fail("should not cast correctly to string");
         } catch (RuntimeException e){
-            assertEquals(e.getCause().getClass(), ClassCastException.class);
+            assertTrue(e.getCause().getClass().equals(ClassCastException.class));
+            assertTrue(e.getMessage().contains("Unable to cast field value as instance of "));
         } catch (Exception e){
             fail();
+        }
+    }
+
+    @Test
+    public void invalidByteValue() {
+        try {
+            StringValueCell cell = new StringValueCell("l", "v");
+            byte[] byteValue = CellReflector.getValueAsBytes(cell);
+            fail("cell extractor should have throw error");
+        } catch (RuntimeException e){
+            assertTrue(e.getCause().getClass().equals(ClassCastException.class));
+            assertTrue(e.getMessage().contains("Unable to cast field value as instance of "));
+        }
+    }
+
+    @Test
+    public void getValueType() {
+        try {
+            IntValueCell cell = new IntValueCell("l", 1);
+            Class<?> typeOfCellValue = CellReflector.getValueType(cell);
+            assertEquals(typeOfCellValue.getClass(), Integer.class.getClass());
+            assertNotEquals(typeOfCellValue, String.class);
+            assertNotEquals(typeOfCellValue, Double.class);
+        } catch (Exception e){
+            fail(e.getMessage(), e);
         }
     }
 
@@ -190,8 +226,8 @@ public class CellReflectorTest {
             CellWithCustomClassValue.ValueMockClass ts = CellReflector.getAuxiliaryValue(CellWithCustomClassValue.ValueMockClass.class, cell, "ts");
             fail("Return should throw class cast exception for mismatch types");
         }  catch (RuntimeException e){
-            assertEquals(e.getCause().getClass(), ClassCastException.class);
-            assertTrue(e.getMessage().contains("Unable to cast to parameterized type"));
+            assertTrue(e.getCause().getClass().equals(ClassCastException.class));
+            assertTrue(e.getMessage().contains("Unable to cast field value as instance of "));
         } catch (Exception e){
             fail();
         }

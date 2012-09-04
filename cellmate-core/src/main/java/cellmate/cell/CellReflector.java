@@ -25,6 +25,11 @@ public final class CellReflector {
         return asString(field, obj);
     }
 
+    public static Double getValueAsDouble(Object obj) {
+        Field field = getValueField(obj);
+        return asDouble(field, obj);
+    }
+
     public static int getValueAsInt(Object obj) {
         Field field = getValueField(obj);
         return asInt(field, obj);
@@ -39,7 +44,8 @@ public final class CellReflector {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (ClassCastException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Unable to cast field value as instance of " + byte[].class.getName() +
+                      ". Found field class " + field.getType().getName(), e);
         }
     }
 
@@ -61,6 +67,13 @@ public final class CellReflector {
 
     public static boolean hasNamedAuxiliaryField(Object obj, String name){
         return (getNamedAuxiliaryField(obj, name) != null);
+    }
+
+    public static Class<?> getValueType(Object obj)
+        throws IllegalArgumentException {
+        checkCellPresent(obj);
+        Field field = getSingleMatchingField(obj, Value.class);
+        return field.getType();
     }
 
     private static Field getNamedAuxiliaryField(Object obj,
@@ -87,14 +100,15 @@ public final class CellReflector {
         return found;
     }
 
-    private static <T> T asInstance(Class<T> clazz, Field field, Object obj) {
+    private static <T> T asInstance(Class<T> type, Field field, Object obj) {
         try {
             field.setAccessible(true);
-            return clazz.cast(field.get(obj));
+            return type.cast(field.get(obj));
         }  catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }  catch(ClassCastException e){
-            throw new RuntimeException("Unable to cast to parameterized type " + clazz.getName(),e);
+            throw new RuntimeException("Unable to cast field value as instance of " + type.getName() +
+                      ". Found field class " + field.getType().getName(), e);
         }
     }
 
@@ -110,13 +124,18 @@ public final class CellReflector {
         return (Long)getAs(Long.class, field, obj);
     }
 
+    private static double asDouble(Field field, Object obj){
+        return (Double)getAs(Double.class, field, obj);
+    }
+
     private static Object getAs(Class type, Field field, Object obj) {
         try{
             field.setAccessible(true);
             Object res = field.get(obj);
             return res == null ? null : type.cast(res);
         } catch (ClassCastException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Unable to cast field value as instance of " + type.getName() +
+                      ". Found field class of " + field.getType().getName(), e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -133,7 +152,7 @@ public final class CellReflector {
 
     private static Field getSingleMatchingField(Object obj,
                                                 Class<? extends Annotation> clazz)
-            throws RuntimeException {
+           {
 
         checkCellPresent(obj);
         Field[] fields = obj.getClass().getDeclaredFields();

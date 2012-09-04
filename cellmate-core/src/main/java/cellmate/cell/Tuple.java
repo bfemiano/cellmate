@@ -22,7 +22,7 @@ public final class Tuple<C> {
         pairs = ImmutableList.builder();
     }
 
-    public void addCellTuple(C pair) {
+    public void addCell(C pair) {
         pairs.add(pair);
     }
 
