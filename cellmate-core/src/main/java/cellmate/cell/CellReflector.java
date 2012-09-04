@@ -94,9 +94,10 @@ public final class CellReflector {
             }
         }
         if(found == null)
-            sendFieldError("Did you forget to name the auxilary field?. No field matching given annotation name " + name + " ", CellAuxilaryField.class);
+            sendFieldError("Did you forget to name the auxilary field?. " +
+                    "No field matching cell auxiliary fields with given name: " + name + ". ", CellAuxilaryField.class);
         if(foundCount > 1)
-            sendFieldError("Too many auxiliary fields with matching name: " + name, CellAuxilaryField.class);
+            sendFieldError("Too many auxiliary fields with matching name: " + name + ". ", CellAuxilaryField.class);
         return found;
     }
 

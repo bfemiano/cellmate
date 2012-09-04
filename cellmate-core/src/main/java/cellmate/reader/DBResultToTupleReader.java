@@ -16,15 +16,23 @@ public abstract class DBResultToTupleReader<D,C> implements DBResultReader<D, C>
     public ImmutableList<Tuple<C>> read(Iterable<D> items, int maxResultsPerQuery) {
         ImmutableList.Builder<Tuple<C>> list = ImmutableList.builder();
         Tuple<C> result = null;
+        Tuple<C> previous = null;
         String current_label = null;
 
+        int count = 0;
         for(D dbRecord : items){
-            result = addCells(dbRecord, result);
+            if(count >= maxResultsPerQuery)
+                break;
+            result = addCells(dbRecord, previous);
             if(current_label != null && !current_label.equals(result.getTag())){
-               list.add(result);
+                list.add(previous);
             }
-            current_label = result.getTag();
+            previous = result;
+            current_label = previous.getTag();
+            count++;
         }
+        if(previous != null)
+            list.add(previous);
         return list.build();
     }
 

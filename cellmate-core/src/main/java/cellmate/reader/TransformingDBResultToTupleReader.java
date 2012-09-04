@@ -4,6 +4,8 @@ import cellmate.cell.Tuple;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
+
 /**
  * User: bfemiano
  * Date: 8/29/12
@@ -12,9 +14,9 @@ import com.google.common.collect.ImmutableList;
 @Beta
 public class TransformingDBResultToTupleReader<D,C> extends DBResultToTupleReader<D, C> {
 
-    private ImmutableList<CellTransformer<D,C>> transformers;
+    private Collection<CellTransformer<D,C>> transformers;
 
-    public TransformingDBResultToTupleReader(ImmutableList<CellTransformer<D,C>> transformers){
+    public TransformingDBResultToTupleReader(Collection<CellTransformer<D,C>> transformers){
         this.transformers = transformers;
     }
 

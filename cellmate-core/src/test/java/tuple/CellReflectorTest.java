@@ -278,7 +278,7 @@ public class CellReflectorTest {
         try {
             CellReflector.getAuxiliaryValue(String.class, tuple, "aux4");
         } catch (RuntimeException e){
-            assertTrue(e.getMessage().contains("No field matching given annotation name "));
+            assertTrue(e.getMessage().contains("No field matching cell auxiliary fields with given name: "));
         } catch (Exception e){
             fail();
         }
