@@ -8,11 +8,12 @@ package cellmate.writer;
 
 import cellmate.cell.Tuple;
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 
 @Beta
 public interface DBRecordWriter<D,C>  {
 
-    public D getFromTuple(D dbItem, Tuple<C> tuple);
+    public ImmutableList<D> write(Iterable<Tuple<C>> tuples, WriteParameters parameters, DBItemTransformer<D,C> transformer);
 
-    public void write(D dbItem);
+    public ImmutableList<D> write(Iterable<Tuple<C>> tuples, WriteParameters parameters);
 }

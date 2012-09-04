@@ -1,5 +1,6 @@
 package cellmate.reader;
 
+import cellmate.cell.CellReflector;
 import cellmate.cell.StringValueCell;
 import cellmate.cell.Tuple;
 import org.testng.annotations.BeforeClass;
@@ -22,6 +23,7 @@ public class TransformingDBReaderTest {
 
     @BeforeClass
     public void setup() {
+        reader = new TupleTransformerDBResultReader<MockDBResult, StringValueCell>();
         dbResults = Lists.newArrayList();
         dbResults.add(new MockDBResult("row1", "cf", "name", "brian"));
         dbResults.add(new MockDBResult("row1", "cf", "age", "13"));
@@ -31,9 +33,7 @@ public class TransformingDBReaderTest {
 
     @Test
     public void qualValCells() {
-        List<CellTransformer<MockDBResult, StringValueCell>> transformers = Lists.newArrayList();
-        transformers.add(new CellTransformer<MockDBResult, StringValueCell> () {
-
+        CellTransformer<MockDBResult, StringValueCell> transformer = new CellTransformer<MockDBResult, StringValueCell> () {
             public Tuple<StringValueCell> apply(MockDBResult dbItem, Tuple<StringValueCell> tuple) {
                 if(tuple == null){
                     tuple = new Tuple<StringValueCell>(dbItem.getId());
@@ -44,17 +44,17 @@ public class TransformingDBReaderTest {
                 tuple.addCell(cell);
                 return tuple;
             }
-        });
-        reader = new TransformingDBResultToTupleReader<MockDBResult, StringValueCell>(transformers);
+        };
 
-        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults);
+        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
+
+        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 2);
     }
 
     @Test
     public void commonLabelForAllCells() {
-        List<CellTransformer<MockDBResult, StringValueCell>> transformers = Lists.newArrayList();
-        transformers.add(new CellTransformer<MockDBResult, StringValueCell> () {
+        CellTransformer<MockDBResult,StringValueCell> transformer = new CellTransformer<MockDBResult, StringValueCell> () {
 
             public Tuple<StringValueCell> apply(MockDBResult dbItem, Tuple<StringValueCell> tuple) {
                 if(tuple == null){
@@ -65,26 +65,39 @@ public class TransformingDBReaderTest {
                 String label = dbItem.getQual();
                 String value = dbItem.getVal();
                 if(dbItem.getColfam().equals("events")) {
-                     label = "event";
-                     value = dbItem.getQual();
+                    label = "event";
+                    value = dbItem.getQual();
                 }
                 StringValueCell cell = new StringValueCell(label, value, dbItem.getTimestamp());
                 tuple.addCell(cell);
                 return tuple;
             }
-        });
-        reader = new TransformingDBResultToTupleReader<MockDBResult, StringValueCell>(transformers);
+        };
 
-        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults);
+        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
+        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 2);
 
-        //check for item contents.
+        boolean foundEvent = false;
+        boolean foundRow2 = false;
+        for(Tuple<StringValueCell> tuple : tuples){
+            if(tuple.getTag().equals("row2")){
+                foundRow2 = true;
+                for(StringValueCell cell : tuple.getInternalList()){
+                    String label = CellReflector.getLabelAsString(cell);
+                    if(label.equals("event")){
+                        foundEvent = true;
+                    }
+                }
+            }
+        }
+        assertTrue(foundEvent & foundRow2);
     }
 
     @Test
     public void allInOneTuple() {
-        List<CellTransformer<MockDBResult, StringValueCell>> transformers = Lists.newArrayList();
-        transformers.add(new CellTransformer<MockDBResult, StringValueCell> () {
+
+        CellTransformer<MockDBResult, StringValueCell> transformer = new CellTransformer<MockDBResult, StringValueCell> () {
 
             public Tuple<StringValueCell> apply(MockDBResult dbItem, Tuple<StringValueCell> tuple) {
                 if(tuple == null){
@@ -93,27 +106,86 @@ public class TransformingDBReaderTest {
                 String label = dbItem.getQual();
                 String value = dbItem.getVal();
                 if(dbItem.getColfam().equals("events")) {
-                     label = "event";
-                     value = dbItem.getQual();
+                    label = "event";
+                    value = dbItem.getQual();
                 }
                 StringValueCell cell = new StringValueCell(label, value, dbItem.getTimestamp());
                 tuple.addCell(cell);
                 return tuple;
             }
-        });
-        reader = new TransformingDBResultToTupleReader<MockDBResult, StringValueCell>(transformers);
+        };
+        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
 
-        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults);
+        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
+        assertEquals(tuples.size(), 1);
+        assertEquals(tuples.iterator().next().getTag(), "common bag label");
+    }
+
+    @Test
+    public void nullTupleHandling() {
+        CellTransformer<MockDBResult, StringValueCell> transformer = new CellTransformer<MockDBResult, StringValueCell> () {
+
+            public Tuple<StringValueCell> apply(MockDBResult dbItem, Tuple<StringValueCell> tuple) {
+                if(tuple == null){
+                    return null;
+                }
+                return tuple;
+            }
+        };
+        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
+        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
+        assertEquals(tuples.size(), 0);
+
+        transformer = new CellTransformer<MockDBResult, StringValueCell> () {
+
+            public Tuple<StringValueCell> apply(MockDBResult dbItem, Tuple<StringValueCell> tuple) {
+                if(tuple == null){
+                    tuple = new Tuple<StringValueCell>(dbItem.getId());
+                } else if (!tuple.getTag().equals(dbItem.getId())){
+                    return null;
+                }
+                StringValueCell cell = new StringValueCell(dbItem.getQual(), dbItem.getVal(), dbItem.getTimestamp());
+                tuple.addCell(cell);
+                return tuple;
+            }
+        };
+        tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 1);
     }
 
     @Test
-    public void nullReturnHandling() {
-         //see how the reader reacts to null returns.
+    public void maxResults() {
+        CellTransformer<MockDBResult, StringValueCell> transformer = new CellTransformer<MockDBResult, StringValueCell> () {
+            public Tuple<StringValueCell> apply(MockDBResult dbItem, Tuple<StringValueCell> tuple) {
+                if(tuple == null){
+                    tuple = new Tuple<StringValueCell>(dbItem.getId());
+                } else if (!tuple.getTag().equals(dbItem.getId())){
+                    tuple = new Tuple<StringValueCell>(dbItem.getId());
+                }
+                StringValueCell cell = new StringValueCell(dbItem.getQual(), dbItem.getVal(), dbItem.getTimestamp());
+                tuple.addCell(cell);
+                return tuple;
+            }
+        };
+
+        CommonQueryParameters parameters = new CommonQueryParameters.Builder().setMaxResults(1).build();
+
+        Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
+        assertEquals(tuples.size(), 1);
+        assertNotNull(tuples.iterator().next().getInternalList());
+        assertEquals(tuples.iterator().next().getInternalList().size(), 1);
     }
 
     @Test
-    public void maxResults() {
-        //call reader.read with max results.
+    public void unsupportedRead() {
+        try {
+
+            CommonQueryParameters parameters = new CommonQueryParameters.Builder().setMaxResults(1).build();
+
+            Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters);
+            fail("should have throw unsupported operations exception");
+        } catch (UnsupportedOperationException e){
+            assertTrue(e.getMessage().contains("only transforming operations allowed by this implementation"));
+        }
     }
 }

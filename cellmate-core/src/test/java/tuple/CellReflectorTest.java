@@ -26,6 +26,34 @@ public class CellReflectorTest {
     }
 
     @Test
+    public void colFam() {
+        StringValueCell cell = new StringValueCell("l", "v", "cf");
+        assertTrue(CellReflector.hasColFamField(cell));
+        try {
+            assertEquals(CellReflector.getColFam(cell), "cf");
+        } catch (NoSuchFieldException e) {
+            fail("did not find col fam annotation or null column fam");
+        }
+
+        IntValueCell intCell = new IntValueCell("l", 1);
+        assertFalse(CellReflector.hasColFamField(intCell));
+        try {
+            CellReflector.getColFam(intCell);
+            fail("should not find field");
+        } catch (NoSuchFieldException e) {
+            assertTrue(e.getMessage().contains("no column family annotated for given cell type:"));
+        }
+
+        cell = new StringValueCell("l", "v", 1l);
+        try {
+            CellReflector.getColFam(cell);
+            fail("should throw NoSuchFieldException even when null");
+        } catch (NoSuchFieldException e) {
+            assertTrue(e.getMessage().contains("column family for cell is null"));
+        }
+    }
+
+    @Test
     public void hasNamedAuxValue() {
         assertTrue(CellReflector.hasNamedAuxiliaryField(cellWithAux, "ts"));
     }

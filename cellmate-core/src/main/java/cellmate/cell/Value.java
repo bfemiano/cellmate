@@ -2,8 +2,10 @@ package cellmate.cell;
 
 import com.google.common.annotations.Beta;
 
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * User: bfemiano
@@ -11,6 +13,7 @@ import java.lang.annotation.RetentionPolicy;
  * Time: 12:18 PM
  */
 @Beta
+@Target(value={ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Value {
 }

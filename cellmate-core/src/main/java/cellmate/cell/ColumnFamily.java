@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
 
 /**
  * User: bfemiano
- * Date: 8/28/12
- * Time: 12:18 PM
+ * Date: 9/4/12
+ * Time: 5:45 PM
  */
 @Beta
 @Target(value={ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Label {
+public @interface ColumnFamily {
 
 }

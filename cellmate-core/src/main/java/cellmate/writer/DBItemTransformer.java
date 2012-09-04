@@ -9,5 +9,5 @@ import cellmate.cell.Tuple;
  */
 public interface DBItemTransformer<D,C> {
 
-    public D apply(D dbRecord, Tuple<C> tuple);
+    public D apply(Tuple<C> tuple);
 }

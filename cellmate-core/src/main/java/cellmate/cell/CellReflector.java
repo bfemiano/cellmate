@@ -45,7 +45,7 @@ public final class CellReflector {
             throw new RuntimeException(e);
         } catch (ClassCastException e) {
             throw new RuntimeException("Unable to cast field value as instance of " + byte[].class.getName() +
-                      ". Found field class " + field.getType().getName(), e);
+                    ". Found field class " + field.getType().getName(), e);
         }
     }
 
@@ -60,7 +60,7 @@ public final class CellReflector {
     }
 
     public static <T> T getAuxiliaryValue(Class<T> clazz, Object obj, String name)
-        throws ClassCastException{
+            throws ClassCastException{
         Field field = getNamedAuxiliaryField(obj, name);
         return asInstance(clazz, field, obj);
     }
@@ -69,8 +69,38 @@ public final class CellReflector {
         return (getNamedAuxiliaryField(obj, name) != null);
     }
 
+    public static String getColFam(Object cell)
+            throws NoSuchFieldException{
+        checkCellPresent(cell);
+        if(hasColFamField(cell)) {
+            Field field = getSingleMatchingField(cell, ColumnFamily.class);
+            field.setAccessible(true);
+            try {
+                Object res = field.get(cell);
+                if(res == null){
+                    throw new NoSuchFieldException("column family for cell is null");
+                }
+                return String.class.cast(res);
+            } catch (IllegalAccessException e){
+                throw new RuntimeException(e);
+            }
+        } else {
+            throw new NoSuchFieldException("no column family annotated for given cell type: " + cell.getClass().getName());
+        }
+    }
+
+    public static boolean hasColFamField(Object cell) {
+        Field[] fields = cell.getClass().getDeclaredFields();
+        for(Field field: fields){
+            if(field.isAnnotationPresent(ColumnFamily.class)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Class<?> getValueType(Object obj)
-        throws IllegalArgumentException {
+            throws IllegalArgumentException {
         checkCellPresent(obj);
         Field field = getSingleMatchingField(obj, Value.class);
         return field.getType();
@@ -109,7 +139,7 @@ public final class CellReflector {
             throw new RuntimeException(e);
         }  catch(ClassCastException e){
             throw new RuntimeException("Unable to cast field value as instance of " + type.getName() +
-                      ". Found field class " + field.getType().getName(), e);
+                    ". Found field class " + field.getType().getName(), e);
         }
     }
 
@@ -136,24 +166,24 @@ public final class CellReflector {
             return res == null ? null : type.cast(res);
         } catch (ClassCastException e) {
             throw new RuntimeException("Unable to cast field value as instance of " + type.getName() +
-                      ". Found field class of " + field.getType().getName(), e);
+                    ". Found field class of " + field.getType().getName(), e);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Field getLabelField(Object obj) {
+    public static Field getLabelField(Object obj) {
         Class<?> clz = obj.getClass();
         return getSingleMatchingField(obj, Label.class);
     }
 
-    private static Field getValueField(Object obj) {
+    public static Field getValueField(Object obj) {
         return getSingleMatchingField(obj, Value.class);
     }
 
     private static Field getSingleMatchingField(Object obj,
                                                 Class<? extends Annotation> clazz)
-           {
+    {
 
         checkCellPresent(obj);
         Field[] fields = obj.getClass().getDeclaredFields();

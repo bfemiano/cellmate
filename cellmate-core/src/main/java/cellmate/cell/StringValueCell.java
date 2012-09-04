@@ -22,10 +22,26 @@ public final class StringValueCell {
     @CellAuxilaryField(name="ts")
     private long timestamp;
 
+    @ColumnFamily
+    private String colFam;
+
     public StringValueCell(String label, String value, long timestamp) {
         this.label = label;
         this.value = value;
         this.timestamp = timestamp;
+    }
+
+    public StringValueCell(String label, String value, String colFam, long timestamp) {
+        this.label = label;
+        this.value = value;
+        this.colFam = colFam;
+        this.timestamp = timestamp;
+    }
+
+    public StringValueCell(String label, String value, String colFam) {
+        this.label = label;
+        this.value = value;
+        this.colFam = colFam;
     }
 
     public StringValueCell(String label, String value) {
