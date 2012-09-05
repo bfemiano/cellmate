@@ -1,4 +1,6 @@
-# Cellmate: streamlined BigTable operations #
+# Cellmate #
+
+# Streamlined Bigtable operations
 
 Framework to help abstract columnar data collection and manipulation from datastore API specifics.  
 
@@ -8,7 +10,7 @@ Cellmate provides classes to help abstract the datastore key/value pairs into co
 
 <ol>
 <li>Reader implementations for HBase and Accumulo that support any cell type transform operation. (Note: Only basic ops supported 	   	at this time. Nothing fancy yet.)</li>
-<li>Various concrete cells for HBase and Accumulo and demonstrate usage.  </li>
+<li>Various prebuilt cell classes for use over HBase/Accumulo that cover many use cases. </li>
 <li>Several Accumulo/HBase cell transformer examples to support the prebuilt cell types.</li>
 <li>Writer implementations for HBase and Accumulo that automatically handle persisting any custom cell type.</li>
 <li>Cell extractors that assist with parsing cells and tuples for higher-level domain objects.</li>
