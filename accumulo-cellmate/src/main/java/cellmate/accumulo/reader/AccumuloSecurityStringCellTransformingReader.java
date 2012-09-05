@@ -27,7 +27,7 @@ public class AccumuloSecurityStringCellTransformingReader
     }
 
     public ImmutableList<Tuple<SecurityStringValueCell>> read(Iterable<Map.Entry<Key, Value>> dbItems, ReadParameters parameters) {
-        return reader.read(dbItems, parameters, new SecurityStringCellTransformer(false, false, false));
+        return reader.read(dbItems, parameters, new SecurityStringCellTransformer(false, false, false)); //ignores timestamp, colvis, and col fam.
     }
 
     public ImmutableList<Tuple<SecurityStringValueCell>> read(Iterable<Map.Entry<Key, Value>> dbItems,

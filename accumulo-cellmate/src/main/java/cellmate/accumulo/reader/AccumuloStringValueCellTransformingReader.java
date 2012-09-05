@@ -30,9 +30,9 @@ public class AccumuloStringValueCellTransformingReader
             public Tuple<StringValueCell> apply(Map.Entry<Key, Value> dbItem, Tuple<StringValueCell> tuple) {
                 String activeRowId = dbItem.getKey().getRow().toString();
                 if (tuple == null) {
-                    return new Tuple<StringValueCell>(activeRowId);
+                    tuple = new Tuple<StringValueCell>(activeRowId);
                 } else if (!tuple.getTag().equals(activeRowId)) {
-                    return new Tuple<StringValueCell>(activeRowId);
+                    tuple = new Tuple<StringValueCell>(activeRowId);
                 }
                 String label = dbItem.getKey().getColumnQualifier().toString();
                 String value = new String(dbItem.getValue().get());
