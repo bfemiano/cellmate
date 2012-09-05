@@ -16,7 +16,7 @@ public class TupleTransformerDBResultReader<D,C> implements DBResultReader<D,C>{
 
 
     public ImmutableList<Tuple<C>> read(Iterable<D> dbItems, ReadParameters parameters) {
-        throw new UnsupportedOperationException("only transforming operations allowed by this implementation.");
+        throw new UnsupportedOperationException("Read does not work without transformer.");
     }
 
     public ImmutableList<Tuple<C>> read(Iterable<D> items, ReadParameters parameters, CellTransformer<D, C> transformer) {

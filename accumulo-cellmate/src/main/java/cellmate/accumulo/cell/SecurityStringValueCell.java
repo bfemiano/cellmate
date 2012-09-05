@@ -1,12 +1,14 @@
 package cellmate.accumulo.cell;
 
 import cellmate.cell.*;
+import com.google.common.annotations.Beta;
 
 /**
  * User: bfemiano
  * Date: 9/5/12
  * Time: 1:04 AM
  */
+@Beta
 @Cell
 public final class SecurityStringValueCell{
 
@@ -31,9 +33,9 @@ public final class SecurityStringValueCell{
         this.value = value;
     }
 
-    public SecurityStringValueCell(String label, String value, String colVis) {
+    public SecurityStringValueCell(String label, String value, String colfam) {
         this(label, value);
-        this.colVis = colVis;
+        this.colFam = colfam;
     }
 
     public SecurityStringValueCell(String label, String value, long timestamp) {
@@ -46,15 +48,8 @@ public final class SecurityStringValueCell{
         this.colVis = colVis;
     }
 
-    public void setColFam(String colFam){
+    public SecurityStringValueCell(String label, String value, long timestamp, String colVis, String colFam) {
+        this(label, value ,timestamp, colVis);
         this.colFam = colFam;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public void setColVis(String colVis) {
-        this.colVis = colVis;
     }
 }

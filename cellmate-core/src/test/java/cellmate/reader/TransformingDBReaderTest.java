@@ -182,10 +182,12 @@ public class TransformingDBReaderTest {
 
             CommonReadParameters parameters = new CommonReadParameters.Builder().setMaxResults(1).build();
 
-            Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters);
+            reader.read(dbResults, parameters);
             fail("should have throw unsupported operations exception");
         } catch (UnsupportedOperationException e){
-            assertTrue(e.getMessage().contains("only transforming operations allowed by this implementation"));
+            assertTrue(e.getMessage().contains("Read does not work without transformer."));
+        } catch (Exception e){
+            fail();
         }
     }
 }

@@ -16,13 +16,11 @@ import java.util.Map;
 public class SecurityStringCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell>{
 
-    private boolean recordTimestamp = false;
-    private boolean recordColVis = false;
-    private boolean  recordColFam = false;
+    private boolean recordTsAndColVis = false;
+    private boolean recordColFam = false;
 
-    public SecurityStringCellTransformer(boolean recordTimestamp, boolean recordColVis, boolean recordColFam){
-        this.recordTimestamp = recordTimestamp;
-        this.recordColFam = recordColVis;
+    public SecurityStringCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
+        this.recordTsAndColVis = recordTimestampAndColVis;
         this.recordColFam = recordColFam;
     }
 
@@ -37,14 +35,18 @@ public class SecurityStringCellTransformer
         String label = dbItem.getKey().getColumnQualifier().toString();
         String value = new String(dbItem.getValue().get());
         String colVis = dbItem.getKey().getColumnVisibility().toString();
+        String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
-        SecurityStringValueCell cell = new SecurityStringValueCell(label, value);
-        if(recordColFam)
-            cell.setColFam(dbItem.getKey().getColumnFamily().toString());
-        if(recordColVis)
-            cell.setColVis(colVis);
-        if(recordTimestamp)
-            cell.setTimestamp(timestamp);
+        SecurityStringValueCell cell;
+        if(recordColFam & recordTsAndColVis) {
+            cell = new SecurityStringValueCell(label, value, timestamp, colVis, colFam);
+        } else if (recordColFam) {
+            cell = new SecurityStringValueCell(label, value, colFam);
+        } else if (recordTsAndColVis) {
+            cell = new SecurityStringValueCell(label, value, timestamp, colVis);
+        } else {
+            cell = new SecurityStringValueCell(label, value);
+        }
         tuple.addCell(cell);
         return tuple;
     }
