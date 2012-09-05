@@ -7,9 +7,10 @@
     <groupId>cellmate</groupId>
     <artifactId>cellmate-base</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>0.1</version>
     <modules>
         <module>cellmate-core</module>
-        <module>cloudbase-cellmate</module>
+        <module>accumulo-cellmate</module>
+        <module>hbase-cellmate</module>
     </modules>
 </project>

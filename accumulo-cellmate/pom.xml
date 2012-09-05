@@ -16,12 +16,12 @@
     </properties>
     <artifactId>accumulo-cellmate</artifactId>
     <groupId>cellmate</groupId>
-    <version>1.0</version>
+    <version>0.1</version>
     <dependencies>
         <dependency>
             <artifactId>cellmate-core</artifactId>
             <groupId>cellmate</groupId>
-            <version>1.0</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
