@@ -1,8 +1,7 @@
 # Cellmate #
 
-# Streamlined Bigtable operations
-
-Framework to help abstract columnar data collection and manipulation from datastore API specifics.  
+## Streamlined BigTable operations ##
+This framework helps abstract columnar data collection and manipulation from datastore API specifics.  
 
 Cellmate provides classes to help abstract the datastore key/value pairs into collections of cells stored in one or more tuples. DAO layers can be architected with respect to these tuples and cells, primarily decoupled from the underlying BigTable semantics. Users can use the prebuilt API specific readers/writers and transformers, or implement their own to support custom cell types. 
 
