@@ -1,23 +1,25 @@
 # Cellmate: streamlined BigTable operations #
 
-Framework to help abstract columnar data collection and manipulation from the details specific to that API.  
+Framework to help abstract columnar data collection and manipulation from datastore API specifics.  
 
-Users manipulate read/write from cellmate using collections of cells stored in one or more tuples. DAO layers can be architected with respect to these tuples and cells, primarily decoupled from the underlying BigTable semantics. Users can use the prebuilt API specific readers/writers and transformers, or implement their own to support custom cell types. 
+Cellmate provides classes to help abstract the datastore key/value pairs into collections of cells stored in one or more tuples. DAO layers can be architected with respect to these tuples and cells, primarily decoupled from the underlying BigTable semantics. Users can use the prebuilt API specific readers/writers and transformers, or implement their own to support custom cell types. 
 
 ## What this API provides ##
 
 <ol>
 <li>Reader implementations for HBase and Accumulo that support any cell type transform operation. (Note: Only basic ops supported 	   	at this time. Nothing fancy yet.)</li>
-<li>Various concrete cell implementations to support HBase and Accumulo and demonstrate usage.  </li>
-<li>Several cell transformer examples to support the prebuilt cell types over the Accumulo/HBase readers.</li>
+<li>Various concrete cells for HBase and Accumulo and demonstrate usage.  </li>
+<li>Several Accumulo/HBase cell transformer examples to support the prebuilt cell types.</li>
 <li>Writer implementations for HBase and Accumulo that automatically handle persisting any custom cell type.</li>
-<li>Concrete cell extractors to handle parsing cells by label and custom fields.</li>
-<li>Annotations and interfaces to help build custom cells and transformers with use in the various readers.</li>
+<li>Cell extractors that assist with parsing cells and tuples for higher-level domain objects.</li>
+<li>Annotations and interfaces to help build custom cells, transformers or reader/writer implementations.</li>
 </ol>
 
 ## Not yet ready ##
 
-None of the HBase reader/writer code is implemented yet. The Accumulo code is checked in, but not yet unit tested. 
+None of the HBase reader/writer code is implemented yet. The Accumulo reader code is checked in, but not yet unit tested. 
+
+The codebase is about 40% complete. 
 
 ## Usage ##
 Licensed AS-IS under Apache License 2.0
