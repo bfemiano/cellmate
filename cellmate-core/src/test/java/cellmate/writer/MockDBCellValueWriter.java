@@ -23,14 +23,14 @@ public class MockDBCellValueWriter<C> implements DBRecordWriter<MockMutation, C>
             MockMutation result = new MockMutation(tuple.getTag());
             for(C cell : tuple.getInternalList()) {
                 String qual = CellReflector.getLabelAsString(cell);
-                String val = CellReflector.getValueAsString(cell);
-                String colFam= null;
+                byte[] valueBytes = CellReflector.getValueBytesIfPrimative(cell);
+                String colFam;
                 try {
                     colFam = CellReflector.getColFam(cell);
                 } catch (NoSuchFieldException e) {
                     colFam = "cf";
                 }
-                result.addItem(new MockMutation.MockColQualVal(colFam, qual, val.getBytes()));
+                result.addItem(new MockMutation.MockColQualVal(colFam, qual, valueBytes));
             }
             list.add(result);
         }

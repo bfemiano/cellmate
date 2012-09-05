@@ -1,13 +1,20 @@
 package cellmate.writer;
 
+import cellmate.cell.CellReflector;
 import cellmate.cell.IntValueCell;
 import cellmate.cell.StringValueCell;
 import cellmate.cell.Tuple;
 import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
+import org.w3c.dom.events.MutationEvent;
 
+import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -73,8 +80,67 @@ public class DBCellWritersTest {
         ImmutableList<MockMutation> mutations = writer.write(tuplesWithStrings, parameters);
         assertNotNull(mutations);
         assertEquals(mutations.size(), 2);
+        int foundName = 0;
+        int foundAge = 0;
+        int foundHeight = 0;
+        int foundCfColFam = 0;
+        int foundInfoColFam = 0;
+        for(MockMutation mut : mutations){
+            if(!mut.getRowId().equals("row1") & !mut.getRowId().equals("row2")){
+                fail("row id other than row1 or row2 found");
+            }
+            for(MockMutation.MockColQualVal item : mut.getItems()){
+                if(item.getColFam().equals("cf")) {
+                    foundCfColFam++;
+                } else if(item.getColFam().equals("info")){
+                    foundInfoColFam++;
+                } else {
+                    fail();
+                }
+                if(item.getQual().equals("name")){
+                    foundName++;
+                }
+                if(item.getQual().equals("age")){
+                    foundAge++;
+                }
+                if(item.getQual().equals("height")){
+                    foundHeight++;
+                }
+            }
+        }
+        assertEquals(foundName, 2);
+        assertEquals(foundAge, 2);
+        assertEquals(foundHeight, 2);
+        assertEquals(foundInfoColFam, 4);
+        assertEquals(foundCfColFam, 2);
     }
 
-    //more tests for robustness. figure some out.
+    @Test
+    public void verifyByteContents() {
+        assertEquals(tupleWithInts.size(), 2);
+        assertEquals(tupleWithInts.get(0).getInternalList().size(), 2);
+        assertEquals(tupleWithInts.get(1).getInternalList().size(), 2);
+
+        DBRecordWriter<MockMutation, IntValueCell> writer = new MockDBCellValueWriter<IntValueCell>();
+        CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
+
+        ImmutableList<MockMutation> mutations = writer.write(tupleWithInts, parameters);
+        assertNotNull(mutations);
+        assertEquals(mutations.size(), 2);
+        assertEquals(mutations.get(0).getItems().size(), 2);
+        boolean verifiedIntBytes = false;
+        for(MockMutation.MockColQualVal item : mutations.get(0).getItems()){
+            if(item.getQual().equals("age")){
+                byte[] value = item.getValue();
+                byte[] testInt = new byte[4];
+                ByteBuffer.wrap(testInt).putInt(13);
+                assertEquals(testInt, value);
+                verifiedIntBytes = true;
+            }
+        }
+        assertTrue(verifiedIntBytes);
+    }
+
+    //few more checks.
 
 }

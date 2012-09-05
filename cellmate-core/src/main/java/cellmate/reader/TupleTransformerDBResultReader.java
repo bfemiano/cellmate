@@ -3,10 +3,7 @@ package cellmate.reader;
 import cellmate.cell.Tuple;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -18,11 +15,11 @@ import java.util.NoSuchElementException;
 public class TupleTransformerDBResultReader<D,C> implements DBResultReader<D,C>{
 
 
-    public ImmutableList<Tuple<C>> read(Iterable<D> dbItems, QueryParameters parameters) {
+    public ImmutableList<Tuple<C>> read(Iterable<D> dbItems, ReadParameters parameters) {
         throw new UnsupportedOperationException("only transforming operations allowed by this implementation.");
     }
 
-    public ImmutableList<Tuple<C>> read(Iterable<D> items, QueryParameters parameters, CellTransformer<D, C> transformer) {
+    public ImmutableList<Tuple<C>> read(Iterable<D> items, ReadParameters parameters, CellTransformer<D, C> transformer) {
         ImmutableList.Builder<Tuple<C>> list = ImmutableList.builder();
         Tuple<C> result;
         Tuple<C> previous = null;
@@ -48,9 +45,9 @@ public class TupleTransformerDBResultReader<D,C> implements DBResultReader<D,C>{
         return list.build();
     }
 
-    private int getMaxResults(QueryParameters parameters) {
+    private int getMaxResults(ReadParameters parameters) {
         try {
-            return parameters.getInt(CommonQueryParameters.MAX_RESULTS);
+            return parameters.getInt(CommonReadParameters.MAX_RESULTS);
         } catch (NoSuchElementException e){
             return Integer.MAX_VALUE;
         }

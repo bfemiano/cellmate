@@ -5,7 +5,7 @@ package cellmate.reader;
  * Date: 9/4/12
  * Time: 3:06 PM
  */
-public interface QueryParameters {
+public interface ReadParameters {
 
     public int getInt(String paramName);
     public long getLong(String paramName);

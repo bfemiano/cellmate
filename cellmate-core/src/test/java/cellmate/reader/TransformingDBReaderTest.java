@@ -46,7 +46,7 @@ public class TransformingDBReaderTest {
             }
         };
 
-        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
+        CommonReadParameters parameters = new CommonReadParameters.Builder().build();
 
         Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 2);
@@ -74,7 +74,7 @@ public class TransformingDBReaderTest {
             }
         };
 
-        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
+        CommonReadParameters parameters = new CommonReadParameters.Builder().build();
         Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 2);
 
@@ -114,7 +114,7 @@ public class TransformingDBReaderTest {
                 return tuple;
             }
         };
-        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
+        CommonReadParameters parameters = new CommonReadParameters.Builder().build();
 
         Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 1);
@@ -132,7 +132,7 @@ public class TransformingDBReaderTest {
                 return tuple;
             }
         };
-        CommonQueryParameters parameters = new CommonQueryParameters.Builder().build();
+        CommonReadParameters parameters = new CommonReadParameters.Builder().build();
         Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 0);
 
@@ -168,7 +168,7 @@ public class TransformingDBReaderTest {
             }
         };
 
-        CommonQueryParameters parameters = new CommonQueryParameters.Builder().setMaxResults(1).build();
+        CommonReadParameters parameters = new CommonReadParameters.Builder().setMaxResults(1).build();
 
         Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters, transformer);
         assertEquals(tuples.size(), 1);
@@ -180,7 +180,7 @@ public class TransformingDBReaderTest {
     public void unsupportedRead() {
         try {
 
-            CommonQueryParameters parameters = new CommonQueryParameters.Builder().setMaxResults(1).build();
+            CommonReadParameters parameters = new CommonReadParameters.Builder().setMaxResults(1).build();
 
             Collection<Tuple<StringValueCell>> tuples = reader.read(dbResults, parameters);
             fail("should have throw unsupported operations exception");

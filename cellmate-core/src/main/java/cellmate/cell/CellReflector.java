@@ -1,9 +1,14 @@
 package cellmate.cell;
 
 import com.google.common.annotations.Beta;
+import com.google.common.primitives.Bytes;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.NoSuchElementException;
 
 /**
  * User: bfemiano
@@ -90,6 +95,7 @@ public final class CellReflector {
     }
 
     public static boolean hasColFamField(Object cell) {
+        checkCellPresent(cell);
         Field[] fields = cell.getClass().getDeclaredFields();
         for(Field field: fields){
             if(field.isAnnotationPresent(ColumnFamily.class)){
@@ -97,6 +103,41 @@ public final class CellReflector {
             }
         }
         return false;
+    }
+
+    public static byte[] getValueBytesIfPrimative(Object cell)
+            throws NoSuchElementException{
+        checkCellPresent(cell);
+        Field field = getValueField(cell);
+        field.setAccessible(true);
+        byte[] valueBytes = new byte[8];
+        try {
+            if(field.getType().equals(int.class)){
+                int value = field.getInt(cell);
+                valueBytes = new byte[4];
+                ByteBuffer.wrap(valueBytes).putInt(value);
+            } else if (field.getType().equals(double.class)) {
+                double value = field.getDouble(cell);
+                ByteBuffer.wrap(valueBytes).putDouble(value);
+            } else if (field.getType().equals(String.class)){
+                String value = String.class.cast(field.get(cell));
+                if(value != null){
+                    valueBytes = value.getBytes();
+                } else {
+                    throw new NoSuchElementException("null value for string");
+                }
+            } else if (field.getType().equals(byte[].class)){
+                 valueBytes = byte[].class.cast(field.get(cell));
+            } else if (field.getType().equals(long.class)) {
+                long value = field.getLong(cell);
+                ByteBuffer.wrap(valueBytes).putLong(value);
+            } else {
+                throw new IllegalArgumentException("unsupported type (int, double, long, String, byte[]");
+            }
+            return valueBytes;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Class<?> getValueType(Object obj)

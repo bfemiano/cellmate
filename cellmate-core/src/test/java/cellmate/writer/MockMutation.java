@@ -41,5 +41,17 @@ public class MockMutation {
             this.qual = qual;
             this.value = value;
         }
+
+        public String getColFam() {
+            return colFam;
+        }
+
+        public String getQual() {
+            return qual;
+        }
+
+        public byte[] getValue() {
+            return value;
+        }
     }
 }

@@ -1,11 +1,15 @@
 package tuple;
 
 import cellmate.cell.*;
+import com.sun.jdi.ByteValue;
 import com.sun.jdi.DoubleValue;
+import com.sun.jdi.LongValue;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
+import java.util.NoSuchElementException;
 
 import static org.testng.Assert.*;
 
@@ -72,6 +76,57 @@ public class CellReflectorTest {
         value = CellReflector.getValueAsString(cell1);
         assertNotNull(value);
         assertEquals(value, "v");
+    }
+
+    @Test
+    public void getValueBytes() {
+        StringValueCell strCell = new StringValueCell("l", "v");
+        StringValueCell nullStrCell = new StringValueCell("l", null);
+        IntValueCell    intCell = new IntValueCell("l", 1);
+        LongValueCell lonCell = new LongValueCell("l", 2l);
+        DoubleValueCell dbCell = new DoubleValueCell("l", 11.11);
+        ByteValueCell byteCell = new ByteValueCell("l", "v".getBytes());
+
+        byte[] strBytes = CellReflector.getValueBytesIfPrimative(strCell);
+        assertEquals(strBytes, "v".getBytes());
+
+        byte[] lonBytes = CellReflector.getValueBytesIfPrimative(lonCell);
+        byte[] testLongBytes = new byte[8];
+        ByteBuffer.wrap(testLongBytes).putLong(2l);
+        assertEquals(lonBytes, testLongBytes);
+
+        byte[] intBytes = CellReflector.getValueBytesIfPrimative(intCell);
+        byte[] testIntBytes = new byte[4];
+        ByteBuffer.wrap(testIntBytes).putInt(1);
+        assertEquals(intBytes, testIntBytes);
+
+        byte[] doubleBytes = CellReflector.getValueBytesIfPrimative(dbCell);
+        byte[] testDoubleBytes = new byte[8];
+        ByteBuffer.wrap(testDoubleBytes).putDouble(11.11);
+        assertEquals(doubleBytes, testDoubleBytes);
+
+        byte[] bytesValue = CellReflector.getValueBytesIfPrimative(byteCell);
+        byte[] testByteArray = "v".getBytes();
+        assertEquals(bytesValue, testByteArray);
+
+        try {
+             CellReflector.getValueBytesIfPrimative(nullStrCell);
+        }  catch (NoSuchElementException e){
+            assertTrue(e.getMessage().contains("null value"));
+        }   catch (Exception e){
+            fail();
+        }
+
+        try {
+           CellWithCustomClassValue cell = new CellWithCustomClassValue("l","v");
+           CellReflector.getValueBytesIfPrimative(cell);
+        } catch (IllegalArgumentException e){
+            assertTrue(e.getMessage().contains("unsupported type"));
+        }  catch (Exception e){
+            fail();
+        }
+
+
     }
 
     @Test
