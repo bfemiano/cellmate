@@ -6,6 +6,12 @@ Users manipulate read/write from cellmate using collections of cells stored in o
 
 ## This API provides.. ##
 
+<ol>
+<li>Reader implementations for HBase and Accumulo that support any cell type transform operation. (Note: Only basic ops supported 	   	at this time. Nothing fancy yet.)</li>
+<li>Various concrete cell implementations to support HBase and Accumulo and demonstrate usage.  </li>
+<li>Several cell transformer examples to support the prebuilt cell types over the Accumulo/HBase readers.</li>
+</ol>
+
 1) Reader implementations for HBase and Accumulo that support any cell type transform operation. (Note: Only basic ops supported 	   	at this time. Nothing fancy yet.)
 2) Concrete cell implementations to support HBase and Accumulo.  
 3) Concrete cell transformer examples to support the prebuilt cell types over the Accumulo/HBase readers.
