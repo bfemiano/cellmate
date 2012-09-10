@@ -1,8 +1,7 @@
 package cellmate.accumulo.reader.celltransformer;
 
 import cellmate.accumulo.cell.SecurityLongValueCell;
-import cellmate.accumulo.cell.SecurityStringValueCell;
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
@@ -25,13 +24,11 @@ public class SecurityLongCellTransformer implements CellTransformer<Map.Entry<Ke
         this.recordColFam = recordColFam;
     }
 
-    public Tuple<SecurityLongValueCell> apply(Map.Entry<Key, Value> dbItem,
-                                                Tuple<SecurityLongValueCell> tuple) {
+    public CellGroup<SecurityLongValueCell> apply(Map.Entry<Key, Value> dbItem,
+                                                CellGroup<SecurityLongValueCell> cellGroup) {
         String activeRowId = dbItem.getKey().getRow().toString();
-        if (tuple == null) {
-            tuple = new Tuple<SecurityLongValueCell>(activeRowId);
-        } else if (!tuple.getTag().equals(activeRowId)) {
-            tuple = new Tuple<SecurityLongValueCell>(activeRowId);
+        if (!cellGroup.getTag().equals(activeRowId)) {
+            cellGroup = new CellGroup<SecurityLongValueCell>(activeRowId);
         }
         String label = dbItem.getKey().getColumnQualifier().toString();
         long value = ByteBuffer.wrap(dbItem.getValue().get()).asLongBuffer().get();
@@ -48,7 +45,7 @@ public class SecurityLongCellTransformer implements CellTransformer<Map.Entry<Ke
         } else {
             cell = new SecurityLongValueCell(label, value);
         }
-        tuple.addCell(cell);
-        return tuple;
+        cellGroup.addCell(cell);
+        return cellGroup;
     }
 }

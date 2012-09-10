@@ -1,6 +1,6 @@
 package cellmate.reader;
 
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
 import com.google.common.annotations.Beta;
 
 /**
@@ -11,5 +11,5 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface CellTransformer<D,C> {
 
-    public Tuple<C> apply(D dbItem, Tuple<C> tuple);
+    public CellGroup<C> apply(D dbItem, CellGroup<C> cellGroup);
 }

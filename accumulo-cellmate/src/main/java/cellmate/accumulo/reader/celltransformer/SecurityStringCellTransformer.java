@@ -1,7 +1,7 @@
 package cellmate.accumulo.reader.celltransformer;
 
 import cellmate.accumulo.cell.SecurityStringValueCell;
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
@@ -24,13 +24,11 @@ public class SecurityStringCellTransformer
         this.recordColFam = recordColFam;
     }
 
-    public Tuple<SecurityStringValueCell> apply(Map.Entry<Key, Value> dbItem,
-                                                Tuple<SecurityStringValueCell> tuple) {
+    public CellGroup<SecurityStringValueCell> apply(Map.Entry<Key, Value> dbItem,
+                                                CellGroup<SecurityStringValueCell> cellGroup) {
         String activeRowId = dbItem.getKey().getRow().toString();
-        if (tuple == null) {
-            tuple = new Tuple<SecurityStringValueCell>(activeRowId);
-        } else if (!tuple.getTag().equals(activeRowId)) {
-            tuple = new Tuple<SecurityStringValueCell>(activeRowId);
+        if (!cellGroup.getTag().equals(activeRowId)) {
+            cellGroup = new CellGroup<SecurityStringValueCell>(activeRowId);
         }
         String label = dbItem.getKey().getColumnQualifier().toString();
         String value = new String(dbItem.getValue().get());
@@ -47,8 +45,8 @@ public class SecurityStringCellTransformer
         } else {
             cell = new SecurityStringValueCell(label, value);
         }
-        tuple.addCell(cell);
-        return tuple;
+        cellGroup.addCell(cell);
+        return cellGroup;
     }
 
 }

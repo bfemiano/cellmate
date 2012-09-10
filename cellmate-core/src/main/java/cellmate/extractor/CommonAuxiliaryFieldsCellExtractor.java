@@ -1,10 +1,8 @@
 package cellmate.extractor;
 
-import cellmate.cell.CellReflector;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,43 +23,46 @@ public class CommonAuxiliaryFieldsCellExtractor implements CellExtractor{
     public <C> Collection<C> getCellsWithTimestamp(List<C> cells, final String tsfieldName) {
         return filterCellsByPredicate(cells, new Predicate<C>() {
             public boolean apply(C c) {
-                return getTimestamp(c, tsfieldName) != null;
+                try {
+                    return getTimestamp(c, tsfieldName) != null;
+                } catch (CellExtractorException e) {
+                    throw new RuntimeException("Cell extraction error during predicate apply()", e);
+                }
             }
         });
     }
 
-    /**
-     *
-     *
-     * @param cells
-     * @param tsfieldName
-     * @param <C>
-     * @return
-     */
-    public <C> C getCellWithMostRecentTimestamp(List<C> cells, final String tsfieldName) {
+
+    public <C> C getCellWithMostRecentTimestamp(List<C> cells, final String tsfieldName)
+            throws CellExtractorException{
         Collection<C> cellsWithTimestamp = getCellsWithTimestamp(cells, tsfieldName);
         return Collections.max(cellsWithTimestamp, new Comparator<C>() {
             public int compare(C c, C c1) {
-                Long t1 = getTimestamp(c, tsfieldName);
-                Long t2 = getTimestamp(c1, tsfieldName);
-                return t1.compareTo(t2);
+                try {
+                    Long t1 = getTimestamp(c, tsfieldName);
+                    Long t2 = getTimestamp(c1, tsfieldName);
+                    return t1.compareTo(t2);
+                } catch (CellExtractorException e){
+                    throw new RuntimeException("Cell extraction error during comparator operation", e);
+                }
             }
         });
     }
 
 
-    public <C> Long getTimestamp(C cell, String tsFieldName) {
+    public <C> Long getTimestamp(C cell, String tsFieldName)
+            throws CellExtractorException{
         Long result = getNamedAuxiliaryValue(Long.class, cell, tsFieldName);
         return result;
     }
 
-
-    private <C,V> V getNamedAuxiliaryValue(Class<V> fieldType, C cell, String name){
-        V result = CellReflector.getAuxiliaryValue(fieldType, cell, name);
-        return result;
+    public <C> Collection<C> filterCellsByPredicate(List<C> cells, Predicate<? super C> predicate) {
+        return Collections2.filter(cells, predicate);
     }
 
-    public <C> Collection<C> filterCellsByPredicate(List<C> cells, Predicate<? super C> predicate) {
-         return Collections2.filter(cells, predicate);
+    private <C,V> V getNamedAuxiliaryValue(Class<V> fieldType, C cell, String name)
+            throws CellExtractorException {
+        V result = CellReflector.getAuxiliaryValue(fieldType, cell, name);
+        return result;
     }
 }

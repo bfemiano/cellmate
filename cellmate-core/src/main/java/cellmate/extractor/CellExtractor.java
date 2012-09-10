@@ -15,5 +15,7 @@ import java.util.List;
 public interface CellExtractor {
 
 
-    public <C> Collection<C> filterCellsByPredicate(List<C> cells, Predicate<? super C> predicate);
+    public <C> Collection<C> filterCellsByPredicate(List<C> cells,
+                                                    Predicate<? super C> predicate)
+                                                    throws CellExtractorException;
 }

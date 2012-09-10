@@ -1,21 +1,19 @@
 package cellmate.writer;
 
-import cellmate.cell.CellReflector;
 import cellmate.cell.IntValueCell;
 import cellmate.cell.StringValueCell;
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
+import cellmate.extractor.CellExtractorException;
+import cellmate.extractor.ErrorType;
 import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.w3c.dom.events.MutationEvent;
+
 
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
 
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * User: bfemiano
@@ -25,13 +23,9 @@ import java.util.List;
 public class DBCellWritersTest {
 
     private DBRecordWriter<MockMutation, StringValueCell> writer;
-    private Tuple<StringValueCell> row1;
-    private Tuple<StringValueCell> row2;
-    private Tuple<IntValueCell> row3;
-    private Tuple<IntValueCell> row4;
 
-    ImmutableList<Tuple<StringValueCell>> tuplesWithStrings;
-    ImmutableList<Tuple<IntValueCell>> tupleWithInts;
+    ImmutableList<CellGroup<StringValueCell>> group1;
+    ImmutableList<CellGroup<StringValueCell>> group2;
 
     @BeforeClass
     public void setup() {
@@ -39,60 +33,61 @@ public class DBCellWritersTest {
 
         StringValueCell cell1 = new StringValueCell("name", "brian", "info");
         StringValueCell cell2 = new StringValueCell("age", "11", "info");
-        StringValueCell cell3 = new StringValueCell("height", "6ft");
-        row1 = new Tuple<StringValueCell>("row1");
+        StringValueCell cell3 = new StringValueCell("height", "6ft", "info");
+        CellGroup<StringValueCell> row1 = new CellGroup<StringValueCell>("row1");
         row1.addCell(cell1);
         row1.addCell(cell2);
         row1.addCell(cell3);
 
-        row2 = new Tuple<StringValueCell>("row2");
+        CellGroup<StringValueCell> row2 = new CellGroup<StringValueCell>("row2");
         row2.addCell(cell1);
         row2.addCell(cell2);
         row2.addCell(cell3);
 
 
-        IntValueCell cell4 = new IntValueCell("age", 13);
-        IntValueCell cell5 = new IntValueCell("siblings", 1);
-        row3 = new Tuple<IntValueCell>("row3");
+        StringValueCell cell4 = new StringValueCell("age", "13", "cf");
+        StringValueCell cell5 = new StringValueCell("siblings", "1", "cf");
+        CellGroup<StringValueCell> row3 = new CellGroup<StringValueCell>("row3");
         row3.addCell(cell4);
         row3.addCell(cell5);
 
-        row4 = new Tuple<IntValueCell>("row4");
+        CellGroup<StringValueCell> row4 = new CellGroup<StringValueCell>("row4");
         row4.addCell(cell4);
         row4.addCell(cell5);
 
-        ImmutableList.Builder<Tuple<StringValueCell>> builder1 = ImmutableList.builder();
+        ImmutableList.Builder<CellGroup<StringValueCell>> builder1 = ImmutableList.builder();
         builder1.add(row1);
         builder1.add(row2);
-        tuplesWithStrings = builder1.build();
+        group1 = builder1.build();
 
-        ImmutableList.Builder<Tuple<IntValueCell>> builder2 = ImmutableList.builder();
+        ImmutableList.Builder<CellGroup<StringValueCell>> builder2 = ImmutableList.builder();
         builder2.add(row3);
         builder2.add(row4);
-        tupleWithInts = builder2.build();
-
+        group2 = builder2.build();
     }
 
     @Test
     public void mixedColumnFamiles() {
         CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
 
-        ImmutableList<MockMutation> mutations = writer.write(tuplesWithStrings, parameters);
+        ImmutableList<MockMutation> mutations = null;
+        try {
+            mutations = writer.write(group1, parameters);
+        } catch (CellExtractorException e) {
+            fail("cell extraction error",e);
+        }
         assertNotNull(mutations);
         assertEquals(mutations.size(), 2);
         int foundName = 0;
         int foundAge = 0;
         int foundHeight = 0;
-        int foundCfColFam = 0;
         int foundInfoColFam = 0;
         for(MockMutation mut : mutations){
             if(!mut.getRowId().equals("row1") & !mut.getRowId().equals("row2")){
                 fail("row id other than row1 or row2 found");
             }
             for(MockMutation.MockColQualVal item : mut.getItems()){
-                if(item.getColFam().equals("cf")) {
-                    foundCfColFam++;
-                } else if(item.getColFam().equals("info")){
+                if(item.getColFam().equals("info")){
                     foundInfoColFam++;
                 } else {
                     fail();
@@ -111,20 +106,24 @@ public class DBCellWritersTest {
         assertEquals(foundName, 2);
         assertEquals(foundAge, 2);
         assertEquals(foundHeight, 2);
-        assertEquals(foundInfoColFam, 4);
-        assertEquals(foundCfColFam, 2);
+        assertEquals(foundInfoColFam, 6);
     }
 
     @Test
     public void verifyByteContents() {
-        assertEquals(tupleWithInts.size(), 2);
-        assertEquals(tupleWithInts.get(0).getInternalList().size(), 2);
-        assertEquals(tupleWithInts.get(1).getInternalList().size(), 2);
+        assertEquals(group2.size(), 2);
+        assertEquals(group2.get(0).getInternalList().size(), 2);
+        assertEquals(group2.get(1).getInternalList().size(), 2);
 
-        DBRecordWriter<MockMutation, IntValueCell> writer = new MockDBCellValueWriter<IntValueCell>();
+        DBRecordWriter<MockMutation, StringValueCell> writer = new MockDBCellValueWriter<StringValueCell>();
         CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
 
-        ImmutableList<MockMutation> mutations = writer.write(tupleWithInts, parameters);
+        ImmutableList<MockMutation> mutations = null;
+        try {
+            mutations = writer.write(group2, parameters);
+        } catch (CellExtractorException e) {
+            fail("cell extraction exception");
+        }
         assertNotNull(mutations);
         assertEquals(mutations.size(), 2);
         assertEquals(mutations.get(0).getItems().size(), 2);
@@ -132,8 +131,7 @@ public class DBCellWritersTest {
         for(MockMutation.MockColQualVal item : mutations.get(0).getItems()){
             if(item.getQual().equals("age")){
                 byte[] value = item.getValue();
-                byte[] testInt = new byte[4];
-                ByteBuffer.wrap(testInt).putInt(13);
+                byte[] testInt = "13".getBytes();
                 assertEquals(testInt, value);
                 verifiedIntBytes = true;
             }
@@ -141,6 +139,56 @@ public class DBCellWritersTest {
         assertTrue(verifiedIntBytes);
     }
 
-    //few more checks.
+    @Test
+    public void missingColFam() {
+
+        ImmutableList<CellGroup<IntValueCell>> missingColFamGroup;
+        ImmutableList.Builder<CellGroup<IntValueCell>> builder3 = ImmutableList.builder();
+        CellGroup<IntValueCell> row5 = new CellGroup<IntValueCell>("row5");
+        row5.addCell(new IntValueCell("l",1));
+        builder3.add(row5);
+        missingColFamGroup = builder3.build();
+
+        assertEquals(missingColFamGroup.size(), 1);
+        assertEquals(missingColFamGroup.get(0).getInternalList().size(), 1);
+        DBRecordWriter<MockMutation, IntValueCell> writer = new MockDBCellValueWriter<IntValueCell>();
+        CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
+
+        ImmutableList<MockMutation> mutations = null;
+        try {
+            writer.write(missingColFamGroup, parameters);
+            fail("tried to write a group with missing col fam field");
+        } catch (CellExtractorException e) {
+            assertEquals(e.getType(), ErrorType.MISSING_FIELD);
+            assertTrue(e.getMessage().contains("no column family annotated for given cell type"));
+        }
+    }
+
+    @Test
+    public void nullColFam() {
+
+        ImmutableList<CellGroup<StringValueCell>> nullColFamGroup;
+        ImmutableList.Builder<CellGroup<StringValueCell>> builder3 = ImmutableList.builder();
+        CellGroup<StringValueCell> row5 = new CellGroup<StringValueCell>("row5");
+        row5.addCell(new StringValueCell("l","2"));
+        builder3.add(row5);
+        nullColFamGroup = builder3.build();
+
+        assertEquals(nullColFamGroup.size(), 1);
+        assertEquals(nullColFamGroup.get(0).getInternalList().size(), 1);
+        DBRecordWriter<MockMutation, StringValueCell> writer =
+                new MockDBCellValueWriter<StringValueCell>();
+        CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
+
+        ImmutableList<MockMutation> mutations = null;
+        try {
+            writer.write(nullColFamGroup, parameters);
+            fail("tried to write a group with null col fam field");
+        } catch (CellExtractorException e) {
+            assertEquals(e.getType(), ErrorType.NULL_FIELD);
+            assertTrue(e.getMessage().contains("Column family value is null"));
+        }
+
+    }
 
 }

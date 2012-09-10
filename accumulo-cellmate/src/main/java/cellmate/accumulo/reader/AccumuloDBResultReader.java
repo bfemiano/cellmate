@@ -1,11 +1,11 @@
 package cellmate.accumulo.reader;
 
 
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
 import cellmate.reader.DBResultReader;
 import cellmate.reader.ReadParameters;
-import cellmate.reader.TupleTransformerDBResultReader;
+import cellmate.reader.BasicCellGroupingDBResultReader;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import org.apache.accumulo.core.client.*;
@@ -30,28 +30,45 @@ public class AccumuloDBResultReader<C>
 
 
     private Instance instance;
+    private String instanceName;
+    private String zookeepers;
     private static final Logger log = Logger.getLogger(AccumuloDBResultReader.class);
     private static final Pattern colon = Pattern.compile("[:]");
-    private TupleTransformerDBResultReader<Map.Entry<Key,Value>, C> baseReader = new
-            TupleTransformerDBResultReader<Map.Entry<Key, Value>, C>();
+    private DBResultReader<Map.Entry<Key,Value>, C> baseReader = new
+            BasicCellGroupingDBResultReader<Map.Entry<Key, Value>, C>();
 
-    public AccumuloDBResultReader(AccumuloReadParameters parameters){
-        try {
-            String zoo = parameters.getZookeepers();
-            String instanceName = parameters.getInstanceName();
-            instance = new ZooKeeperInstance(instanceName, zoo);
-        } catch (NoSuchElementException e){
-            throw new IllegalArgumentException("missing zookeepers and/or instance id");
-        }
-
-    }
 
     @VisibleForTesting
     public AccumuloDBResultReader(AccumuloReadParameters parameters, Instance instance){
         this.instance = instance;
     }
 
-    public ImmutableList<Tuple<C>> read(Iterable<Map.Entry<Key, Value>> dbItems, ReadParameters parameters) {
+    public AccumuloDBResultReader(AccumuloReadParameters parameters){
+        try {
+           String instanceName = parameters.getInstanceName();
+           String zookeepers = parameters.getZookeepers();
+           instance = new ZooKeeperInstance(instanceName, zookeepers);
+        } catch (NoSuchElementException e){
+            throw new IllegalArgumentException("missing zookeepers and/or instance id");
+        }
+    }
+
+    public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, AccumuloReadParameters parameters) {
+        this(parameters);
+        this.baseReader = baseReader;
+    }
+
+    public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, String instanceName, String zookeepers){
+        this.baseReader = baseReader;
+        this.instance = new ZooKeeperInstance(instanceName, zookeepers);
+    }
+
+    public AccumuloDBResultReader(String instanceName, String zookeepers){
+        instance = new ZooKeeperInstance(instanceName, zookeepers);
+    }
+
+
+    public ImmutableList<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems, ReadParameters parameters) {
         return baseReader.read(dbItems, parameters);
     }
 
@@ -65,7 +82,7 @@ public class AccumuloDBResultReader<C>
         }
     }
 
-    public ImmutableList<Tuple<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
+    public ImmutableList<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
                                         ReadParameters params,
                                         CellTransformer<Map.Entry<Key,Value>, C> transformer) {
         if(!(params instanceof AccumuloReadParameters)){

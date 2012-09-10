@@ -1,8 +1,7 @@
 package cellmate.accumulo.reader.celltransformer;
 
-import cellmate.accumulo.cell.SecurityByteValueCell;
 import cellmate.accumulo.cell.SecurityIntValueCell;
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
@@ -25,13 +24,11 @@ public class SecurityIntCellTransformer
         this.recordColFam = recordColFam;
     }
 
-    public Tuple<SecurityIntValueCell> apply(Map.Entry<Key, Value> dbItem,
-                                                Tuple<SecurityIntValueCell> tuple) {
+    public CellGroup<SecurityIntValueCell> apply(Map.Entry<Key, Value> dbItem,
+                                                CellGroup<SecurityIntValueCell> cellGroup) {
         String activeRowId = dbItem.getKey().getRow().toString();
-        if (tuple == null) {
-            tuple = new Tuple<SecurityIntValueCell>(activeRowId);
-        } else if (!tuple.getTag().equals(activeRowId)) {
-            tuple = new Tuple<SecurityIntValueCell>(activeRowId);
+        if (!cellGroup.getTag().equals(activeRowId)) {
+            cellGroup = new CellGroup<SecurityIntValueCell>(activeRowId);
         }
         String label = dbItem.getKey().getColumnQualifier().toString();
         int value = ByteBuffer.wrap(dbItem.getValue().get()).asIntBuffer().get();
@@ -48,7 +45,7 @@ public class SecurityIntCellTransformer
         } else {
             cell = new SecurityIntValueCell(label, value);
         }
-        tuple.addCell(cell);
-        return tuple;
+        cellGroup.addCell(cell);
+        return cellGroup;
     }
 }

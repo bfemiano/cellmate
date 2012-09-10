@@ -1,7 +1,6 @@
 package cellmate.extractor;
 
 import cellmate.cell.*;
-import cellmate.cell.CellReflector;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -17,14 +16,14 @@ import static org.testng.Assert.*;
  */
 public class SingleValueCellExtractorTest {
 
-    Tuple<StringValueCell> row1Tuple;
-    Tuple<StringValueCell> row2Tuple;
+    CellGroup<StringValueCell> row1CellGroup;
+    CellGroup<StringValueCell> row2CellGroup;
     private SingleMultiValueCellExtractor extractorSingle =
             new SingleMultiValueCellExtractor();
 
     @BeforeClass
     public void hydrateTuple(){
-        row1Tuple = new Tuple<StringValueCell>("fakeId1");
+        row1CellGroup = new CellGroup<StringValueCell>("fakeId1");
         StringValueCell cell1 = new StringValueCell("name", "brian");
         StringValueCell cell2 = new StringValueCell("event", "234211213");
         StringValueCell cell3 = new StringValueCell("event", "234111200");
@@ -36,18 +35,18 @@ public class SingleValueCellExtractorTest {
         StringValueCell cell9 = new StringValueCell("lat", "11.22");
         StringValueCell cell10 = new StringValueCell("lon", "33.44");
 
-        row1Tuple.addCell(cell1);
-        row1Tuple.addCell(cell2);
-        row1Tuple.addCell(cell3);
-        row1Tuple.addCell(cell4);
-        row1Tuple.addCell(cell5);
-        row1Tuple.addCell(cell6);
-        row1Tuple.addCell(cell7);
-        row1Tuple.addCell(cell8);
-        row1Tuple.addCell(cell9);
-        row1Tuple.addCell(cell10);
+        row1CellGroup.addCell(cell1);
+        row1CellGroup.addCell(cell2);
+        row1CellGroup.addCell(cell3);
+        row1CellGroup.addCell(cell4);
+        row1CellGroup.addCell(cell5);
+        row1CellGroup.addCell(cell6);
+        row1CellGroup.addCell(cell7);
+        row1CellGroup.addCell(cell8);
+        row1CellGroup.addCell(cell9);
+        row1CellGroup.addCell(cell10);
 
-        row2Tuple = new Tuple<StringValueCell>("fakeId2");
+        row2CellGroup = new CellGroup<StringValueCell>("fakeId2");
         cell1 = new StringValueCell("name", "brian");
         cell4 = new StringValueCell("trylong", "error");
         cell5 = new StringValueCell("edge", "192");
@@ -57,28 +56,28 @@ public class SingleValueCellExtractorTest {
         cell9 = new StringValueCell("chk_d", "2012-08-22", 238124123l);
         cell10 = new StringValueCell("loc", "21911", 238124123l);
         StringValueCell cell11 = new StringValueCell("trydouble", "error");
-        row2Tuple.addCell(cell1);
-        row2Tuple.addCell(cell2);
-        row2Tuple.addCell(cell3);
-        row2Tuple.addCell(cell4);
-        row2Tuple.addCell(cell5);
-        row2Tuple.addCell(cell6);
-        row2Tuple.addCell(cell7);
-        row2Tuple.addCell(cell8);
-        row2Tuple.addCell(cell9);
-        row2Tuple.addCell(cell10);
-        row2Tuple.addCell(cell11);
+        row2CellGroup.addCell(cell1);
+        row2CellGroup.addCell(cell2);
+        row2CellGroup.addCell(cell3);
+        row2CellGroup.addCell(cell4);
+        row2CellGroup.addCell(cell5);
+        row2CellGroup.addCell(cell6);
+        row2CellGroup.addCell(cell7);
+        row2CellGroup.addCell(cell8);
+        row2CellGroup.addCell(cell9);
+        row2CellGroup.addCell(cell10);
+        row2CellGroup.addCell(cell11);
     }
 
     @Test
     public void tupleCounts() {
-        assertEquals(row1Tuple.getInternalList().size(), 10);
-        assertEquals(row2Tuple.getInternalList().size(), 11);
+        assertEquals(row1CellGroup.getInternalList().size(), 10);
+        assertEquals(row2CellGroup.getInternalList().size(), 11);
     }
 
     @Test
     public void filter() {
-        Collection<StringValueCell> cells = extractorSingle.filterCellsByLabel(row1Tuple.getInternalList(), "name");
+        Collection<StringValueCell> cells = extractorSingle.filterCellsByLabel(row1CellGroup.getInternalList(), "name");
         assertNotNull(cells);
         assertEquals(cells.size(), 1);
         try {
@@ -92,10 +91,10 @@ public class SingleValueCellExtractorTest {
     @Test
     public void exactString() {
         try {
-            Tuple<StringValueCell> tuple = new Tuple<StringValueCell>("blah");
+            CellGroup<StringValueCell> cellGroup = new CellGroup<StringValueCell>("blah");
             StringValueCell cell = new StringValueCell("name", "brian");
-            tuple.addCell(cell);
-            String value = extractorSingle.getStringValueByLabel(tuple.getInternalList(), "name");
+            cellGroup.addCell(cell);
+            String value = extractorSingle.getStringValueByLabel(cellGroup.getInternalList(), "name");
             assertEquals(value, "brian");
         } catch (RuntimeException e){
             fail(e.getMessage(),e);
@@ -106,7 +105,7 @@ public class SingleValueCellExtractorTest {
 
     @Test
     public void regexString() {  //startsWith 'l'
-        Collection<StringValueCell> cells = extractorSingle.regexMatchLabel(row1Tuple.getInternalList(), "^[l]+[a-zA-Z]+");
+        Collection<StringValueCell> cells = extractorSingle.regexMatchLabel(row1CellGroup.getInternalList(), "^[l]+[a-zA-Z]+");
         assertNotNull(cells);
         assertEquals(cells.size(), 3);
 
@@ -131,10 +130,10 @@ public class SingleValueCellExtractorTest {
     @Test
     public void exactDouble() {
         try {
-            Tuple<DoubleValueCell> tupleBag = new Tuple<DoubleValueCell>("fake4id");
+            CellGroup<DoubleValueCell> cellGroupBag = new CellGroup<DoubleValueCell>("fake4id");
             DoubleValueCell cell1 = new DoubleValueCell("lat", 11.22);
-            tupleBag.addCell(cell1);
-            double lat = extractorSingle.getDoubleValueByLabel(tupleBag.getInternalList(), "lat");
+            cellGroupBag.addCell(cell1);
+            double lat = extractorSingle.getDoubleValueByLabel(cellGroupBag.getInternalList(), "lat");
             assertEquals(lat, 11.22);
         } catch (IllegalArgumentException e){
             fail("bad argument", e);
@@ -146,10 +145,10 @@ public class SingleValueCellExtractorTest {
     @Test
     public void exactInt() {
         try {
-            Tuple<IntValueCell> tupleBag = new Tuple<IntValueCell>("fake4id");
+            CellGroup<IntValueCell> cellGroupBag = new CellGroup<IntValueCell>("fake4id");
             IntValueCell cell1 = new IntValueCell("loc", 21911);
-            tupleBag.addCell(cell1);
-            int loc = extractorSingle.getIntValueByLabel(tupleBag.getInternalList(), "loc");
+            cellGroupBag.addCell(cell1);
+            int loc = extractorSingle.getIntValueByLabel(cellGroupBag.getInternalList(), "loc");
             assertEquals(loc, 21911);
         } catch (IllegalArgumentException e){
             fail("bad argument", e);
@@ -161,10 +160,10 @@ public class SingleValueCellExtractorTest {
     @Test
     public void exactLong() {
         try {
-            Tuple<LongValueCell> tupleBag = new Tuple<LongValueCell>("fake4id");
+            CellGroup<LongValueCell> cellGroupBag = new CellGroup<LongValueCell>("fake4id");
             LongValueCell cell1 = new LongValueCell("loc", 21911l);
-            tupleBag.addCell(cell1);
-            long loc = extractorSingle.getLongValueByLabel(tupleBag.getInternalList(), "loc");
+            cellGroupBag.addCell(cell1);
+            long loc = extractorSingle.getLongValueByLabel(cellGroupBag.getInternalList(), "loc");
             assertEquals(loc, 21911l);
         } catch (IllegalArgumentException e){
             fail("bad argument", e);
@@ -177,10 +176,10 @@ public class SingleValueCellExtractorTest {
     @Test
     public void exactBytes() {
         try {
-            Tuple<ByteValueCell> tupleBag = new Tuple<ByteValueCell>("fake4id");
+            CellGroup<ByteValueCell> cellGroupBag = new CellGroup<ByteValueCell>("fake4id");
             ByteValueCell cell1 = new ByteValueCell("loc", "21911".getBytes());
-            tupleBag.addCell(cell1);
-            byte[] loc = extractorSingle.getBytesValueByLabel(tupleBag.getInternalList(), "loc");
+            cellGroupBag.addCell(cell1);
+            byte[] loc = extractorSingle.getBytesValueByLabel(cellGroupBag.getInternalList(), "loc");
             assertEquals(loc, "21911".getBytes());
         }  catch (IllegalArgumentException e){
             fail("bad argument", e);
@@ -192,7 +191,7 @@ public class SingleValueCellExtractorTest {
     @Test
     public void stringList() {
         try {
-            List<String> items = extractorSingle.getAllStringCellValuesWithLabel(row1Tuple.getInternalList(), "event");
+            List<String> items = extractorSingle.getAllStringCellValuesWithLabel(row1CellGroup.getInternalList(), "event");
             assertNotNull(items);
             assertEquals(items.size(), 2);
             boolean found1 = false;
@@ -214,13 +213,13 @@ public class SingleValueCellExtractorTest {
     @Test
     public void intList() {
         try {
-            Tuple<IntValueCell> tuple = new Tuple<IntValueCell>("fake4id");
+            CellGroup<IntValueCell> cellGroup = new CellGroup<IntValueCell>("fake4id");
             IntValueCell cell1 = new IntValueCell("edge", 191);
             IntValueCell cell2 = new IntValueCell("edge", 192);
-            tuple.addCell(cell1);
-            tuple.addCell(cell2);
+            cellGroup.addCell(cell1);
+            cellGroup.addCell(cell2);
 
-            Collection<Integer> items = extractorSingle.getAllIntCellValuesWithLabel(tuple.getInternalList(), "edge");
+            Collection<Integer> items = extractorSingle.getAllIntCellValuesWithLabel(cellGroup.getInternalList(), "edge");
             assertNotNull(items);
             assertEquals(items.size(), 2);
             boolean found1 = false;
@@ -243,13 +242,13 @@ public class SingleValueCellExtractorTest {
     @Test
     public void longList() {
         try {
-            Tuple<LongValueCell> tupleBag = new Tuple<LongValueCell>("fake4id");
+            CellGroup<LongValueCell> cellGroupBag = new CellGroup<LongValueCell>("fake4id");
             LongValueCell cell1 = new LongValueCell("event", 234211213l);
             LongValueCell cell2 = new LongValueCell("event", 234111200l);
-            tupleBag.addCell(cell1);
-            tupleBag.addCell(cell2);
+            cellGroupBag.addCell(cell1);
+            cellGroupBag.addCell(cell2);
 
-            List<Long> items = extractorSingle.getAllLongCellValueByLabel(tupleBag.getInternalList(), "event");
+            List<Long> items = extractorSingle.getAllLongCellValueByLabel(cellGroupBag.getInternalList(), "event");
             assertNotNull(items);
             assertEquals(items.size(), 2);
             boolean found1 = false;
@@ -272,9 +271,10 @@ public class SingleValueCellExtractorTest {
     public void castToLongError() {
         String msg = "row2 contains an event with an invalid long value, and should have thrown an error";
         try {
-            extractorSingle.getLongValueByLabel(row2Tuple.getInternalList(), "trylong");
+            extractorSingle.getLongValueByLabel(row2CellGroup.getInternalList(), "trylong");
             fail(msg);
-        }  catch (RuntimeException e) {
+        }  catch (CellExtractorException e) {
+            assertEquals(e.getType(), ErrorType.CLASS_CAST);
             assertEquals(e.getCause().getClass(), ClassCastException.class);
             assertTrue(e.getMessage().contains("Unable to cast field value as instance"));
         }  catch (Exception e){
@@ -286,9 +286,10 @@ public class SingleValueCellExtractorTest {
     public void castToDouble() {
         String msg = "row2 contains a lon with an invalid double value, and should have thrown an error";
         try {
-            extractorSingle.getDoubleValueByLabel(row2Tuple.getInternalList(), "trydouble");
+            extractorSingle.getDoubleValueByLabel(row2CellGroup.getInternalList(), "trydouble");
             fail(msg);
-        }  catch (RuntimeException e) {
+        }  catch (CellExtractorException e) {
+            assertEquals(e.getType(), ErrorType.CLASS_CAST);
             assertEquals(e.getCause().getClass(), ClassCastException.class);
             assertTrue(e.getMessage().contains("Unable to cast field value as instance"));
         }  catch (Exception e){

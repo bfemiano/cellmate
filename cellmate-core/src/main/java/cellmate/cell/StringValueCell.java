@@ -54,11 +54,10 @@ public final class StringValueCell {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StringValueCell cell = (StringValueCell) o;
+        StringValueCell that = (StringValueCell) o;
 
-        if (timestamp != cell.timestamp) return false;
-        if (label != null ? !label.equals(cell.label) : cell.label != null) return false;
-        if (value != null ? !value.equals(cell.value) : cell.value != null) return false;
+        if (label != null ? !label.equals(that.label) : that.label != null) return false;
+        if (value != null ? !value.equals(that.value) : that.value != null) return false;
 
         return true;
     }
@@ -67,7 +66,6 @@ public final class StringValueCell {
     public int hashCode() {
         int result = label != null ? label.hashCode() : 0;
         result = 31 * result + (value != null ? value.hashCode() : 0);
-        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
         return result;
     }
 }

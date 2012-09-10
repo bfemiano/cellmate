@@ -1,8 +1,8 @@
 package cellmate.writer;
 
-import cellmate.cell.CellReflector;
-import cellmate.cell.Tuple;
-import cellmate.reader.MockDBResult;
+import cellmate.cell.CellGroup;
+import cellmate.extractor.CellExtractorException;
+import cellmate.extractor.CellReflector;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -11,25 +11,22 @@ import com.google.common.collect.ImmutableList;
  * Time: 6:15 PM
  */
 public class MockDBCellValueWriter<C> implements DBRecordWriter<MockMutation, C>{
-    public ImmutableList<MockMutation> write(Iterable<Tuple<C>> tuples,
+    public ImmutableList<MockMutation> write(Iterable<CellGroup<C>> tuples,
                                              WriteParameters parameters,
                                              DBItemTransformer<MockMutation, C> mockDBResultCDBItemTransformer) {
         throw new UnsupportedOperationException("transforming not supported");
     }
 
-    public ImmutableList<MockMutation> write(Iterable<Tuple<C>> tuples, WriteParameters parameters) {
+    public ImmutableList<MockMutation> write(Iterable<CellGroup<C>> tuples, WriteParameters parameters)
+        throws CellExtractorException {
         ImmutableList.Builder<MockMutation> list = ImmutableList.builder();
-        for(Tuple<C> tuple : tuples){
-            MockMutation result = new MockMutation(tuple.getTag());
-            for(C cell : tuple.getInternalList()) {
+        for(CellGroup<C> cellGroup : tuples){
+            MockMutation result = new MockMutation(cellGroup.getTag());
+            for(C cell : cellGroup.getInternalList()) {
                 String qual = CellReflector.getLabelAsString(cell);
                 byte[] valueBytes = CellReflector.getValueBytesIfPrimative(cell);
                 String colFam;
-                try {
-                    colFam = CellReflector.getColFam(cell);
-                } catch (NoSuchFieldException e) {
-                    colFam = "cf";
-                }
+                colFam = CellReflector.getColFam(cell);
                 result.addItem(new MockMutation.MockColQualVal(colFam, qual, valueBytes));
             }
             list.add(result);

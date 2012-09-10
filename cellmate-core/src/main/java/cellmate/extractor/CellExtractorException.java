@@ -7,11 +7,24 @@ package cellmate.extractor;
  */
 public class CellExtractorException extends Exception {
 
-    public CellExtractorException(String msg){
+    private ErrorType type;
+
+    public CellExtractorException(String msg, ErrorType type){
         super(msg);
+        this.type = type;
     }
 
-    public CellExtractorException(String msg, Throwable e){
+    public CellExtractorException(Throwable e, ErrorType type){
+        super(e);
+        this.type = type;
+    }
+
+    public CellExtractorException(String msg, Throwable e, ErrorType type){
         super(msg, e);
+        this.type = type;
+    }
+
+    public ErrorType getType() {
+        return this.type;
     }
 }

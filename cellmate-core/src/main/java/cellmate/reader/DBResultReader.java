@@ -1,6 +1,6 @@
 package cellmate.reader;
 
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
@@ -12,7 +12,9 @@ import com.google.common.collect.ImmutableList;
 @Beta
 public interface DBResultReader<D, C> {
 
-    public ImmutableList<Tuple<C>> read(Iterable<D> dbItems, ReadParameters parameters);
+    public ImmutableList<CellGroup<C>> read(Iterable<D> dbItems, ReadParameters parameters);
 
-    public ImmutableList<Tuple<C>> read(Iterable<D> dbItems, ReadParameters parameters, CellTransformer<D,C> transformer);
+    public ImmutableList<CellGroup<C>> read(Iterable<D> dbItems,
+                                            ReadParameters parameters,
+                                            CellTransformer<D,C> transformer);
 }

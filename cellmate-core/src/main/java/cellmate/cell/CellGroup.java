@@ -9,15 +9,17 @@ import com.google.common.collect.ImmutableList;
  * Time: 1:31 PM
  */
 @Beta
-public final class Tuple<C> {
+public final class CellGroup<C> {
 
     private ImmutableList.Builder<C> pairs;
 
     private String tag;
 
-    private Tuple(){};
+    public static <C> CellGroup<C> emptyGroup() {
+        return new CellGroup<C>("");
+    }
 
-    public Tuple(String tag) {
+    public CellGroup(String tag) {
         this.tag = tag;
         pairs = ImmutableList.builder();
     }

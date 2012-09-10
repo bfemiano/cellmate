@@ -1,6 +1,6 @@
 package cellmate.writer;
 
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
 
 /**
  * User: bfemiano
@@ -9,5 +9,5 @@ import cellmate.cell.Tuple;
  */
 public interface DBItemTransformer<D,C> {
 
-    public D apply(Tuple<C> tuple);
+    public D apply(CellGroup<C> cellGroup);
 }

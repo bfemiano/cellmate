@@ -6,14 +6,18 @@ package cellmate.writer;
  * Time: 1:59 AM
  */
 
-import cellmate.cell.Tuple;
+import cellmate.cell.CellGroup;
+import cellmate.extractor.CellExtractorException;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
 @Beta
 public interface DBRecordWriter<D,C>  {
 
-    public ImmutableList<D> write(Iterable<Tuple<C>> tuples, WriteParameters parameters, DBItemTransformer<D,C> transformer);
+    public ImmutableList<D> write(Iterable<CellGroup<C>> tuples,
+                                  WriteParameters parameters,
+                                  DBItemTransformer<D,C> transformer) throws CellExtractorException;
 
-    public ImmutableList<D> write(Iterable<Tuple<C>> tuples, WriteParameters parameters);
+    public ImmutableList<D> write(Iterable<CellGroup<C>> tuples,
+                                  WriteParameters parameters) throws CellExtractorException;
 }
