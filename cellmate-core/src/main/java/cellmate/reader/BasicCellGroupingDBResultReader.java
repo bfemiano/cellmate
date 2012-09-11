@@ -1,10 +1,10 @@
 package cellmate.reader;
 
-import cellmate.cell.Cell;
 import cellmate.cell.CellGroup;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -16,13 +16,15 @@ import java.util.NoSuchElementException;
 public class BasicCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>{
 
     private CellGroup<C> EMPTY_INITIAL_GROUP = CellGroup.emptyGroup();
+    private static final String UNSUPPORTED_OP = "Basic cell reader needs to be sent an iterable and transformer";
 
-
-    public ImmutableList<CellGroup<C>> read(Iterable<D> dbItems, ReadParameters parameters) {
-        throw new UnsupportedOperationException("Read does not work without transformer.");
+    public ImmutableList<CellGroup<C>> read(ReadParameters parameters, CellTransformer<D, C> transformer) {
+        throw new UnsupportedOperationException(UNSUPPORTED_OP);
     }
 
-    public ImmutableList<CellGroup<C>> read(Iterable<D> items, ReadParameters parameters, CellTransformer<D, C> transformer) {
+    public ImmutableList<CellGroup<C>> read(Iterable<D> items,
+                                            ReadParameters parameters,
+                                            CellTransformer<D, C> transformer) {
         ImmutableList.Builder<CellGroup<C>> list = ImmutableList.builder();
         CellGroup<C> result = EMPTY_INITIAL_GROUP;
         CellGroup<C> previous = EMPTY_INITIAL_GROUP;
@@ -46,6 +48,8 @@ public class BasicCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>
             list.add(previous);
         return list.build();
     }
+
+
 
     private int getMaxResults(ReadParameters parameters) {
         try {

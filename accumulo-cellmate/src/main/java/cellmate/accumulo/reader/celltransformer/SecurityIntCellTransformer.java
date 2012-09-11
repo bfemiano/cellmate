@@ -15,17 +15,22 @@ import java.util.Map;
  * Time: 2:59 PM
  */
 public class SecurityIntCellTransformer
-           implements CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> {
-    private boolean recordTsAndColVis = false;
-    private boolean recordColFam = false;
+        implements CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> {
+    private boolean recordTsAndColVis;
+    private boolean recordColFamilies;
 
     public SecurityIntCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
-        this.recordTsAndColVis = recordTimestampAndColVis;
-        this.recordColFam = recordColFam;
+        recordTsAndColVis = recordTimestampAndColVis;
+        recordColFamilies = recordColFam;
+    }
+
+    public SecurityIntCellTransformer() {
+        recordTsAndColVis = false;
+        recordColFamilies = false;
     }
 
     public CellGroup<SecurityIntValueCell> apply(Map.Entry<Key, Value> dbItem,
-                                                CellGroup<SecurityIntValueCell> cellGroup) {
+                                                 CellGroup<SecurityIntValueCell> cellGroup) {
         String activeRowId = dbItem.getKey().getRow().toString();
         if (!cellGroup.getTag().equals(activeRowId)) {
             cellGroup = new CellGroup<SecurityIntValueCell>(activeRowId);
@@ -36,9 +41,9 @@ public class SecurityIntCellTransformer
         String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
         SecurityIntValueCell cell;
-        if(recordColFam & recordTsAndColVis) {
+        if(recordColFamilies & recordTsAndColVis) {
             cell = new SecurityIntValueCell(label, value, timestamp, colVis, colFam);
-        } else if (recordColFam) {
+        } else if (recordColFamilies) {
             cell = new SecurityIntValueCell(label, value, colFam);
         } else if (recordTsAndColVis) {
             cell = new SecurityIntValueCell(label, value, timestamp, colVis);

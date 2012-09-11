@@ -12,11 +12,11 @@ import java.util.NoSuchElementException;
 public class CommonReadParameters implements ReadParameters {
 
     public static final String MAX_RESULTS = "cellmate.max.results.param";
-    public static final String TABLE_NAME = "cellmate.read.scan.table.name";
-    public static final String BATCH_SIZE = "cellmate.read.batch.scan.size";
-    public static final String CF_AND_QUAL_LIST = "cellmate.read.scan.col.fams.and.quals";
-    public static final String START_KEY = "cellmate.read.row.start.key";
-    public static final String END_KEY = "cellmate.read.row.end.key";
+    public static final String TABLE_NAME = "cellmate.populate.populate.table.name";
+    public static final String BATCH_SIZE = "cellmate.populate.batch.populate.size";
+    public static final String CF_AND_QUAL_LIST = "cellmate.populate.populate.col.fams.and.quals";
+    public static final String START_KEY = "cellmate.populate.row.start.key";
+    public static final String END_KEY = "cellmate.populate.row.end.key";
 
     Map<String, Object> propertyMap;
 
@@ -52,7 +52,7 @@ public class CommonReadParameters implements ReadParameters {
         return getString(END_KEY);
     }
 
-    public String[] getColFamsAndQuals()
+    public String[] getColumns()
             throws NoSuchElementException{
         return getStrings(CF_AND_QUAL_LIST);
     }
@@ -112,13 +112,14 @@ public class CommonReadParameters implements ReadParameters {
         }
     }
 
-    public String[] getStrings(String paramName)
-            throws NoSuchElementException {
+
+
+    public String[] getStrings(String paramName) {
         try {
             Object obj = checkAndGet(paramName);
             return String[].class.cast(obj);
         } catch (ClassCastException e){
-            throw new RuntimeException("could not cast value as String[]",e);
+            throw new RuntimeException("could not cast value as String array", e);
         }
     }
 
@@ -159,7 +160,7 @@ public class CommonReadParameters implements ReadParameters {
             return this;
         }
 
-        public Builder setColFams(String[] colFams){
+        public Builder setColumns(String[] colFams){
             propertyMap.put(CF_AND_QUAL_LIST, colFams);
             return this;
         }

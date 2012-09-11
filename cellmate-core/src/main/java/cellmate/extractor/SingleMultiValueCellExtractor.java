@@ -50,11 +50,6 @@ public class SingleMultiValueCellExtractor
         });
     }
 
-    public <C> boolean hasMoreThanOne(Collection<C> values)
-            throws IllegalArgumentException{
-        return values.size() > 1;
-    }
-
     public <C> Collection<Integer> getAllIntCellValuesWithLabel(List<C> internalList, String label)
            throws CellExtractorException {
         Collection<C> values = filterCellsByLabel(internalList, label);
@@ -87,46 +82,50 @@ public class SingleMultiValueCellExtractor
 
     private <T,C> T getTypedValueByLabel(Class<T> type, List<C> cells, String label)
             throws CellExtractorException {
-        Collection<C> values = getSingleCell(cells, label);
-        T result = CellReflector.getValueAsInstance(type, values.iterator().next());
+        C value = getSingleCellByLabel(cells, label);
+        T result = CellReflector.getValueAsInstance(type, value);
         return result;
     }
 
     public <C> long getLongValueByLabel(List<C> cells, String label)
             throws CellExtractorException {
-        Collection<C> values = getSingleCell(cells, label);
-        return CellReflector.getValueAsLong(values.iterator().next());
+        C value = getSingleCellByLabel(cells, label);
+        return CellReflector.getValueAsLong(value);
     }
 
     public <C> int getIntValueByLabel(List<C> cells, String label)
             throws CellExtractorException {
-        Collection<C> values = getSingleCell(cells, label);
-        return CellReflector.getValueAsInt(values.iterator().next());
+        C value = getSingleCellByLabel(cells, label);
+        return CellReflector.getValueAsInt(value);
     }
 
     public <C> double getDoubleValueByLabel(List<C> cells, String label)
             throws CellExtractorException {
-        Collection<C> values = getSingleCell(cells, label);
-        return CellReflector.getValueAsDouble(values.iterator().next());
+        C value = getSingleCellByLabel(cells, label);
+        return CellReflector.getValueAsDouble(value);
     }
 
     public <C> byte[] getBytesValueByLabel(List<C> cells, String label)
             throws CellExtractorException {
-        Collection<C> values = getSingleCell(cells, label);
-        byte[] result = CellReflector.getValueAsBytes(values.iterator().next());
+        C value= getSingleCellByLabel(cells, label);
+        byte[] result = CellReflector.getValueAsBytes(value);
         return result;
     }
 
     public <C> String getStringValueByLabel(List<C> cells, String label)
             throws CellExtractorException {
-        Collection<C> values = getSingleCell(cells, label);
-        String result =  CellReflector.getValueAsString(values.iterator().next());
+        C value = getSingleCellByLabel(cells, label);
+        String result =  CellReflector.getValueAsString(value);
         return result;
     }
 
-    private <C> Collection<C> getSingleCell(List<C> cells, String field)
+    public <C> C getSingleCellByLabel(List<C> cells, String field)
             throws CellExtractorException {
         Collection <C> values = filterCellsByLabel(cells, field);
-        return values;
+        if(values.size() > 1)
+            throw new CellExtractorException("Too many values for single cell get", ErrorType.TOO_MANY_FIELDS);
+        if(values.size() == 0)
+            throw new CellExtractorException("No value for single get", ErrorType.MISSING_FIELD);
+        return values.iterator().next();
     }
 }

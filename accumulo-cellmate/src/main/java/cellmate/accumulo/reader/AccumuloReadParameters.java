@@ -14,10 +14,10 @@ import java.util.NoSuchElementException;
  */
 public class AccumuloReadParameters implements ReadParameters {
 
-    public static final String ZOOKEEPERS = "cellmate.read.accumulo.zookeepers.list";
-    public static final String INSTANCE_NAME = "cellmate.read.accumulo.instance.name";
-    public static final String USER = "cellmate.read.accumulo.user";
-    public static final String PASSWORD = "cellmate.read.accumulo.password";
+    public static final String ZOOKEEPERS = "cellmate.populate.accumulo.zookeepers.list";
+    public static final String INSTANCE_NAME = "cellmate.populate.accumulo.instance.name";
+    public static final String USER = "cellmate.populate.accumulo.user";
+    public static final String PASSWORD = "cellmate.populate.accumulo.password";
 
     private Map<String, Object> propertyMap;
     private CommonReadParameters commonParameters;
@@ -44,6 +44,10 @@ public class AccumuloReadParameters implements ReadParameters {
         return commonParameters.getBatchSize();
     }
 
+    public String[] getColumns(){
+        return commonParameters.getColumns();
+    }
+
     public String getZookeepers()
             throws NoSuchElementException{
         return getString(ZOOKEEPERS);
@@ -67,11 +71,6 @@ public class AccumuloReadParameters implements ReadParameters {
     public String getPassword()
             throws NoSuchElementException{
         return getString(PASSWORD);
-    }
-
-    public String[] getColFamsAndQuals()
-            throws NoSuchElementException{
-        return commonParameters.getColFamsAndQuals();
     }
 
     public int getInt(String paramName)
@@ -167,6 +166,11 @@ public class AccumuloReadParameters implements ReadParameters {
             return this;
         }
 
+        public Builder setColumns(String[] columns) {
+            commonParamBuilder.setColumns(columns);
+            return this;
+        }
+
         public Builder setMaxResults(int maxResults) {
             commonParamBuilder.setMaxResults(maxResults);
             return this;
@@ -200,6 +204,11 @@ public class AccumuloReadParameters implements ReadParameters {
 
         public Builder setPassword(String password){
             propertyMap.put(PASSWORD, password);
+            return this;
+        }
+
+        public Builder setTable(String tableName){
+            commonParamBuilder.setTableName(tableName);
             return this;
         }
 

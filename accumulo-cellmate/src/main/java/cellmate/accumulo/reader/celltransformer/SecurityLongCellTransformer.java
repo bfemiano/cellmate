@@ -16,12 +16,17 @@ import java.util.Map;
  */
 public class SecurityLongCellTransformer implements CellTransformer<Map.Entry<Key,Value>, SecurityLongValueCell> {
 
-    private boolean recordTsAndColVis = false;
-    private boolean recordColFam = false;
+    private boolean recordTsAndColVis;
+    private boolean recordColFamilies;
 
     public SecurityLongCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
-        this.recordTsAndColVis = recordTimestampAndColVis;
-        this.recordColFam = recordColFam;
+        recordTsAndColVis = recordTimestampAndColVis;
+        recordColFamilies = recordColFam;
+    }
+
+    public SecurityLongCellTransformer() {
+        recordTsAndColVis = false;
+        recordColFamilies = false;
     }
 
     public CellGroup<SecurityLongValueCell> apply(Map.Entry<Key, Value> dbItem,
@@ -36,9 +41,9 @@ public class SecurityLongCellTransformer implements CellTransformer<Map.Entry<Ke
         String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
         SecurityLongValueCell cell;
-        if(recordColFam & recordTsAndColVis) {
+        if(recordColFamilies & recordTsAndColVis) {
             cell = new SecurityLongValueCell(label, value, timestamp, colVis, colFam);
-        } else if (recordColFam) {
+        } else if (recordColFamilies) {
             cell = new SecurityLongValueCell(label, value, colFam);
         } else if (recordTsAndColVis) {
             cell = new SecurityLongValueCell(label, value, timestamp, colVis);

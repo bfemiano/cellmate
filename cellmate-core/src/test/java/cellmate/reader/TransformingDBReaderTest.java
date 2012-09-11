@@ -47,7 +47,6 @@ public class TransformingDBReaderTest {
         };
 
         MockReadParameters parameters = new MockReadParameters.Builder().build();
-
         Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
         assertEquals(cellGroups.size(), 2);
     }
@@ -119,7 +118,6 @@ public class TransformingDBReaderTest {
             }
         };
         MockReadParameters parameters = new MockReadParameters.Builder().build();
-
         Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
         assertEquals(cellGroups.size(), 1);
         assertEquals(cellGroups.iterator().next().getTag(), "common bag label");
@@ -171,26 +169,10 @@ public class TransformingDBReaderTest {
         };
 
         MockReadParameters parameters = new MockReadParameters.Builder().setMaxResults(1).build();
-
         Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
         assertEquals(cellGroups.size(), 1);
         assertNotNull(cellGroups.iterator().next().getInternalList());
         assertEquals(cellGroups.iterator().next().getInternalList().size(), 1);
-    }
-
-    @Test
-    public void unsupportedRead() {
-        try {
-
-            MockReadParameters parameters = new MockReadParameters.Builder().setMaxResults(1).build();
-
-            reader.read(dbResults, parameters);
-            fail("should have throw unsupported operations exception");
-        } catch (UnsupportedOperationException e){
-            assertTrue(e.getMessage().contains("Read does not work without transformer."));
-        } catch (Exception e){
-            fail();
-        }
     }
 
     @Test

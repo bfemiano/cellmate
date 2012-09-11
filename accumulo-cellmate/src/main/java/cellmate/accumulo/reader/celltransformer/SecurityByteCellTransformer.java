@@ -15,12 +15,17 @@ import java.util.Map;
  */
 public class SecurityByteCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> {
-    private boolean recordTsAndColVis = false;
-    private boolean recordColFam = false;
+    private boolean recordTsAndColVis;
+    private boolean recordColFamilies;
 
     public SecurityByteCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
-        this.recordTsAndColVis = recordTimestampAndColVis;
-        this.recordColFam = recordColFam;
+        recordTsAndColVis = recordTimestampAndColVis;
+        recordColFamilies = recordColFam;
+    }
+
+    public SecurityByteCellTransformer() {
+         recordTsAndColVis = false;
+        recordColFamilies = false;
     }
 
     public CellGroup<SecurityByteValueCell> apply(Map.Entry<Key, Value> dbItem,
@@ -35,9 +40,9 @@ public class SecurityByteCellTransformer
         String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
         SecurityByteValueCell cell;
-        if(recordColFam & recordTsAndColVis) {
+        if(recordColFamilies & recordTsAndColVis) {
             cell = new SecurityByteValueCell(label, value, timestamp, colVis, colFam);
-        } else if (recordColFam) {
+        } else if (recordColFamilies) {
             cell = new SecurityByteValueCell(label, value, colFam);
         } else if (recordTsAndColVis) {
             cell = new SecurityByteValueCell(label, value, timestamp, colVis);

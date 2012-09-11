@@ -43,7 +43,7 @@ public class CellReflectorTest {
             fail("should not find field");
         } catch (CellExtractorException e) {
             assertTrue(e.getMessage().contains("no column family annotated for given cell type:"));
-            assertEquals(e.getType(), ErrorType.MISSING_FIELD);
+            assertEquals(e.getType(), ErrorType.MISSING_COLFAM_ON_WRITE);
         }
 
         cell = new StringValueCell("l", "v", 1l);

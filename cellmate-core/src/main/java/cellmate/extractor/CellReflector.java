@@ -100,7 +100,7 @@ public final class CellReflector {
             }
         } else {
             throw new CellExtractorException("no column family annotated for given cell type: "
-                    + cell.getClass().getName(), ErrorType.MISSING_FIELD);
+                    + cell.getClass().getName(), ErrorType.MISSING_COLFAM_ON_WRITE);
         }
     }
 
@@ -144,7 +144,8 @@ public final class CellReflector {
                 long value = field.getLong(cell);
                 ByteBuffer.wrap(valueBytes).putLong(value);
             } else {
-                throw new CellExtractorException("unsupported type (int, double, long, String, byte[]", ErrorType.UNSUPPORTED_TYPE);
+                throw new CellExtractorException("unsupported type (int, double, long, String, byte[]",
+                        ErrorType.UNSUPPORTED_TYPE);
             }
             return valueBytes;
         } catch (IllegalAccessException e) {
@@ -177,9 +178,11 @@ public final class CellReflector {
         }
         if(found == null)
             sendFieldError("Did you forget to name the auxilary field?. " +
-                    "No field matching cell auxiliary fields with given name: " + name + ". ", CellAuxilaryField.class, ErrorType.MISSING_FIELD);
+                    "No field matching cell auxiliary fields with given name: " +
+                    name + ". ", CellAuxilaryField.class, ErrorType.MISSING_FIELD);
         if(foundCount > 1)
-            sendFieldError("Too many auxiliary fields with matching name: " + name + ". ", CellAuxilaryField.class, ErrorType.TOO_MANY_FIELDS);
+            sendFieldError("Too many auxiliary fields with matching name: " +
+                    name + ". ", CellAuxilaryField.class, ErrorType.TOO_MANY_FIELDS);
         return found;
     }
 
@@ -226,7 +229,8 @@ public final class CellReflector {
             return type.cast(res);
         } catch (ClassCastException e) {
             throw new CellExtractorException("Unable to cast field value as instance of " + type.getName() +
-                    ". Found field class of " + field.getType().getName(), e, ErrorType.CLASS_CAST);
+                    ". Found field class of "
+                    + field.getType().getName(), e, ErrorType.CLASS_CAST);
         } catch (IllegalAccessException e) {
             throw new CellExtractorException(e, ErrorType.ILLEGAL_ACCESS);
         }
@@ -257,17 +261,20 @@ public final class CellReflector {
             }
         }
         if(found == null) {
-            sendFieldError("No field found in cell class with annotation: ", clazz, ErrorType.MISSING_FIELD);
+            sendFieldError("No field found in cell class with annotation: ",
+                    clazz, ErrorType.MISSING_FIELD);
         }
         if(foundCount > 1) {
-            sendFieldError("More than one field found with annotation: ", clazz, ErrorType.TOO_MANY_FIELDS);
+            sendFieldError("More than one field found with annotation: ",
+                    clazz, ErrorType.TOO_MANY_FIELDS);
         }
         return found;
     }
 
     private static void checkCellPresent(Object obj) throws CellExtractorException {
         if(!obj.getClass().isAnnotationPresent(Cell.class))
-            throw new CellExtractorException("Class is not annotated as a cell", ErrorType.MISSING_ANNOTATION);
+            throw new CellExtractorException("Class is not annotated as a cell",
+                    ErrorType.MISSING_ANNOTATION);
     }
 
     private static void sendFieldError(String msg,

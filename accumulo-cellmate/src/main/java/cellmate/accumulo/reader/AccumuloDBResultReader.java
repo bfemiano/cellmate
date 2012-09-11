@@ -1,6 +1,7 @@
 package cellmate.accumulo.reader;
 
 
+import cellmate.accumulo.reader.celltransformer.SecurityByteCellTransformer;
 import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
 import cellmate.reader.DBResultReader;
@@ -16,6 +17,7 @@ import org.apache.accumulo.core.security.Authorizations;
 import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
@@ -34,20 +36,21 @@ public class AccumuloDBResultReader<C>
     private String zookeepers;
     private static final Logger log = Logger.getLogger(AccumuloDBResultReader.class);
     private static final Pattern colon = Pattern.compile("[:]");
-    private DBResultReader<Map.Entry<Key,Value>, C> baseReader = new
-            BasicCellGroupingDBResultReader<Map.Entry<Key, Value>, C>();
+    private DBResultReader<Map.Entry<Key,Value>, C> baseReader;
 
 
     @VisibleForTesting
-    public AccumuloDBResultReader(AccumuloReadParameters parameters, Instance instance){
+    public AccumuloDBResultReader(Instance instance){
         this.instance = instance;
+        baseReader = new BasicCellGroupingDBResultReader<Map.Entry<Key, Value>, C>();
     }
 
     public AccumuloDBResultReader(AccumuloReadParameters parameters){
         try {
-           String instanceName = parameters.getInstanceName();
-           String zookeepers = parameters.getZookeepers();
-           instance = new ZooKeeperInstance(instanceName, zookeepers);
+            String instanceName = parameters.getInstanceName();
+            String zookeepers = parameters.getZookeepers();
+            this.instance = new ZooKeeperInstance(instanceName, zookeepers);
+            this.baseReader = new BasicCellGroupingDBResultReader<Map.Entry<Key, Value>, C>();
         } catch (NoSuchElementException e){
             throw new IllegalArgumentException("missing zookeepers and/or instance id");
         }
@@ -60,17 +63,15 @@ public class AccumuloDBResultReader<C>
 
     public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, String instanceName, String zookeepers){
         this.baseReader = baseReader;
-        this.instance = new ZooKeeperInstance(instanceName, zookeepers);
+        instance = new ZooKeeperInstance(instanceName, zookeepers);
     }
 
     public AccumuloDBResultReader(String instanceName, String zookeepers){
         instance = new ZooKeeperInstance(instanceName, zookeepers);
+        baseReader = new BasicCellGroupingDBResultReader<Map.Entry<Key, Value>, C>();
     }
 
 
-    public ImmutableList<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems, ReadParameters parameters) {
-        return baseReader.read(dbItems, parameters);
-    }
 
     private Authorizations getAuthsFromParameters(Connector connector) {
         try {
@@ -82,11 +83,11 @@ public class AccumuloDBResultReader<C>
         }
     }
 
-    public ImmutableList<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
-                                        ReadParameters params,
-                                        CellTransformer<Map.Entry<Key,Value>, C> transformer) {
+    public List<CellGroup<C>> read(ReadParameters params, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
         if(!(params instanceof AccumuloReadParameters)){
-            throw new IllegalArgumentException("ReadParameter implementation must be " + AccumuloReadParameters.class.getName());
+            throw new IllegalArgumentException("ReadParameter implementation must be " +
+                    AccumuloReadParameters.class.getName() + " to use this reader class " +
+                    " instead found " + params.getClass().getName());
         }
         AccumuloReadParameters parameters =  (AccumuloReadParameters)params;
         Connector connector = getConnectorFromParameters(parameters);
@@ -96,33 +97,34 @@ public class AccumuloDBResultReader<C>
             scan = addRange(scan, parameters);
             scan = addColFamsAndQuals(scan, parameters);
             scan = setBatchSize(scan, parameters);
-            baseReader.read(scan, parameters, transformer);
+            return read(scan, parameters, transformer);
         } catch (NoSuchElementException e){
             throw new IllegalArgumentException("Missing table name in parameters");
         } catch (TableNotFoundException e) {
             throw new IllegalArgumentException("Table not found during read: " + parameters.getTableName(),e);
         }
+    }
 
-        return read(dbItems, parameters);
+    public List<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
+                                   ReadParameters parameters,
+                                   CellTransformer<Map.Entry<Key, Value>, C> transformer) {
+        return baseReader.read(dbItems, parameters, transformer);
     }
 
     private Scanner addColFamsAndQuals(Scanner scan, AccumuloReadParameters parameters) {
-        try {
-            String[] colfamsAndQuals = parameters.getColFamsAndQuals();
-            for(String pair : colfamsAndQuals) {
-               String[] colFamAndQual = colon.split(pair);
-               if(colFamAndQual.length == 1){
-                  scan.fetchColumnFamily(new Text(colFamAndQual[0]));
-               } else if(colFamAndQual.length == 2){
-                   scan.fetchColumn(new Text(colFamAndQual[0]), new Text(colFamAndQual[1]));
-               } else {
-                   throw new IllegalArgumentException("malformed colfam entry: " + pair);
-               }
+        String[] colfamsAndQuals = parameters.getColumns();
+        for(String pair : colfamsAndQuals) {
+            String[] colFamAndQual = colon.split(pair);
+            if(colFamAndQual.length == 1){
+                scan.fetchColumnFamily(new Text(colFamAndQual[0]));
+            } else if(colFamAndQual.length == 2){
+                scan.fetchColumn(new Text(colFamAndQual[0]), new Text(colFamAndQual[1]));
+            } else {
+                throw new IllegalArgumentException("malformed colfam entry: " + pair);
             }
-        } catch (NoSuchElementException e){
-            if(log.isInfoEnabled())
-                log.info("no column family/qualifier were specified");
         }
+        if(colfamsAndQuals.length == 0 && log.isDebugEnabled())
+            log.debug("no columns specified in parameters");
         return scan;
     }
 
@@ -132,7 +134,7 @@ public class AccumuloDBResultReader<C>
             scan.setBatchSize(batchSize);
         } catch (NoSuchElementException e){
             if(log.isInfoEnabled())
-                 log.info(" no property found using default batch size.");
+                log.info(" Using default batch size.");
         }
         return scan;
     }
@@ -167,9 +169,9 @@ public class AccumuloDBResultReader<C>
         } catch (NoSuchElementException e){
             throw new IllegalArgumentException("missing user/pass");
         } catch (AccumuloSecurityException e) {
-            throw new RuntimeException("Security error trying to establish scan connector",e);
+            throw new RuntimeException("Security error trying to establish populate connector",e);
         } catch (AccumuloException e) {
-            throw new RuntimeException("General Accumulo error while setting up scan connector",e);
+            throw new RuntimeException("General Accumulo error while setting up populate connector",e);
         }
         return connector;
     }

@@ -16,5 +16,4 @@ public enum ErrorType {
     TOO_MANY_FIELDS,
     UNSUPPORTED_TYPE,
     UNKNOWN_ERROR;
-
 }

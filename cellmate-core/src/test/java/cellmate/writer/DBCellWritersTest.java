@@ -159,7 +159,7 @@ public class DBCellWritersTest {
             writer.write(missingColFamGroup, parameters);
             fail("tried to write a group with missing col fam field");
         } catch (CellExtractorException e) {
-            assertEquals(e.getType(), ErrorType.MISSING_FIELD);
+            assertEquals(e.getType(), ErrorType.MISSING_COLFAM_ON_WRITE);
             assertTrue(e.getMessage().contains("no column family annotated for given cell type"));
         }
     }
