@@ -2,8 +2,8 @@ package cellmate.accumulo.reader;
 
 import cellmate.reader.CommonReadParameters;
 import cellmate.reader.ReadParameters;
+import com.google.common.collect.Lists;
 import org.apache.accumulo.core.client.IteratorSetting;
-import org.testng.collections.Lists;
 
 import java.util.HashMap;
 import java.util.List;

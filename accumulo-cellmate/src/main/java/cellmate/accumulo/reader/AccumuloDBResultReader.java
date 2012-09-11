@@ -1,14 +1,12 @@
 package cellmate.accumulo.reader;
 
 
-import cellmate.accumulo.reader.celltransformer.SecurityByteCellTransformer;
 import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
 import cellmate.reader.DBResultReader;
 import cellmate.reader.ReadParameters;
 import cellmate.reader.BasicCellGroupingDBResultReader;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
 import org.apache.accumulo.core.client.*;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Range;
@@ -73,7 +71,7 @@ public class AccumuloDBResultReader<C>
 
 
 
-    private Authorizations getAuthsFromParameters(Connector connector) {
+    private Authorizations getAuthsFromConnector(Connector connector) {
         try {
             return connector.securityOperations().getUserAuthorizations(connector.whoami());
         } catch (AccumuloException e) {
@@ -91,7 +89,7 @@ public class AccumuloDBResultReader<C>
         }
         AccumuloReadParameters parameters =  (AccumuloReadParameters)params;
         Connector connector = getConnectorFromParameters(parameters);
-        Authorizations auths = getAuthsFromParameters(connector);
+        Authorizations auths = getAuthsFromConnector(connector);
         try {
             Scanner scan = connector.createScanner(parameters.getTableName(), auths);
             scan = addRange(scan, parameters);
@@ -107,9 +105,8 @@ public class AccumuloDBResultReader<C>
     }
 
     private Scanner attachIterators(Scanner scan, AccumuloReadParameters parameters) {
-        for(IteratorSetting iterator : parameters.getIterators()){
+        for(IteratorSetting iterator : parameters.getIterators())
             scan.addScanIterator(iterator);
-        }
         return scan;
     }
 
@@ -168,7 +165,7 @@ public class AccumuloDBResultReader<C>
     }
 
 
-    protected Connector getConnectorFromParameters(AccumuloReadParameters parameters) {
+    private Connector getConnectorFromParameters(AccumuloReadParameters parameters) {
         Connector connector;
         try {
             String user = parameters.getUser();
