@@ -1,6 +1,6 @@
 # Cellmate #
 
-## DAO over BigTable made easier ##
+## DAO over BigTable made easy ##
 This framework helps abstract columnar data collection and manipulation from the raw datastore APIs.  
 
 Cellmate provides classes that abstract the datastore key/value pairs into collections of cells stored in one or more cell groups. DAO layers can be architected with respect to these cells, primarily decoupled from the underlying BigTable semantics. Users can write inline functional code for custom cell transformation, or use some of the prebuilt transformer classes to familiarize themselves with the approach.  
