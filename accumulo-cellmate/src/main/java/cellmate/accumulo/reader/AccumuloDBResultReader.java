@@ -97,12 +97,20 @@ public class AccumuloDBResultReader<C>
             scan = addRange(scan, parameters);
             scan = addColFamsAndQuals(scan, parameters);
             scan = setBatchSize(scan, parameters);
+            scan = attachIterators(scan, parameters);
             return read(scan, parameters, transformer);
         } catch (NoSuchElementException e){
             throw new IllegalArgumentException("Missing table name in parameters");
         } catch (TableNotFoundException e) {
             throw new IllegalArgumentException("Table not found during read: " + parameters.getTableName(),e);
         }
+    }
+
+    private Scanner attachIterators(Scanner scan, AccumuloReadParameters parameters) {
+        for(IteratorSetting iterator : parameters.getIterators()){
+            scan.addScanIterator(iterator);
+        }
+        return scan;
     }
 
     public List<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,

@@ -2,8 +2,11 @@ package cellmate.accumulo.reader;
 
 import cellmate.reader.CommonReadParameters;
 import cellmate.reader.ReadParameters;
+import org.apache.accumulo.core.client.IteratorSetting;
+import org.testng.collections.Lists;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -14,10 +17,11 @@ import java.util.NoSuchElementException;
  */
 public class AccumuloReadParameters implements ReadParameters {
 
-    public static final String ZOOKEEPERS = "cellmate.populate.accumulo.zookeepers.list";
-    public static final String INSTANCE_NAME = "cellmate.populate.accumulo.instance.name";
-    public static final String USER = "cellmate.populate.accumulo.user";
-    public static final String PASSWORD = "cellmate.populate.accumulo.password";
+    public static final String ZOOKEEPERS = "cellmate.read.accumulo.zookeepers.list";
+    public static final String INSTANCE_NAME = "cellmate.read.accumulo.instance.name";
+    public static final String USER = "cellmate.read.accumulo.user";
+    public static final String PASSWORD = "cellmate.read.accumulo.password";
+    public static final String ITERATOR_PREFIX = "cellmate.read.accumulo.iterator.prefix";
 
     private Map<String, Object> propertyMap;
     private CommonReadParameters commonParameters;
@@ -56,6 +60,16 @@ public class AccumuloReadParameters implements ReadParameters {
     public String getInstanceName()
             throws NoSuchElementException{
         return getString(INSTANCE_NAME);
+    }
+
+    public List<IteratorSetting> getIterators() {
+        List<IteratorSetting> iterators = Lists.newArrayList();
+        for(String key : propertyMap.keySet()) {
+             if(key.contains(ITERATOR_PREFIX)) {
+                 iterators.add(getObjectAs(IteratorSetting.class, key));
+             }
+        }
+        return iterators;
     }
 
     public String getTableName()
@@ -156,6 +170,7 @@ public class AccumuloReadParameters implements ReadParameters {
 
         Map<String, Object> propertyMap = new HashMap<String, Object>();
         CommonReadParameters.Builder commonParamBuilder = new CommonReadParameters.Builder();
+        private int iteratorPrefix;
 
         public AccumuloReadParameters build() {
             return new AccumuloReadParameters(this);
@@ -209,6 +224,11 @@ public class AccumuloReadParameters implements ReadParameters {
 
         public Builder setTable(String tableName){
             commonParamBuilder.setTableName(tableName);
+            return this;
+        }
+
+        public Builder addIteratorSetting(IteratorSetting iterator){
+            propertyMap.put(ITERATOR_PREFIX + (iteratorPrefix++), iterator);
             return this;
         }
 

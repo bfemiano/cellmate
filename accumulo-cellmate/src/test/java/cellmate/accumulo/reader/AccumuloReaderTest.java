@@ -13,6 +13,7 @@ import org.apache.accumulo.core.client.mock.MockInstance;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Value;
+import org.apache.accumulo.core.iterators.user.RegExFilter;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.core.security.ColumnVisibility;
 import org.apache.hadoop.io.Text;
@@ -155,6 +156,33 @@ public class AccumuloReaderTest {
             assertEquals(items.size(), 2);
             assertEquals(items.get(0).getInternalList().size(), 5);
             assertEquals(items.get(1).getInternalList().size(), 4);
+
+        } catch (Exception e){
+            fail("failed with exception",e);
+        }
+    }
+
+    @Test
+    public void iteratorAttachment() {
+        try {
+
+            IteratorSetting iter = new IteratorSetting(15, "regexfilter", RegExFilter.class);
+            iter.addOption(RegExFilter.VALUE_REGEX, "brian");
+            AccumuloReadParameters localParams = builder.setColumns(new String[]{"info:name"}).
+                    addIteratorSetting(iter).build();
+            AccumuloDBResultReader<SecurityStringValueCell> reader =
+                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            assertNotNull(reader);
+            List<CellGroup<SecurityStringValueCell>> items =
+                    reader.read(localParams, new SecurityStringCellTransformer(true, true));
+            assertNotNull(items);
+            assertEquals(items.size(), 1);
+
+            SingleMultiValueCellExtractor extractor = new SingleMultiValueCellExtractor();
+            SecurityStringValueCell cell = extractor.getSingleCellByLabel(items.get(0).getInternalList(), "name");
+            String value = CellReflector.getValueAsString(cell);
+            assertNotNull(value);
+            assertEquals(value, "brian");
 
         } catch (Exception e){
             fail("failed with exception",e);
