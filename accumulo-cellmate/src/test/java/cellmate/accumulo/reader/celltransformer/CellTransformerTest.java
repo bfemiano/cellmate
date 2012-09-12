@@ -329,6 +329,11 @@ public class CellTransformerTest {
     }
 
     @Test
+    public void commonLabelFlatteningIfNecessary() {
+
+    }
+
+    @Test
     public void countTotalKeyValues() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
         AccumuloAggregateDBResultReader<IntValueCell> reader =

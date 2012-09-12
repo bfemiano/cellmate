@@ -144,7 +144,7 @@ public final class CellReflector {
                 long value = field.getLong(cell);
                 ByteBuffer.wrap(valueBytes).putLong(value);
             } else {
-                throw new CellExtractorException("unsupported type (int, double, long, String, byte[]",
+                throw new CellExtractorException("unsupported type (int, double, long, String, byte[])",
                         ErrorType.UNSUPPORTED_TYPE);
             }
             return valueBytes;

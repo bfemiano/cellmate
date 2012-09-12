@@ -1,6 +1,7 @@
 package cellmate.accumulo.reader;
 
 
+import cellmate.accumulo.parameters.AccumuloParameterOps;
 import cellmate.accumulo.parameters.AccumuloParameters;
 import cellmate.cell.CellGroup;
 import cellmate.cell.parameters.Parameters;
@@ -67,8 +68,8 @@ public class AccumuloDBResultReader<C>
     }
 
     public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, String instanceName, String zookeepers){
-        this.baseReader = baseReader;
         instance = new ZooKeeperInstance(instanceName, zookeepers);
+        this.baseReader = baseReader;
     }
 
     public AccumuloDBResultReader(String instanceName, String zookeepers){
@@ -78,25 +79,10 @@ public class AccumuloDBResultReader<C>
 
 
 
-    private Authorizations getAuthsFromConnector(Connector connector) {
-        try {
-            return connector.securityOperations().getUserAuthorizations(connector.whoami());
-        } catch (AccumuloException e) {
-            throw new RuntimeException("General Accumulo error getting auths for current user: " + connector.whoami(),e);
-        } catch (AccumuloSecurityException e) {
-            throw new RuntimeException("Security error getting auths for current user: " + connector.whoami(),e);
-        }
-    }
-
     public List<CellGroup<C>> read(Parameters params, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
-        if(!(params instanceof AccumuloParameters)){
-            throw new IllegalArgumentException("ReadParameter implementation must be " +
-                    AccumuloParameters.class.getName() + " to use this reader class " +
-                    " instead found " + params.getClass().getName());
-        }
-        AccumuloParameters parameters =  (AccumuloParameters)params;
-        Connector connector = getConnectorFromParameters(parameters);
-        Authorizations auths = getAuthsFromConnector(connector);
+        AccumuloParameters parameters = AccumuloParameterOps.checkParamType(params);
+        Connector connector = AccumuloParameterOps.getConnectorFromParameters(instance, parameters);
+        Authorizations auths = AccumuloParameterOps.getAuthsFromConnector(connector);
         try {
             Scanner scan = connector.createScanner(parameters.getTableName(), auths);
             scan = addRange(scan, parameters);
@@ -169,22 +155,5 @@ public class AccumuloDBResultReader<C>
 
         scan.setRange(new Range(startKey, endKey));
         return scan;
-    }
-
-
-    private Connector getConnectorFromParameters(AccumuloParameters parameters) {
-        Connector connector;
-        try {
-            String user = parameters.getUser();
-            String pass = parameters.getPassword();
-            connector = instance.getConnector(user, pass);
-        } catch (NoSuchElementException e){
-            throw new IllegalArgumentException("missing user/pass");
-        } catch (AccumuloSecurityException e) {
-            throw new RuntimeException("Security error trying to establish populate connector",e);
-        } catch (AccumuloException e) {
-            throw new RuntimeException("General Accumulo error while setting up populate connector",e);
-        }
-        return connector;
     }
 }

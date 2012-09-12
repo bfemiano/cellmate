@@ -15,5 +15,6 @@ public enum ErrorType {
     NULL_FIELD,
     TOO_MANY_FIELDS,
     UNSUPPORTED_TYPE,
+    REJECTED_WRITE,
     UNKNOWN_ERROR;
 }

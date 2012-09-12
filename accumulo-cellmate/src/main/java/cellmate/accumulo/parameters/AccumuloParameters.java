@@ -3,7 +3,7 @@ package cellmate.accumulo.parameters;
 import cellmate.cell.parameters.CommonParameters;
 import cellmate.cell.parameters.Parameters;
 import com.google.common.collect.Lists;
-import org.apache.accumulo.core.client.IteratorSetting;
+import org.apache.accumulo.core.client.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +22,13 @@ public class AccumuloParameters implements Parameters {
     public static final String USER = "cellmate.read.accumulo.user";
     public static final String PASSWORD = "cellmate.read.accumulo.password";
     public static final String ITERATOR_PREFIX = "cellmate.read.accumulo.iterator.prefix";
+    public static final String MAX_MEMORY_FOR_WRITE = "cellmate.write.max.memory";
+    public static final String MAX_LATENCY_FOR_WRITE = "cellmate.write.max.latency";
+    public static final String MAX_WRITE_THREADS = "cellmate.write.max.threads";
+
+    private static final long DEFAULT_MAX_MEMORY= 10000L;
+    private static final long DEFAULT_MAX_LATENCY=1000L;
+    private static final int DEFAULT_MAX_WRITE_THREADS = 4;
 
     private Map<String, Object> propertyMap;
     private CommonParameters commonParameters;
@@ -30,7 +37,6 @@ public class AccumuloParameters implements Parameters {
         propertyMap = builder.propertyMap;
         commonParameters = builder.commonParamBuilder.build();
     }
-
 
     public int getMaxResults() {
         return commonParameters.getMaxResults();
@@ -60,6 +66,30 @@ public class AccumuloParameters implements Parameters {
     public String getInstanceName()
             throws NoSuchElementException{
         return getString(INSTANCE_NAME);
+    }
+
+    public long getMaxWriteMemory() {
+        try {
+           return getLong(MAX_MEMORY_FOR_WRITE);
+        } catch (NoSuchElementException e){
+            return DEFAULT_MAX_MEMORY;
+        }
+    }
+
+    public long getMaxWriteLatency() {
+        try {
+           return getLong(MAX_LATENCY_FOR_WRITE);
+        } catch (NoSuchElementException e){
+            return DEFAULT_MAX_LATENCY;
+        }
+    }
+
+    public int getMaxWriteThreads() {
+        try {
+           return getInt(MAX_WRITE_THREADS);
+        } catch (NoSuchElementException e){
+            return DEFAULT_MAX_WRITE_THREADS;
+        }
     }
 
     public List<IteratorSetting> getIterators() {
@@ -219,6 +249,21 @@ public class AccumuloParameters implements Parameters {
 
         public Builder setPassword(String password){
             propertyMap.put(PASSWORD, password);
+            return this;
+        }
+
+        public Builder setMaxWriteMemory(String password){
+            propertyMap.put(MAX_MEMORY_FOR_WRITE, password);
+            return this;
+        }
+
+        public Builder setMaxWriteLatency(String password){
+            propertyMap.put(MAX_LATENCY_FOR_WRITE, password);
+            return this;
+        }
+
+        public Builder setMaxWriteThreads(String password){
+            propertyMap.put(MAX_WRITE_THREADS, password);
             return this;
         }
 

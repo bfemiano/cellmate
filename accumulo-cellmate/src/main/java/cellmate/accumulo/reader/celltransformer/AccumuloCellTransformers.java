@@ -102,10 +102,6 @@ public class AccumuloCellTransformers {
         return new SecurityByteCellTransformer(false, false);
     }
 
-    public static ColFamToCommonLabelMapCellTransformer commonLabelOnColFamMatches(Map<String, String> colFamToLabelMap) {
-        return new ColFamToCommonLabelMapCellTransformer(colFamToLabelMap);
-    }
-
     public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> singleBagByteValueCells() {
         return new CellTransformer<Map.Entry<Key, Value>, SecurityByteValueCell>() {
             public CellGroup<SecurityByteValueCell> apply(Map.Entry<Key, Value> dbItem,
@@ -133,6 +129,29 @@ public class AccumuloCellTransformers {
                 SecurityByteValueCell cell = new SecurityByteValueCell(label, value, timestamp, colVis, colFam);
                 group.addCell(cell);
                 return group;
+            }
+        };
+    }
+
+    public static CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell> colFamToCommonLabelOnMatches(
+            final Map<String, String> colFamToCommonLabel) {
+        return new CellTransformer<Map.Entry<Key, Value>, SecurityStringValueCell>() {
+            public CellGroup<SecurityStringValueCell> apply(Map.Entry<Key, Value> dbItem,
+                                                            CellGroup<SecurityStringValueCell> cellGroup) throws CellExtractorException {
+                String activeRowId = dbItem.getKey().getRow().toString();
+                if (!cellGroup.getTag().equals(activeRowId)) {
+                    cellGroup = new CellGroup<SecurityStringValueCell>(activeRowId);
+                }
+                String colFamStr = dbItem.getKey().getColumnFamily().toString();
+                String label = dbItem.getKey().getColumnQualifier().toString();
+                String value = new String(dbItem.getValue().get());
+                if(colFamToCommonLabel.containsKey(colFamStr)){
+                    value = label;
+                    label = colFamToCommonLabel.get(colFamStr);
+                }
+                SecurityStringValueCell cell = new SecurityStringValueCell(label, value, colFamStr);
+                cellGroup.addCell(cell);
+                return cellGroup;
             }
         };
     }
@@ -202,7 +221,7 @@ public class AccumuloCellTransformers {
                         if(dbItem.getKey().getColumnQualifier().toString().equals(qual)){
                             byte[] valBytes = dbItem.getValue().get();
                             if(valBytes.length > 0)
-                                 qualAggs.put(qual, qualAggs.get(qual) + ByteBuffer.wrap(valBytes).asIntBuffer().get());
+                                qualAggs.put(qual, qualAggs.get(qual) + ByteBuffer.wrap(valBytes).asIntBuffer().get());
                         }
                     }
                 } else {
