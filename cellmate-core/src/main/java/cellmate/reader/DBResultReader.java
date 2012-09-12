@@ -1,8 +1,8 @@
 package cellmate.reader;
 
 import cellmate.cell.CellGroup;
+import cellmate.cell.parameters.Parameters;
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import java.util.List;
 public interface DBResultReader<D, C> {
 
     public List<CellGroup<C>> read(Iterable<D> dbItems,
-                                            ReadParameters parameters,
+                                            Parameters parameters,
                                             CellTransformer<D, C> transformer);
 
-    public List<CellGroup<C>> read(ReadParameters parameters,
+    public List<CellGroup<C>> read(Parameters parameters,
                                             CellTransformer<D, C> transformer);
 
 }

@@ -1,5 +1,8 @@
 package cellmate.reader;
 
+import cellmate.cell.parameters.CommonParameters;
+import cellmate.cell.parameters.Parameters;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -9,14 +12,14 @@ import java.util.NoSuchElementException;
  * Date: 9/4/12
  * Time: 3:08 PM
  */
-public class MockReadParameters implements ReadParameters {
+public class MockParameters implements Parameters {
 
     public static final String MAX_RESULTS = "cellmate.max.results.param";
 
     private Map<String, Object> propertyMap;
-    private CommonReadParameters commonParameters;
+    private CommonParameters commonParameters;
 
-    private MockReadParameters(Builder builder){
+    private MockParameters(Builder builder){
         propertyMap = builder.propertyMap;
         commonParameters = builder.commonParamBuilder.build();
     }
@@ -67,10 +70,10 @@ public class MockReadParameters implements ReadParameters {
     public static class Builder{
 
         Map<String, Object> propertyMap = new HashMap<String, Object>();
-        CommonReadParameters.Builder commonParamBuilder = new CommonReadParameters.Builder();
+        CommonParameters.Builder commonParamBuilder = new CommonParameters.Builder();
 
-        public MockReadParameters build() {
-            return new MockReadParameters(this);
+        public MockParameters build() {
+            return new MockParameters(this);
         }
 
         public Builder setMaxResults(int maxResults) {

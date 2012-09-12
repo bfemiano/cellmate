@@ -1,4 +1,4 @@
-package cellmate.reader;
+package cellmate.cell.parameters;
 
 import java.util.NoSuchElementException;
 
@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
  * Date: 9/4/12
  * Time: 3:06 PM
  */
-public interface ReadParameters {
+public interface Parameters {
 
     public int getInt(String paramName);
     public long getLong(String paramName);

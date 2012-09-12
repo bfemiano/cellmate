@@ -190,7 +190,10 @@ public final class CellReflector {
             throws CellExtractorException {
         try {
             field.setAccessible(true);
-            return type.cast(field.get(obj));
+            Object res = field.get(obj);
+            if(res == null)
+                throw new CellExtractorException("null value for type: " + type.getName(), ErrorType.NULL_FIELD);
+            return type.cast(res);
         }  catch (IllegalAccessException e) {
             throw new CellExtractorException(e, ErrorType.ILLEGAL_ACCESS);
         }  catch(ClassCastException e){

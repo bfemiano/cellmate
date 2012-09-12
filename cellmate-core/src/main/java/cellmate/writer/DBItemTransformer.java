@@ -1,6 +1,9 @@
 package cellmate.writer;
 
 import cellmate.cell.CellGroup;
+import cellmate.extractor.CellExtractorException;
+
+import java.util.List;
 
 /**
  * User: bfemiano
@@ -9,5 +12,5 @@ import cellmate.cell.CellGroup;
  */
 public interface DBItemTransformer<D,C> {
 
-    public D apply(CellGroup<C> cellGroup);
+    public List<D> apply(CellGroup<C> cellGroup) throws CellExtractorException;
 }

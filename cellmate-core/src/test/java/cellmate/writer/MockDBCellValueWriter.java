@@ -1,6 +1,7 @@
 package cellmate.writer;
 
 import cellmate.cell.CellGroup;
+import cellmate.cell.parameters.Parameters;
 import cellmate.extractor.CellExtractorException;
 import cellmate.extractor.CellReflector;
 import com.google.common.collect.ImmutableList;
@@ -11,26 +12,20 @@ import com.google.common.collect.ImmutableList;
  * Time: 6:15 PM
  */
 public class MockDBCellValueWriter<C> implements DBRecordWriter<MockMutation, C>{
-    public ImmutableList<MockMutation> write(Iterable<CellGroup<C>> tuples,
-                                             WriteParameters parameters,
-                                             DBItemTransformer<MockMutation, C> mockDBResultCDBItemTransformer) {
-        throw new UnsupportedOperationException("transforming not supported");
+
+    private DBRecordWriter<MockMutation, C> dbWriter = new BasicCelltoRecordWriter<MockMutation, C>();
+
+    public ImmutableList<MockMutation> write(Parameters parameters,
+                                             DBItemTransformer<MockMutation, C> mockDBResultCDBItemTransformer)
+            throws CellExtractorException {
+        return dbWriter.write(parameters, mockDBResultCDBItemTransformer);
     }
 
-    public ImmutableList<MockMutation> write(Iterable<CellGroup<C>> tuples, WriteParameters parameters)
+    public ImmutableList<MockMutation> write(Iterable<CellGroup<C>> groups,
+                                             Parameters parameters,
+                                             DBItemTransformer<MockMutation, C> transformer)
         throws CellExtractorException {
-        ImmutableList.Builder<MockMutation> list = ImmutableList.builder();
-        for(CellGroup<C> cellGroup : tuples){
-            MockMutation result = new MockMutation(cellGroup.getTag());
-            for(C cell : cellGroup.getInternalList()) {
-                String qual = CellReflector.getLabelAsString(cell);
-                byte[] valueBytes = CellReflector.getValueBytesIfPrimative(cell);
-                String colFam;
-                colFam = CellReflector.getColFam(cell);
-                result.addItem(new MockMutation.MockColQualVal(colFam, qual, valueBytes));
-            }
-            list.add(result);
-        }
-        return list.build();
+        return dbWriter.write(groups, parameters, transformer);
+
     }
 }

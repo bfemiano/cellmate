@@ -15,10 +15,10 @@ import java.util.NoSuchElementException;
  * Time: 12:16 AM
  */
 @Beta
-public class BasicCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>{
+public class AggregateCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>{
 
     private CellGroup<C> EMPTY_INITIAL_GROUP = CellGroup.emptyGroup();
-    private static final String UNSUPPORTED_OP = "Basic cell reader needs to be sent an iterable and transformer";
+    private static final String UNSUPPORTED_OP = "Aggregate cell reader needs to be sent an iterable and transformer";
 
     public ImmutableList<CellGroup<C>> read(Parameters parameters, CellTransformer<D, C> transformer) {
         throw new UnsupportedOperationException(UNSUPPORTED_OP);
@@ -39,20 +39,21 @@ public class BasicCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>
             try {
                 result = transformer.apply(dbRecord, previous);
             } catch (CellExtractorException e){
-                throw new RuntimeException("Error during cell transformation from db item " + e.getType().name(),e);
+                throw new RuntimeException("Error during cell transformation from db item " + e.getType().name(), e);
             }
             if(result == null)
                 throw new RuntimeException("Supplied cell transformer returned a null cell group reference");
-            if(previous != EMPTY_INITIAL_GROUP
-                    && !previous.getTag().equals(result.getTag())){ //only add on new non-empty tagged group.
-                list.add(previous);
-            }
             previous = result;
             count++;
         }
-        //add the last seen only if it contains records.
-        if(count > 0 &&  previous.getInternalList().size() > 0)
-            list.add(previous);
+        if(count > 0){
+            try {
+                result = transformer.apply(null, previous); //null input signals end of iteration, and we can write the aggregate values.
+            } catch (CellExtractorException e){
+                throw new RuntimeException("Error writing the aggregate cell values", e);
+            }
+            list.add(result);
+        }
         return list.build();
     }
 
@@ -66,3 +67,4 @@ public class BasicCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>
         }
     }
 }
+

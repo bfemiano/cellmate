@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 @Beta
 public final class CellGroup<C> {
 
-    private ImmutableList.Builder<C> pairs;
+    private ImmutableList.Builder<C> cells;
 
     private String tag;
 
@@ -21,15 +21,15 @@ public final class CellGroup<C> {
 
     public CellGroup(String tag) {
         this.tag = tag;
-        pairs = ImmutableList.builder();
+        cells = ImmutableList.builder();
     }
 
-    public void addCell(C pair) {
-        pairs.add(pair);
+    public void addCell(C cell) {
+        cells.add(cell);
     }
 
     public ImmutableList<C> getInternalList() {
-       return pairs.build();
+       return cells.build();
     }
 
     public String getTag() {

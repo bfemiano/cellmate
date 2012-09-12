@@ -1,6 +1,7 @@
 package cellmate.reader;
 
 import cellmate.cell.CellGroup;
+import cellmate.extractor.CellExtractorException;
 import com.google.common.annotations.Beta;
 
 /**
@@ -11,5 +12,5 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface CellTransformer<D,C> {
 
-    public CellGroup<C> apply(D dbItem, CellGroup<C> cellGroup);
+    public CellGroup<C> apply(D dbItem, CellGroup<C> cellGroup) throws CellExtractorException;
 }

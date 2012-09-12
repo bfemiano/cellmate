@@ -3,6 +3,7 @@ package cellmate.accumulo.reader.celltransformer;
 import cellmate.accumulo.cell.SecurityStringValueCell;
 import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
+import com.google.common.base.Defaults;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
 
@@ -17,16 +18,16 @@ public class SecurityStringCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell>{
 
     private boolean recordTsAndColVis;
-    private boolean recordColumnFamiles;
+    private boolean recordCF;
 
     public SecurityStringCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
         recordTsAndColVis = recordTimestampAndColVis;
-        recordColumnFamiles = recordColFam;
+        recordCF = recordColFam;
     }
 
     public SecurityStringCellTransformer() {
         recordTsAndColVis = false;
-        recordColumnFamiles = false;
+        recordCF = false;
     }
 
     public CellGroup<SecurityStringValueCell> apply(Map.Entry<Key, Value> dbItem,
@@ -36,14 +37,15 @@ public class SecurityStringCellTransformer
             cellGroup = new CellGroup<SecurityStringValueCell>(activeRowId);
         }
         String label = dbItem.getKey().getColumnQualifier().toString();
-        String value = new String(dbItem.getValue().get());
+        byte [] valueBytes = dbItem.getValue().get();
+        String value = valueBytes.length > 0 ? new String(valueBytes) : Defaults.defaultValue(String.class);
         String colVis = dbItem.getKey().getColumnVisibility().toString();
         String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
         SecurityStringValueCell cell;
-        if(recordColumnFamiles & recordTsAndColVis) {
+        if(recordCF & recordTsAndColVis) {
             cell = new SecurityStringValueCell(label, value, timestamp, colVis, colFam);
-        } else if (recordColumnFamiles) {
+        } else if (recordCF) {
             cell = new SecurityStringValueCell(label, value, colFam);
         } else if (recordTsAndColVis) {
             cell = new SecurityStringValueCell(label, value, timestamp, colVis);

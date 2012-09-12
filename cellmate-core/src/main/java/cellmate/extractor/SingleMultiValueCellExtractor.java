@@ -27,7 +27,7 @@ public class SingleMultiValueCellExtractor
                     String cellLabel = CellReflector.getLabelAsString(c);
                     return cellLabel.equals(label);
                 } catch (CellExtractorException e){
-                    return false;
+                    throw new RuntimeException("Error during filtering " + e.getType().name(),e);
                 }
             }
         });
@@ -43,8 +43,7 @@ public class SingleMultiValueCellExtractor
                 try {
                     return  Pattern.matches(regex, CellReflector.getLabelAsString(c));
                 } catch (CellExtractorException e){
-                    //TODO log this exception.
-                    return false;
+                    throw new RuntimeException("Error during filtering " + e.getType().name(),e);
                 }
             }
         });
@@ -80,13 +79,6 @@ public class SingleMultiValueCellExtractor
         return matching;
     }
 
-    private <T,C> T getTypedValueByLabel(Class<T> type, List<C> cells, String label)
-            throws CellExtractorException {
-        C value = getSingleCellByLabel(cells, label);
-        T result = CellReflector.getValueAsInstance(type, value);
-        return result;
-    }
-
     public <C> long getLongValueByLabel(List<C> cells, String label)
             throws CellExtractorException {
         C value = getSingleCellByLabel(cells, label);
@@ -119,13 +111,60 @@ public class SingleMultiValueCellExtractor
         return result;
     }
 
-    public <C> C getSingleCellByLabel(List<C> cells, String field)
+    public <T,C> T getTypedValueByLabel(Class<T> type, List<C> cells, String label)
             throws CellExtractorException {
-        Collection <C> values = filterCellsByLabel(cells, field);
-        if(values.size() > 1)
-            throw new CellExtractorException("Too many values for single cell get", ErrorType.TOO_MANY_FIELDS);
-        if(values.size() == 0)
-            throw new CellExtractorException("No value for single get", ErrorType.MISSING_FIELD);
+        C value = getSingleCellByLabel(cells, label);
+        T result = CellReflector.getValueAsInstance(type, value);
+        return result;
+    }
+
+    public <C> C getSingleCellByLabel(List<C> cells, String label)
+            throws CellExtractorException {
+        Collection <C> values = filterCellsByLabel(cells, label);
+        checkForOneCell(values);
         return values.iterator().next();
+    }
+
+    public <C> int getIntValueFromFirstCell(List<C> cells)
+            throws CellExtractorException {
+        checkForOneCell(cells);
+        return CellReflector.getValueAsInt(cells.iterator().next());
+    }
+
+    public <C> double getDoubleValueFromFirstCell(List<C> cells)
+            throws CellExtractorException {
+        checkForOneCell(cells);
+        return CellReflector.getValueAsDouble(cells.iterator().next());
+    }
+
+    public <C> long getLongValueFromFirstCell(List<C> cells)
+            throws CellExtractorException {
+        checkForOneCell(cells);
+        return CellReflector.getValueAsLong(cells.iterator().next());
+    }
+
+    public <C> String getStringValueFromFirstCell(List<C> cells)
+            throws CellExtractorException {
+        checkForOneCell(cells);
+        return CellReflector.getValueAsString(cells.iterator().next());
+    }
+
+    public <C> byte[] getBytesValueFromFirstCell(List<C> cells)
+            throws CellExtractorException {
+        checkForOneCell(cells);
+        return CellReflector.getValueAsBytes(cells.iterator().next());
+    }
+
+    public <T,C> T getTypedValueFromFirstItem(Class<T> cls, List<C> cells)
+            throws CellExtractorException {
+        checkForOneCell(cells);
+        return CellReflector.getValueAsInstance(cls, cells.iterator().next());
+    }
+
+    private <C> void checkForOneCell(Collection<C> cells) throws CellExtractorException {
+        if(cells.size() > 1)
+            throw new CellExtractorException("Too many values for single cell get", ErrorType.TOO_MANY_FIELDS);
+        if(cells.size() == 0)
+            throw new CellExtractorException("No value for single get", ErrorType.MISSING_FIELD);
     }
 }

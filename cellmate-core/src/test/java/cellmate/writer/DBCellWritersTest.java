@@ -3,7 +3,9 @@ package cellmate.writer;
 import cellmate.cell.IntValueCell;
 import cellmate.cell.StringValueCell;
 import cellmate.cell.CellGroup;
+import cellmate.cell.parameters.CommonParameters;
 import cellmate.extractor.CellExtractorException;
+import cellmate.extractor.CellReflector;
 import cellmate.extractor.ErrorType;
 import com.google.common.collect.ImmutableList;
 import org.testng.annotations.BeforeClass;
@@ -13,7 +15,7 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
 
-import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
  * User: bfemiano
@@ -26,6 +28,8 @@ public class DBCellWritersTest {
 
     ImmutableList<CellGroup<StringValueCell>> group1;
     ImmutableList<CellGroup<StringValueCell>> group2;
+
+    private DBItemTransformer<MockMutation, StringValueCell> stringTransformer;
 
     @BeforeClass
     public void setup() {
@@ -64,15 +68,33 @@ public class DBCellWritersTest {
         builder2.add(row3);
         builder2.add(row4);
         group2 = builder2.build();
+
+        stringTransformer = new DBItemTransformer<MockMutation, StringValueCell>() {
+            public List<MockMutation> apply(CellGroup<StringValueCell> cellGroup)
+                    throws CellExtractorException {
+                ImmutableList.Builder<MockMutation> list = ImmutableList.builder();
+                MockMutation result = new MockMutation(cellGroup.getTag());
+                for(StringValueCell cell : cellGroup.getInternalList()) {
+                    String qual = null;
+                    qual = CellReflector.getLabelAsString(cell);
+                    byte[] valueBytes = CellReflector.getValueBytesIfPrimative(cell);
+                    String colFam;
+                    colFam = CellReflector.getColFam(cell);
+                    result.addItem(new MockMutation.MockColQualVal(colFam, qual, valueBytes));
+                }
+                list.add(result);
+                return list.build();
+            }
+        };
     }
 
     @Test
     public void mixedColumnFamiles() {
-        CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
+        CommonParameters parameters = new CommonParameters.Builder().build();
 
         ImmutableList<MockMutation> mutations = null;
         try {
-            mutations = writer.write(group1, parameters);
+            mutations = writer.write(group1, parameters, stringTransformer);
         } catch (CellExtractorException e) {
             fail("cell extraction error",e);
         }
@@ -116,11 +138,11 @@ public class DBCellWritersTest {
         assertEquals(group2.get(1).getInternalList().size(), 2);
 
         DBRecordWriter<MockMutation, StringValueCell> writer = new MockDBCellValueWriter<StringValueCell>();
-        CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
+        CommonParameters parameters = new CommonParameters.Builder().build();
 
         ImmutableList<MockMutation> mutations = null;
         try {
-            mutations = writer.write(group2, parameters);
+            mutations = writer.write(group2, parameters, stringTransformer);
         } catch (CellExtractorException e) {
             fail("cell extraction exception");
         }
@@ -152,11 +174,26 @@ public class DBCellWritersTest {
         assertEquals(missingColFamGroup.size(), 1);
         assertEquals(missingColFamGroup.get(0).getInternalList().size(), 1);
         DBRecordWriter<MockMutation, IntValueCell> writer = new MockDBCellValueWriter<IntValueCell>();
-        CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
+        CommonParameters parameters = new CommonParameters.Builder().build();
 
-        ImmutableList<MockMutation> mutations = null;
         try {
-            writer.write(missingColFamGroup, parameters);
+            writer.write(missingColFamGroup, parameters, new DBItemTransformer<MockMutation, IntValueCell>() {
+                public List<MockMutation> apply(CellGroup<IntValueCell> cellGroup)
+                        throws CellExtractorException {
+                    ImmutableList.Builder<MockMutation> list = ImmutableList.builder();
+                    MockMutation result = new MockMutation(cellGroup.getTag());
+                    for(IntValueCell cell : cellGroup.getInternalList()) {
+                        String qual = null;
+                        qual = CellReflector.getLabelAsString(cell);
+                        byte[] valueBytes = CellReflector.getValueBytesIfPrimative(cell);
+                        String colFam;
+                        colFam = CellReflector.getColFam(cell);
+                        result.addItem(new MockMutation.MockColQualVal(colFam, qual, valueBytes));
+                    }
+                    list.add(result);
+                    return list.build();
+                }
+            });
             fail("tried to write a group with missing col fam field");
         } catch (CellExtractorException e) {
             assertEquals(e.getType(), ErrorType.MISSING_COLFAM_ON_WRITE);
@@ -178,11 +215,11 @@ public class DBCellWritersTest {
         assertEquals(nullColFamGroup.get(0).getInternalList().size(), 1);
         DBRecordWriter<MockMutation, StringValueCell> writer =
                 new MockDBCellValueWriter<StringValueCell>();
-        CommonWriteParameters parameters = new CommonWriteParameters.Builder().build();
+        CommonParameters parameters = new CommonParameters.Builder().build();
 
         ImmutableList<MockMutation> mutations = null;
         try {
-            writer.write(nullColFamGroup, parameters);
+            writer.write(nullColFamGroup, parameters, stringTransformer);
             fail("tried to write a group with null col fam field");
         } catch (CellExtractorException e) {
             assertEquals(e.getType(), ErrorType.NULL_FIELD);

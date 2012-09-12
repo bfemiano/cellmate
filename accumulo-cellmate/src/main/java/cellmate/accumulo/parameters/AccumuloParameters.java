@@ -1,7 +1,7 @@
-package cellmate.accumulo.reader;
+package cellmate.accumulo.parameters;
 
-import cellmate.reader.CommonReadParameters;
-import cellmate.reader.ReadParameters;
+import cellmate.cell.parameters.CommonParameters;
+import cellmate.cell.parameters.Parameters;
 import com.google.common.collect.Lists;
 import org.apache.accumulo.core.client.IteratorSetting;
 
@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
  * Date: 9/4/12
  * Time: 11:09 PM
  */
-public class AccumuloReadParameters implements ReadParameters {
+public class AccumuloParameters implements Parameters {
 
     public static final String ZOOKEEPERS = "cellmate.read.accumulo.zookeepers.list";
     public static final String INSTANCE_NAME = "cellmate.read.accumulo.instance.name";
@@ -24,9 +24,9 @@ public class AccumuloReadParameters implements ReadParameters {
     public static final String ITERATOR_PREFIX = "cellmate.read.accumulo.iterator.prefix";
 
     private Map<String, Object> propertyMap;
-    private CommonReadParameters commonParameters;
+    private CommonParameters commonParameters;
 
-    private AccumuloReadParameters(Builder builder){
+    private AccumuloParameters(Builder builder){
         propertyMap = builder.propertyMap;
         commonParameters = builder.commonParamBuilder.build();
     }
@@ -138,7 +138,7 @@ public class AccumuloReadParameters implements ReadParameters {
             Object obj = checkAndGet(paramName);
             return cls.cast(obj);
         } catch (ClassCastException e){
-            throw new RuntimeException("could not cast value as byte array", e);
+            throw new RuntimeException("could not cast value as " + cls.getName(), e);
         }
     }
 
@@ -169,11 +169,11 @@ public class AccumuloReadParameters implements ReadParameters {
     public static class Builder{
 
         Map<String, Object> propertyMap = new HashMap<String, Object>();
-        CommonReadParameters.Builder commonParamBuilder = new CommonReadParameters.Builder();
+        CommonParameters.Builder commonParamBuilder = new CommonParameters.Builder();
         private int iteratorPrefix;
 
-        public AccumuloReadParameters build() {
-            return new AccumuloReadParameters(this);
+        public AccumuloParameters build() {
+            return new AccumuloParameters(this);
         }
 
         public Builder setEndKey(String endKey) {

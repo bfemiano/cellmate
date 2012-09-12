@@ -297,5 +297,46 @@ public class SingleValueCellExtractorTest {
         }
     }
 
+    @Test
+    public void testGetFirstItem() {
+        CellGroup<StringValueCell> strGroup = new CellGroup<StringValueCell>("");
+        strGroup.addCell(new StringValueCell("l", "test1"));
+
+        CellGroup<IntValueCell> intGroup = new CellGroup<IntValueCell>("");
+        intGroup.addCell(new IntValueCell("l", 1));
+
+        CellGroup<LongValueCell> longGroup = new CellGroup<LongValueCell>("");
+        longGroup.addCell(new LongValueCell("l", 2l));
+
+        CellGroup<ByteValueCell> byteGroup = new CellGroup<ByteValueCell>("");
+        byteGroup.addCell(new ByteValueCell("l", "test1".getBytes()));
+
+        CellGroup<DoubleValueCell> doubleGroup = new CellGroup<DoubleValueCell>("");
+        doubleGroup.addCell(new DoubleValueCell("l", 33.3d));
+
+        try {
+            assertEquals(extractorSingle.getStringValueFromFirstCell(strGroup.getInternalList()), "test1");
+            assertEquals(extractorSingle.getIntValueFromFirstCell(intGroup.getInternalList()), 1);
+            assertEquals(extractorSingle.getLongValueFromFirstCell(longGroup.getInternalList()), 2l);
+            assertEquals(extractorSingle.getBytesValueFromFirstCell(byteGroup.getInternalList()), "test1".getBytes());
+            assertEquals(extractorSingle.getDoubleValueFromFirstCell(doubleGroup.getInternalList()), 33.3d);
+        } catch (Exception e) {
+            fail("failed with exception",e);
+        }
+
+        doubleGroup = new CellGroup<DoubleValueCell>("");
+        doubleGroup.addCell(new DoubleValueCell("l", 33.3d));
+        doubleGroup.addCell(new DoubleValueCell("l", 44.6d));
+        try {
+            extractorSingle.getDoubleValueFromFirstCell(doubleGroup.getInternalList());
+            fail("doublegroup has more than one value. Should have gone to exception");
+        } catch (CellExtractorException e){
+           assertEquals(e.getType(), ErrorType.TOO_MANY_FIELDS);
+        } catch (Exception e){
+            fail();
+        }
+    }
+
+
 
 }

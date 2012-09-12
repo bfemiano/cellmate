@@ -13,12 +13,12 @@ import java.util.Map;
  * Date: 9/5/12
  * Time: 1:46 AM
  */
-public class CommonLabelSecurityStringCellTransformer
+public class ColFamToCommonLabelMapCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>,SecurityStringValueCell>{
 
     private Map<String, String> colFamToCommonLabel;
 
-    public CommonLabelSecurityStringCellTransformer(Map<String, String> colFamToCommonLabel) {
+    public ColFamToCommonLabelMapCellTransformer(Map<String, String> colFamToCommonLabel) {
         this.colFamToCommonLabel = colFamToCommonLabel;
     }
 

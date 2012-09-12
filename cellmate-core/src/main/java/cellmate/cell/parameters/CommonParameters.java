@@ -1,4 +1,4 @@
-package cellmate.reader;
+package cellmate.cell.parameters;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
  * Date: 9/4/12
  * Time: 3:08 PM
  */
-public class CommonReadParameters implements ReadParameters {
+public class CommonParameters implements Parameters {
 
     public static final String MAX_RESULTS = "cellmate.max.results.param";
     public static final String TABLE_NAME = "cellmate.populate.populate.table.name";
@@ -20,7 +20,7 @@ public class CommonReadParameters implements ReadParameters {
 
     Map<String, Object> propertyMap;
 
-    private CommonReadParameters(Builder builder){
+    private CommonParameters(Builder builder){
         propertyMap = builder.propertyMap;
     }
 
@@ -136,8 +136,8 @@ public class CommonReadParameters implements ReadParameters {
 
         Map<String, Object> propertyMap = new HashMap<String, Object>();
 
-        public CommonReadParameters build() {
-            return new CommonReadParameters(this);
+        public CommonParameters build() {
+            return new CommonParameters(this);
         }
 
         public Builder setEndKey(String endKey) {

@@ -3,6 +3,7 @@ package cellmate.accumulo.reader.celltransformer;
 import cellmate.accumulo.cell.SecurityIntValueCell;
 import cellmate.cell.CellGroup;
 import cellmate.reader.CellTransformer;
+import com.google.common.base.Defaults;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
 
@@ -17,16 +18,16 @@ import java.util.Map;
 public class SecurityIntCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> {
     private boolean recordTsAndColVis;
-    private boolean recordColFamilies;
+    private boolean recordCF;
 
     public SecurityIntCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
         recordTsAndColVis = recordTimestampAndColVis;
-        recordColFamilies = recordColFam;
+        recordCF = recordColFam;
     }
 
     public SecurityIntCellTransformer() {
         recordTsAndColVis = false;
-        recordColFamilies = false;
+        recordCF = false;
     }
 
     public CellGroup<SecurityIntValueCell> apply(Map.Entry<Key, Value> dbItem,
@@ -36,14 +37,15 @@ public class SecurityIntCellTransformer
             cellGroup = new CellGroup<SecurityIntValueCell>(activeRowId);
         }
         String label = dbItem.getKey().getColumnQualifier().toString();
-        int value = ByteBuffer.wrap(dbItem.getValue().get()).asIntBuffer().get();
+        byte [] valueBytes = dbItem.getValue().get();
+        int value = valueBytes.length > 0 ? ByteBuffer.wrap(valueBytes).asIntBuffer().get() : Defaults.defaultValue(int.class);
         String colVis = dbItem.getKey().getColumnVisibility().toString();
         String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
         SecurityIntValueCell cell;
-        if(recordColFamilies & recordTsAndColVis) {
+        if(recordCF & recordTsAndColVis) {
             cell = new SecurityIntValueCell(label, value, timestamp, colVis, colFam);
-        } else if (recordColFamilies) {
+        } else if (recordCF) {
             cell = new SecurityIntValueCell(label, value, colFam);
         } else if (recordTsAndColVis) {
             cell = new SecurityIntValueCell(label, value, timestamp, colVis);

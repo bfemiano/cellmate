@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  * Date: 8/28/12
  * Time: 10:47 PM
  */
-public class TransformingDBReaderTest {
+public class BasicDBReaderTest {
 
     private DBResultReader<MockDBResult, StringValueCell> reader;
     List<MockDBResult> dbResults;
@@ -46,7 +46,7 @@ public class TransformingDBReaderTest {
             }
         };
 
-        MockReadParameters parameters = new MockReadParameters.Builder().build();
+        MockParameters parameters = new MockParameters.Builder().build();
         Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
         assertEquals(cellGroups.size(), 2);
     }
@@ -73,7 +73,7 @@ public class TransformingDBReaderTest {
                 }
             };
 
-            MockReadParameters parameters = new MockReadParameters.Builder().build();
+            MockParameters parameters = new MockParameters.Builder().build();
             Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
             assertEquals(cellGroups.size(), 2);
 
@@ -117,7 +117,7 @@ public class TransformingDBReaderTest {
                 return group;
             }
         };
-        MockReadParameters parameters = new MockReadParameters.Builder().build();
+        MockParameters parameters = new MockParameters.Builder().build();
         Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
         assertEquals(cellGroups.size(), 1);
         assertEquals(cellGroups.iterator().next().getTag(), "common bag label");
@@ -131,7 +131,7 @@ public class TransformingDBReaderTest {
                 return group;  //never changes default tuple.
             }
         };
-        MockReadParameters parameters = new MockReadParameters.Builder().build();
+        MockParameters parameters = new MockParameters.Builder().build();
         Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
         assertEquals(cellGroups.size(), 0);
 
@@ -168,7 +168,7 @@ public class TransformingDBReaderTest {
             }
         };
 
-        MockReadParameters parameters = new MockReadParameters.Builder().setMaxResults(1).build();
+        MockParameters parameters = new MockParameters.Builder().setMaxResults(1).build();
         Collection<CellGroup<StringValueCell>> cellGroups = reader.read(dbResults, parameters, transformer);
         assertEquals(cellGroups.size(), 1);
         assertNotNull(cellGroups.iterator().next().getInternalList());
@@ -177,7 +177,7 @@ public class TransformingDBReaderTest {
 
     @Test
     public void parameterDelegation() {
-        MockReadParameters parameters = new MockReadParameters.Builder().addNamedProperty("TEST_STRING", "hi").build();
+        MockParameters parameters = new MockParameters.Builder().addNamedProperty("TEST_STRING", "hi").build();
         try {
             String propValue = parameters.getString("TEST_STRING");
             assertEquals(propValue, "hi");
@@ -187,7 +187,7 @@ public class TransformingDBReaderTest {
 
         MockDBResult result = new MockDBResult("id1", "colfam", "qual", "val");
 
-        parameters = new MockReadParameters.Builder().addNamedProperty("MOCK_RESULT", result).build();
+        parameters = new MockParameters.Builder().addNamedProperty("MOCK_RESULT", result).build();
         try {
             MockDBResult propValue = parameters.getObjectAs(MockDBResult.class, "MOCK_RESULT");
             assertEquals(propValue.getId(), "id1");

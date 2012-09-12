@@ -16,20 +16,20 @@ import java.util.Map;
 public class SecurityByteCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> {
     private boolean recordTsAndColVis;
-    private boolean recordColFamilies;
+    private boolean recordCF;
 
     public SecurityByteCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
         recordTsAndColVis = recordTimestampAndColVis;
-        recordColFamilies = recordColFam;
+        recordCF = recordColFam;
     }
 
     public SecurityByteCellTransformer() {
-         recordTsAndColVis = false;
-        recordColFamilies = false;
+        recordTsAndColVis = false;
+        recordCF = false;
     }
 
     public CellGroup<SecurityByteValueCell> apply(Map.Entry<Key, Value> dbItem,
-                                                CellGroup<SecurityByteValueCell> cellGroup) {
+                                                  CellGroup<SecurityByteValueCell> cellGroup) {
         String activeRowId = dbItem.getKey().getRow().toString();
         if (!cellGroup.getTag().equals(activeRowId)) {
             cellGroup = new CellGroup<SecurityByteValueCell>(activeRowId);
@@ -40,9 +40,9 @@ public class SecurityByteCellTransformer
         String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
         SecurityByteValueCell cell;
-        if(recordColFamilies & recordTsAndColVis) {
+        if(recordCF & recordTsAndColVis) {
             cell = new SecurityByteValueCell(label, value, timestamp, colVis, colFam);
-        } else if (recordColFamilies) {
+        } else if (recordCF) {
             cell = new SecurityByteValueCell(label, value, colFam);
         } else if (recordTsAndColVis) {
             cell = new SecurityByteValueCell(label, value, timestamp, colVis);

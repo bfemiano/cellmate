@@ -374,9 +374,11 @@ public class CellReflectorTest {
     public void nullAuxValue() {
         try {
             CellWithConflictingAuxFields tuple = new CellWithConflictingAuxFields("l", "v");
-            String aux3 = CellReflector.getAuxiliaryValue(String.class, tuple, "aux3");
-            assertNull(aux3);
-        }  catch (Exception e){
+            CellReflector.getAuxiliaryValue(String.class, tuple, "aux3");
+            fail("aux3 is null. Should have thrown a CellExtractionException");
+        } catch (CellExtractorException e){
+            assertEquals(e.getType(), ErrorType.NULL_FIELD);
+        } catch (Exception e){
             fail();
         }
     }

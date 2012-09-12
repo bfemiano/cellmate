@@ -1,10 +1,11 @@
 package cellmate.accumulo.reader;
 
 
+import cellmate.accumulo.parameters.AccumuloParameters;
 import cellmate.cell.CellGroup;
+import cellmate.cell.parameters.Parameters;
 import cellmate.reader.CellTransformer;
 import cellmate.reader.DBResultReader;
-import cellmate.reader.ReadParameters;
 import cellmate.reader.BasicCellGroupingDBResultReader;
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.accumulo.core.client.*;
@@ -43,7 +44,13 @@ public class AccumuloDBResultReader<C>
         baseReader = new BasicCellGroupingDBResultReader<Map.Entry<Key, Value>, C>();
     }
 
-    public AccumuloDBResultReader(AccumuloReadParameters parameters){
+    @VisibleForTesting
+    public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, Instance instance){
+        this.instance = instance;
+        this.baseReader = baseReader;
+    }
+
+    public AccumuloDBResultReader(AccumuloParameters parameters){
         try {
             String instanceName = parameters.getInstanceName();
             String zookeepers = parameters.getZookeepers();
@@ -54,7 +61,7 @@ public class AccumuloDBResultReader<C>
         }
     }
 
-    public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, AccumuloReadParameters parameters) {
+    public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, AccumuloParameters parameters) {
         this(parameters);
         this.baseReader = baseReader;
     }
@@ -81,13 +88,13 @@ public class AccumuloDBResultReader<C>
         }
     }
 
-    public List<CellGroup<C>> read(ReadParameters params, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
-        if(!(params instanceof AccumuloReadParameters)){
+    public List<CellGroup<C>> read(Parameters params, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
+        if(!(params instanceof AccumuloParameters)){
             throw new IllegalArgumentException("ReadParameter implementation must be " +
-                    AccumuloReadParameters.class.getName() + " to use this reader class " +
+                    AccumuloParameters.class.getName() + " to use this reader class " +
                     " instead found " + params.getClass().getName());
         }
-        AccumuloReadParameters parameters =  (AccumuloReadParameters)params;
+        AccumuloParameters parameters =  (AccumuloParameters)params;
         Connector connector = getConnectorFromParameters(parameters);
         Authorizations auths = getAuthsFromConnector(connector);
         try {
@@ -104,19 +111,19 @@ public class AccumuloDBResultReader<C>
         }
     }
 
-    private Scanner attachIterators(Scanner scan, AccumuloReadParameters parameters) {
+    private Scanner attachIterators(Scanner scan, AccumuloParameters parameters) {
         for(IteratorSetting iterator : parameters.getIterators())
             scan.addScanIterator(iterator);
         return scan;
     }
 
     public List<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
-                                   ReadParameters parameters,
+                                   Parameters parameters,
                                    CellTransformer<Map.Entry<Key, Value>, C> transformer) {
         return baseReader.read(dbItems, parameters, transformer);
     }
 
-    private Scanner addColFamsAndQuals(Scanner scan, AccumuloReadParameters parameters) {
+    private Scanner addColFamsAndQuals(Scanner scan, AccumuloParameters parameters) {
         String[] colfamsAndQuals = parameters.getColumns();
         for(String pair : colfamsAndQuals) {
             String[] colFamAndQual = colon.split(pair);
@@ -133,7 +140,7 @@ public class AccumuloDBResultReader<C>
         return scan;
     }
 
-    private Scanner setBatchSize(Scanner scan, AccumuloReadParameters parameters) {
+    private Scanner setBatchSize(Scanner scan, AccumuloParameters parameters) {
         try {
             int batchSize = parameters.getBatchSize();
             scan.setBatchSize(batchSize);
@@ -145,7 +152,7 @@ public class AccumuloDBResultReader<C>
     }
 
 
-    private Scanner addRange(Scanner scan, AccumuloReadParameters parameters) {
+    private Scanner addRange(Scanner scan, AccumuloParameters parameters) {
         String startKey;
         String endKey;
         try {
@@ -165,7 +172,7 @@ public class AccumuloDBResultReader<C>
     }
 
 
-    private Connector getConnectorFromParameters(AccumuloReadParameters parameters) {
+    private Connector getConnectorFromParameters(AccumuloParameters parameters) {
         Connector connector;
         try {
             String user = parameters.getUser();
