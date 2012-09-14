@@ -7,5 +7,6 @@ package cellmate.accumulo.writer;
  */
 public class DBItemTransformerTest {
 
-
 }
+
+

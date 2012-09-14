@@ -8,6 +8,7 @@ import cellmate.cell.CellGroup;
 import cellmate.cell.DoubleValueCell;
 import cellmate.cell.IntValueCell;
 import cellmate.extractor.*;
+import cellmate.reader.DBResultReader;
 import org.apache.accumulo.core.client.*;
 import org.apache.accumulo.core.client.mock.MockInstance;
 import org.apache.accumulo.core.data.Mutation;
@@ -18,7 +19,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 import static org.testng.Assert.assertEquals;
@@ -330,8 +333,16 @@ public class CellTransformerTest {
 
     @Test
     public void commonLabelFlatteningIfNecessary() {
-
+       AccumuloParameters localParams = builder.setColumns(new String[]{"events", "info"}).build();
+       AccumuloDBResultReader<SecurityStringValueCell> reader =
+                new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+        assertNotNull(reader);
+        Map<String, String> commonLabels = new HashMap<String, String>();
+        commonLabels.put("events", "event");
+        List<CellGroup<SecurityStringValueCell>> items = reader.read(localParams, AccumuloCellTransformers.colFamToCommonLabelOnMatches(commonLabels));
+        assertNotNull(items);
     }
+
 
     @Test
     public void countTotalKeyValues() {

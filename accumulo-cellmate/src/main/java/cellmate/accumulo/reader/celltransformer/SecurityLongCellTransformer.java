@@ -19,16 +19,16 @@ public class SecurityLongCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityLongValueCell> {
 
     private boolean recordTsAndColVis;
-    private boolean recordCF;
+    private boolean recordColFamilies;
 
     public SecurityLongCellTransformer(boolean recordTimestampAndColVis, boolean recordColFam){
         recordTsAndColVis = recordTimestampAndColVis;
-        recordCF = recordColFam;
+        recordColFamilies = recordColFam;
     }
 
     public SecurityLongCellTransformer() {
         recordTsAndColVis = false;
-        recordCF = false;
+        recordColFamilies = false;
     }
 
     public CellGroup<SecurityLongValueCell> apply(Map.Entry<Key, Value> dbItem,
@@ -44,9 +44,9 @@ public class SecurityLongCellTransformer
         String colFam = dbItem.getKey().getColumnFamily().toString();
         long timestamp = dbItem.getKey().getTimestamp();
         SecurityLongValueCell cell;
-        if(recordCF & recordTsAndColVis) {
+        if(recordColFamilies & recordTsAndColVis) {
             cell = new SecurityLongValueCell(label, value, timestamp, colVis, colFam);
-        } else if (recordCF) {
+        } else if (recordColFamilies) {
             cell = new SecurityLongValueCell(label, value, colFam);
         } else if (recordTsAndColVis) {
             cell = new SecurityLongValueCell(label, value, timestamp, colVis);

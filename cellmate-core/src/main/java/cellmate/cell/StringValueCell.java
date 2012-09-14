@@ -2,6 +2,7 @@ package cellmate.cell;
 
 import com.google.common.annotations.Beta;
 
+import java.io.BufferedReader;
 import java.util.Arrays;
 
 /**
