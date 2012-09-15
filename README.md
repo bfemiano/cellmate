@@ -2,13 +2,13 @@
 
 ## Data abstraction over Accumulo ##
 
-The cellmate API lets you build domain objects and DAO layers around the cell group interface, instead of the raw Accumulo Key/Value pairs. The net result is less biolerplate setup and strong decoupling between your domain objects and Accumulo operations.
+The Cellmate API lets you build domain objects and DAO layers over its simple and concise cell API, instead of the raw Accumulo Key/Value pairs. The net result is less biolerplate and strong decoupling between your domain objects and Accumulo operations.
 
 Users can focus on their business logic and solving problems, and less on the Accumulo API details of setting up scans, connections, authorizations, filters, and other requirements. All of that is handled for you by Cellmate. 
 
 ## What is Cellmate? ##
 
-Cellmate core contains a number of discrete components that when combined help abstract Accumulo operations. 
+The core library contains a number of discrete components that help abstract Accumulo operations. 
 
 Cell: label/value pairs that typically mark a single string or byte[] value with some meaningful context (usually the qualifier from the Key/Value pair). Users can use one of the prebuilt cell types, or implement their own with annotations. 
 CellGroup: collection of cells with a tag (usually the rowId from the Key/Value pair).
