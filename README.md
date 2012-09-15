@@ -17,6 +17,7 @@ The core library contains a number of discrete components that help abstract Acc
 <li>Reader: Once you define your parameters, you can call read() and get back transformed cells.</li> 
 <li>Extractor: Once you have collections of CellGroups and Cells, the extractors help you dereference the cell label/value pairs based on filter patterns or direct lookup on known labels.</li> 
 <li>Writer: Given one or more CellGroup(s), the writer will generate the correct Mutations and persist back to Accumulo. (Note: At this time, this has functionally has not be tested.)</li>
+</ol>
 
 ## What this API provides ##
 
