@@ -11,12 +11,12 @@ Users can focus on their business logic and solving problems, and less on the Ac
 The core library contains a number of discrete components that help abstract Accumulo operations. 
 <ol>
 <li><b>Cell</b>: label/value pairs that typically mark a single string or byte[] value with some meaningful context (usually the qualifier from the Key/Value pair). Users can use one of the prebuilt cell types, or implement their own with annotations.</li> 
-<li>CellGroup -> collection of cells with a tag (usually the rowId from the Key/Value pair).</li>
-<li>Parameters -> lets you supply parameters required for Accumulo scan and writes (user,pass, start-key, end-key, iterators, etc).</li>
-<li>CellTransformer -> function that tells the reader how to take Key/Value pairs and build Cells and Cell groups from the scanning results.</li>
-<li>Reader -> once you define your parameters, you can call read() and get back transformed cells.</li> 
-<li>Extractor -> once you have collections of CellGroups and Cells, the extractors help you dereference the cell label/value pairs based on filter patterns or direct lookup on known labels.</li> 
-<li>Writer -> given one or more CellGroup(s), the writer will generate the correct Mutations and persist back to Accumulo. (Note: At this time, this has functionally has not be tested.)</li>
+<li><b>CellGroup</b>: collection of cells with a tag (usually the rowId from the Key/Value pair).</li>
+<li><b>Parameters</b> lets you supply parameters required for Accumulo scan and writes (user,pass, start-key, end-key, iterators, etc).</li>
+<li><b>CellTransformer</b>function that tells the reader how to take Key/Value pairs and build Cells and Cell groups from the scanning results.</li>
+<li><b>Reader</b>once you define your parameters, you can call read() and get back transformed cells.</li> 
+<li><b>Extractor</b>once you have collections of CellGroups and Cells, the extractors help you dereference the cell label/value pairs based on filter patterns or direct lookup on known labels.</li> 
+<li><b>Writer</b>given one or more CellGroup(s), the writer will generate the correct Mutations and persist back to Accumulo. (Note: At this time, this has functionally has not be tested.)</li>
 </ol>
 
 ## What this API provides ##
