@@ -161,6 +161,14 @@ public class SingleMultiValueCellExtractor
         return CellReflector.getValueAsInstance(cls, cells.iterator().next());
     }
 
+    public <C> String getLabel(C cell) throws CellExtractorException {
+       return CellReflector.getLabelAsString(cell);
+    }
+
+    public <C> String getStringValue(C cell) throws CellExtractorException {
+        return CellReflector.getValueAsString(cell);
+    }
+
     private <C> void checkForOneCell(Collection<C> cells) throws CellExtractorException {
         if(cells.size() > 1)
             throw new CellExtractorException("Too many values for single cell get", ErrorType.TOO_MANY_FIELDS);
