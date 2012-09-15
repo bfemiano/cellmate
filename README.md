@@ -9,14 +9,14 @@ Users can focus on their business logic and solving problems, and less on the Ac
 ## What is Cellmate? ##
 
 The core library contains a number of discrete components that help abstract Accumulo operations. 
-
-Cell: label/value pairs that typically mark a single string or byte[] value with some meaningful context (usually the qualifier from the Key/Value pair). Users can use one of the prebuilt cell types, or implement their own with annotations. 
-CellGroup: collection of cells with a tag (usually the rowId from the Key/Value pair).
-Parameters: Lets you supply common query parameters required for Accumulo scan (user,pass, start-key, end-key, iterators, etc)
-CellTransformer: Function that tells the reader how to take Key/Value pairs and build Cells and Cell groups from the scanning results.
-Reader: Once you define your parameters, you can call read() and get back transformed cells. 
-Extractor: Once you have collections of CellGroups and Cells, the extractors help you dereference the cell label/value pairs based on filter patterns or direct lookup on known labels. 
-Writer: Given one or more CellGroup(s), the writer will generate the correct Mutations and persist back to Accumulo. (Note: At this time, this has functionally has not be tested.)
+<ol>
+<li>Cell: label/value pairs that typically mark a single string or byte[] value with some meaningful context (usually the qualifier from the Key/Value pair). Users can use one of the prebuilt cell types, or implement their own with annotations.</li> 
+<li>CellGroup: collection of cells with a tag (usually the rowId from the Key/Value pair).</li>
+<li>Parameters: Lets you supply common query parameters required for Accumulo scan (user,pass, start-key, end-key, iterators, etc).</li>
+<li>CellTransformer: Function that tells the reader how to take Key/Value pairs and build Cells and Cell groups from the scanning results.</li>
+<li>Reader: Once you define your parameters, you can call read() and get back transformed cells.</li> 
+<li>Extractor: Once you have collections of CellGroups and Cells, the extractors help you dereference the cell label/value pairs based on filter patterns or direct lookup on known labels.</li> 
+<li>Writer: Given one or more CellGroup(s), the writer will generate the correct Mutations and persist back to Accumulo. (Note: At this time, this has functionally has not be tested.)</li>
 
 ## What this API provides ##
 
