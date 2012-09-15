@@ -10,7 +10,7 @@ Users can focus on their business logic and solving problems, and less on the Ac
 
 The core library contains a number of discrete components that help abstract Accumulo operations. 
 <ol>
-<li>Cell -> label/value pairs that typically mark a single string or byte[] value with some meaningful context (usually the qualifier from the Key/Value pair). Users can use one of the prebuilt cell types, or implement their own with annotations.</li> 
+<li><b>Cell</b>: label/value pairs that typically mark a single string or byte[] value with some meaningful context (usually the qualifier from the Key/Value pair). Users can use one of the prebuilt cell types, or implement their own with annotations.</li> 
 <li>CellGroup -> collection of cells with a tag (usually the rowId from the Key/Value pair).</li>
 <li>Parameters -> lets you supply parameters required for Accumulo scan and writes (user,pass, start-key, end-key, iterators, etc).</li>
 <li>CellTransformer -> function that tells the reader how to take Key/Value pairs and build Cells and Cell groups from the scanning results.</li>
