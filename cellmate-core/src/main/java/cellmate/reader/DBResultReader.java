@@ -7,9 +7,10 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 
 /**
- * User: bfemiano
- * Date: 8/27/12
- * Time: 12:15 AM
+ * Iterface DBResultReader
+ *
+ * @param <D> database item
+ * @param <C> cell class type
  */
 @Beta
 public interface DBResultReader<D, C> {

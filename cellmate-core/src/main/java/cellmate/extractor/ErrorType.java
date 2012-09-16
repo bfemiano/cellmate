@@ -1,9 +1,9 @@
 package cellmate.extractor;
 
 /**
- * User: bfemiano
- * Date: 9/10/12
- * Time: 2:12 PM
+ *
+ * Enum for different CellExtractionException types
+ *
  */
 public enum ErrorType {
 

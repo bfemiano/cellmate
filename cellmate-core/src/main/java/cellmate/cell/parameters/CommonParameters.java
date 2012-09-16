@@ -5,9 +5,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * User: bfemiano
- * Date: 9/4/12
- * Time: 3:08 PM
+ *  Holds common parameter values used across different BigTable implementations
  */
 public class CommonParameters implements Parameters {
 
@@ -23,7 +21,6 @@ public class CommonParameters implements Parameters {
     private CommonParameters(Builder builder){
         propertyMap = builder.propertyMap;
     }
-
 
     public int getMaxResults() {
         try {
@@ -57,6 +54,13 @@ public class CommonParameters implements Parameters {
         return getStrings(CF_AND_QUAL_LIST);
     }
 
+    /**
+     *
+     * @param paramName
+     * @return int
+     * @throws NoSuchElementException if no element by the specified paramName could be found
+     * @throws RuntimeException if class cannot be cast to integer.
+     */
     public int getInt(String paramName)
             throws NoSuchElementException {
         try {
@@ -67,6 +71,13 @@ public class CommonParameters implements Parameters {
         }
     }
 
+    /**
+     *
+     * @param paramName
+     * @return long
+     * @throws NoSuchElementException if no element by the specified paramName could be found
+     * @throws RuntimeException if class cannot be cast to long.
+     */
     public long getLong(String paramName) {
         try {
             Object obj = checkAndGet(paramName);
@@ -76,6 +87,13 @@ public class CommonParameters implements Parameters {
         }
     }
 
+    /**
+     *
+     * @param paramName
+     * @return String
+     * @throws NoSuchElementException if no element by the specified paramName could be found
+     * @throws RuntimeException if class cannot be cast to String.
+     */
     public String getString(String paramName) {
         try {
             Object obj = checkAndGet(paramName);
@@ -85,6 +103,13 @@ public class CommonParameters implements Parameters {
         }
     }
 
+    /**
+     *
+     * @param paramName
+     * @return boolean
+     * @throws NoSuchElementException if no element by the specified paramName could be found
+     * @throws RuntimeException if class cannot be cast to boolean.
+     */
     public boolean getBoolean(String paramName) {
         try {
             Object obj = checkAndGet(paramName);
@@ -94,6 +119,13 @@ public class CommonParameters implements Parameters {
         }
     }
 
+    /**
+     *
+     * @param paramName
+     * @return byte[]
+     * @throws NoSuchElementException if no element by the specified paramName could be found
+     * @throws RuntimeException if class cannot be cast to byte[].
+     */
     public byte[] getBytes(String paramName) {
         try {
             Object obj = checkAndGet(paramName);
@@ -103,6 +135,14 @@ public class CommonParameters implements Parameters {
         }
     }
 
+    /**
+     *
+     * @param cls class to which to cast the object to
+     * @param paramName
+     * @param <T> type of class
+     * @throws RuntimeException if class cannot be cast to byte[].
+     * @return an instance of T
+     */
     public <T> T getObjectAs(Class<T> cls, String paramName) {
         try {
             Object obj = checkAndGet(paramName);

@@ -11,9 +11,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * User: bfemiano
- * Date: 9/4/12
- * Time: 11:09 PM
+ * Accumulo specific scan/write parameters
+ *
  */
 public class AccumuloParameters implements Parameters {
 

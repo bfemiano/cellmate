@@ -14,95 +14,222 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: bfemiano
- * Date: 9/11/12
- * Time: 5:25 PM
+ * Static helper methods that offer concrete Cell transformers that cover a variety of
+ * common use cases for reading Accumulo Key/Value pairs into Cell groups.</br></br>
+ *
+ * The type-specific ValueQualToLabel methods set the cell label to the db qualifer, and the
+ * cell value to the db item value. Depending on which static method you call, you can optionally
+ * add ColumnFamily, and/or ColumnVisibility/Timestamp.  The different typed versions are useful
+ * for automatically reading byte[] values directly to other primative types, but can produce undesirable
+ * behavior if the raw byte[] contents in the DB value were not persisted as the desired type.</br></br>
+ *
+ * For instance, a String written as a Key/Value pair to a byte[] might not appear properly when read
+ * back into a double[], even if the actual String could be cast as a double.</br></br>
+ *
+ * For this reason, most people will be interested in the String and byte[] versions of the ValueQualToLabel() transformer
+ * series. See {@link cellmate.accumulo.reader.celltransformer.SecurityByteCellTransformer} and
+ * {@link cellmate.accumulo.reader.celltransformer.SecurityStringCellTransformer}</br></br>
+ *
+ * A few additional transformer implementations are provided that collect all the records in a common bag, apply artifical
+ * labels on demand, and offer qualifier and total row aggregations.
+ *
  */
 public class AccumuloCellTransformers {
 
-    //static helper methods for getting instances of useful transform implementations.
-
+    /**
+     * Get an instance of SecurityStringCellTransformer that reads qualifer to label, value to String value, and
+     * column family, column visibility, and timestamp.
+     *
+     * The slightly different method names offer convinent ways to grab different combinations of the above settings, including
+     * different value types and exlusion/inclusion of column family, column visibility, and timestamp.
+     *
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell> stringValueQualToLabelWithTime_ColVis_ColFam() {
         return new SecurityStringCellTransformer(true, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell> stringValueQualtoLabelWithTime_ColVis() {
         return new SecurityStringCellTransformer(true, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell> stringValueQualtoLabelWithColFam() {
         return new SecurityStringCellTransformer(false, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell> stringValueQualtoLabel() {
         return new SecurityStringCellTransformer(false, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> intValueQualToLabelWithTime_ColVis_ColFam() {
         return new SecurityIntCellTransformer(true, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> intValueQualtoLabelWithTime_ColVis() {
         return new SecurityIntCellTransformer(true, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> intValueQualtoLabelWithColFam() {
         return new SecurityIntCellTransformer(false, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> intValueQualtoLabel() {
         return new SecurityIntCellTransformer(false, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityLongValueCell> longValueQualToLabelWithTime_ColVis_ColFam() {
         return new SecurityLongCellTransformer(true, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityLongValueCell> longValueQualtoLabelWithTime_ColVis() {
         return new SecurityLongCellTransformer(true, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityLongValueCell> longValueQualtoLabelWithColFam() {
         return new SecurityLongCellTransformer(false, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityLongValueCell> longValueQualtoLabel() {
         return new SecurityLongCellTransformer(false, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityDoubleValueCell> doubleValueQualToLabelWithTime_ColVis_ColFam() {
         return new SecurityDoubleCellTransformer(true, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityDoubleValueCell> doubleValueQualtoLabelWithTime_ColVis() {
         return new SecurityDoubleCellTransformer(true, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityDoubleValueCell> doubleValueQualtoLabelWithColFam() {
         return new SecurityDoubleCellTransformer(false, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityDoubleValueCell> doubleValueQualtoLabel() {
         return new SecurityDoubleCellTransformer(false, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> bytesValueQualToLabelWithTime_ColVis_ColFam() {
         return new SecurityByteCellTransformer(true, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> bytesValueQualtoLabelWithTime_ColVis() {
         return new SecurityByteCellTransformer(true, false);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> bytesValueQualtoLabelWithColFam() {
         return new SecurityByteCellTransformer(false, true);
     }
 
+    /**
+     *
+     * {@link #stringValueQualToLabelWithTime_ColVis_ColFam()}
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> bytesValueQualtoLabel() {
         return new SecurityByteCellTransformer(false, false);
     }
 
-    public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> singleBagByteValueCells() {
+    /**
+     * Transformer that takes each incoming DB item and places in the same cell group. The DBReader will return
+     * one single Cell Group containing all the qualifiers and values see in the scan, regardless of which
+     * row key or column family they came from.
+     *
+     * Column family, column visibility, and timestamp are not written to the aux fields by this transformer.
+     *
+     * @return CellTransformer
+     */
+    public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> singleGroupByteValueCells() {
         return new CellTransformer<Map.Entry<Key, Value>, SecurityByteValueCell>() {
             public CellGroup<SecurityByteValueCell> apply(Map.Entry<Key, Value> dbItem,
                                                           CellGroup<SecurityByteValueCell> group)
@@ -116,7 +243,13 @@ public class AccumuloCellTransformers {
         };
     }
 
-    public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> singleBagByteValueCellsWithTime_ColVis_ColFam() {
+    /**
+     *
+     *
+     * {@link #singleGroupByteValueCells()}
+     * @return CellTransformer
+     */
+    public static CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> singleGroupByteValueCellsWithTime_ColVis_ColFam() {
         return new CellTransformer<Map.Entry<Key, Value>, SecurityByteValueCell>() {
             public CellGroup<SecurityByteValueCell> apply(Map.Entry<Key, Value> dbItem,
                                                           CellGroup<SecurityByteValueCell> group)
@@ -133,6 +266,17 @@ public class AccumuloCellTransformers {
         };
     }
 
+    /**
+     * Transformer that takes a mapping of which column families get a constant label. Useful if your
+     * column family contains a group of qualifiers with no values, where the context for those qualifiers
+     * is simply their existance in the column family itself.
+     *
+     * If a Key/Value pair has a ColumnFamily not found in the map, transformer normally by the same logic
+     * found in the normal string value transformer. See also {@link #stringValueQualtoLabel()}
+     *
+     * @param colFamToCommonLabel map of column families to apply common label.
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell> colFamToCommonLabelOnMatches(
             final Map<String, String> colFamToCommonLabel) {
         return new CellTransformer<Map.Entry<Key, Value>, SecurityStringValueCell>() {
@@ -156,6 +300,18 @@ public class AccumuloCellTransformers {
         };
     }
 
+    /**
+     * Aggregate transformer to read the Key/Value and for any matching the supplied qualifier,
+     * treat the Value byte[] as an integer. Return the average int value seen for all Key/Value
+     * containing the qualifier.
+     *
+     * null  DBItem flag is sent by the Aggregate reader to signal end of scan iteration.
+     *
+     * This class works in conjunction with {@link cellmate.reader.AggregateCellGroupingDBResultReader}
+     *
+     * @param qual to calculate average int value.
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, DoubleValueCell> averageSingleQual (final String qual)
     {
         return new CellTransformer<Map.Entry<Key, Value>, DoubleValueCell>() {
@@ -183,6 +339,17 @@ public class AccumuloCellTransformers {
         };
     }
 
+    /**
+     *  If reading Key/Values where the Value byte[] are integers, this transformer lets you
+     *  get an aggregate sum of all the integer values that match a given qualifier.
+     *
+     * null  DBItem flag is sent by the Aggregate reader to signal end of scan iteration.
+     *
+     * This class works in conjunction with {@link cellmate.reader.AggregateCellGroupingDBResultReader}
+     *
+     * @param qual to flag a Key/Value pair as an integer value and add to the sum.
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, IntValueCell> aggregateSingleQual(final String qual)
     {
         return new CellTransformer<Map.Entry<Key, Value>, IntValueCell>() {
@@ -204,6 +371,16 @@ public class AccumuloCellTransformers {
         };
     }
 
+    /**
+     * Same as aggregateSingleQual() but for multiple qualifiers.
+     *
+     * null DBItem flag is sent by the Aggregate reader to signal end of scan iteration.
+     *
+     * This class works in conjunction with {@link cellmate.reader.AggregateCellGroupingDBResultReader}
+     *
+     * @param qualifiers to flag a Key/Value pair as an integer value and add to the sum.
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, IntValueCell> aggregateMultiQual(final String... qualifiers)
     {
         return new CellTransformer<Map.Entry<Key, Value>, IntValueCell>() {
@@ -235,6 +412,16 @@ public class AccumuloCellTransformers {
         };
     }
 
+    /**
+     * Transformer that ignores the DB item contents and simply tallys how many discrete Key/Value
+     * pairs were seen by the scan.
+     *
+     * null DBItem flag is sent by the Aggregate reader to signal end of scan iteration.
+     *
+     * This class works in conjunction with {@link cellmate.reader.AggregateCellGroupingDBResultReader}
+     *
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, IntValueCell> totalKeyValueCount()
     {
         return new CellTransformer<Map.Entry<Key, Value>, IntValueCell>() {
@@ -253,6 +440,16 @@ public class AccumuloCellTransformers {
         };
     }
 
+    /**
+     * Trnasformer that ignores DB item contents and simply tallys how many unique rowIDs
+     * were seen by the scan.
+     *
+     * null DBItem flag is sent by the Aggregate reader to signal end of scan iteration.
+     *
+     * This class works in conjunction with {@link cellmate.reader.AggregateCellGroupingDBResultReader}
+     *
+     * @return CellTransformer
+     */
     public static CellTransformer<Map.Entry<Key,Value>, IntValueCell> distinctRowIDCount()
     {
         return new CellTransformer<Map.Entry<Key, Value>, IntValueCell>() {

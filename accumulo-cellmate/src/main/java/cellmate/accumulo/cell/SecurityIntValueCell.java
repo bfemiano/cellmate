@@ -4,9 +4,10 @@ import cellmate.cell.*;
 import com.google.common.annotations.Beta;
 
 /**
- * User: bfemiano
- * Date: 9/5/12
- * Time: 2:13 PM
+ * Cell implementation with a int value and Auxiliary fields
+ * to hold ColumnVisibility and Timestamp.
+ *
+ * ColumnFamily present.
  */
 @Beta
 @Cell

@@ -9,9 +9,12 @@ import org.apache.accumulo.core.data.Value;
 import java.util.Map;
 
 /**
- * User: bfemiano
- * Date: 9/5/12
- * Time: 2:24 PM
+ * Cell transformer for byte[] value contents.
+ * Qualifer is written as label.</br></br>
+ *
+ *  Optional flags to ignore column family, column visibility, and timestamp
+ *
+ * {@link AccumuloCellTransformers}
  */
 public class SecurityByteCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityByteValueCell> {
@@ -28,6 +31,14 @@ public class SecurityByteCellTransformer
         recordCF = false;
     }
 
+    /**
+     * Convert Key/Value pair to CellGroup or new cell group if new rowId is seen
+     * in the Key/Value pair.
+     *
+     * @param dbItem key/value pair
+     * @param cellGroup
+     * @return CellGroup
+     */
     public CellGroup<SecurityByteValueCell> apply(Map.Entry<Key, Value> dbItem,
                                                   CellGroup<SecurityByteValueCell> cellGroup) {
         String activeRowId = dbItem.getKey().getRow().toString();

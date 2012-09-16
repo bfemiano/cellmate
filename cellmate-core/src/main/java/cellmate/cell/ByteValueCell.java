@@ -5,9 +5,9 @@ import com.google.common.annotations.Beta;
 import java.util.Arrays;
 
 /**
- * User: bfemiano
- * Date: 8/28/12
- * Time: 9:24 PM
+ * Holds its value as a byte array. Not extendable.
+ *
+ * Fields must be read using Reflection. See {@link cellmate.extractor.CellReflector}
  */
 @Beta
 @Cell

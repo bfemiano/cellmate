@@ -11,9 +11,12 @@ import java.nio.ByteBuffer;
 import java.util.Map;
 
 /**
- * User: bfemiano
- * Date: 9/5/12
- * Time: 2:59 PM
+ * Cell transformer for int value contents.
+ * Qualifer is written as label.</br></br>
+ *
+ *  Optional flags to ignore column family, column visibility, and timestamp
+ *
+ * {@link AccumuloCellTransformers}
  */
 public class SecurityIntCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityIntValueCell> {

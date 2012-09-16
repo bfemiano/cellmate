@@ -3,9 +3,7 @@ package cellmate.cell.parameters;
 import java.util.NoSuchElementException;
 
 /**
- * User: bfemiano
- * Date: 9/4/12
- * Time: 3:06 PM
+ * getters for common types of primative and instance parameter arguments.
  */
 public interface Parameters {
 

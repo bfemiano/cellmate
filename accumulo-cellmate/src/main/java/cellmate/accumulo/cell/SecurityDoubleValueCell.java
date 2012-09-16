@@ -3,9 +3,10 @@ package cellmate.accumulo.cell;
 import cellmate.cell.*;
 
 /**
- * User: bfemiano
- * Date: 9/12/12
- * Time: 12:01 AM
+ * Cell implementation with a double value and Auxiliary fields
+ * to hold ColumnVisibility and Timestamp.
+ *
+ * ColumnFamily present.
  */
 @Cell
 public class SecurityDoubleValueCell {

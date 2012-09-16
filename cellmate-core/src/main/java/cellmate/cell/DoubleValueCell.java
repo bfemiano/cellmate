@@ -3,9 +3,9 @@ package cellmate.cell;
 import com.google.common.annotations.Beta;
 
 /**
- * User: bfemiano
- * Date: 9/3/12
- * Time: 11:46 PM
+ * Cell that holds value as double. Not extendable.
+ *
+ * Fields must be read using Reflection. See {@link cellmate.extractor.CellReflector}
  */
 @Beta
 @Cell

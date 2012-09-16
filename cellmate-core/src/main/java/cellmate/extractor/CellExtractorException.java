@@ -1,9 +1,10 @@
 package cellmate.extractor;
 
 /**
- * User: bfemiano
- * Date: 9/3/12
- * Time: 11:17 PM
+ * Checked exception to capture detailed information about the type of
+ * error which occured.
+ *
+ * See {@link cellmate.extractor.ErrorType}
  */
 public class CellExtractorException extends Exception {
 

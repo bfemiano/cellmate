@@ -12,9 +12,12 @@ import java.nio.DoubleBuffer;
 import java.util.Map;
 
 /**
- * User: bfemiano
- * Date: 9/12/12
- * Time: 12:03 AM
+ * Cell transformer for double value contents.
+ * Qualifer is written as label.</br></br>
+ *
+ *  Optional flags to ignore column family, column visibility, and timestamp
+ *
+ * {@link AccumuloCellTransformers}
  */
 public class SecurityDoubleCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityDoubleValueCell> {

@@ -8,9 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * User: bfemiano
- * Date: 9/4/12
- * Time: 5:45 PM
+ * Required for Cells to be used on write.
  */
 @Beta
 @Target(value={ElementType.FIELD})

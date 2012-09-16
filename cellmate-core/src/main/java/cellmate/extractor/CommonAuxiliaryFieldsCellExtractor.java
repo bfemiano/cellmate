@@ -10,16 +10,23 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * User: bfemiano
- * Date: 8/29/12
- * Time: 1:32 PM
+ *
+ * Extractor that helps parse named auxiliary values from cells, including
+ * timestamp.
+ *
  */
 @Beta
 public class CommonAuxiliaryFieldsCellExtractor implements CellExtractor{
 
-    private SingleMultiValueCellExtractor basicExtractor =
-            new SingleMultiValueCellExtractor();
-
+    /**
+     *
+     * Filter cells that don't have a field with supplied name.
+     *
+     * @param cells to filter
+     * @param tsfieldName named auxiliary field for timestamp.
+     * @param <C> cell class type
+     * @return Collection of filtered cells
+     */
     public <C> Collection<C> getCellsWithTimestamp(List<C> cells, final String tsfieldName) {
         return filterCellsByPredicate(cells, new Predicate<C>() {
             public boolean apply(C c) {
@@ -32,7 +39,16 @@ public class CommonAuxiliaryFieldsCellExtractor implements CellExtractor{
         });
     }
 
-
+    /**
+     *
+     * Filters a given collection of cells for the one containing the most recent timestamp.
+     *
+     * @param cells to filter
+     * @param tsfieldName named auxiliary field for timestamp.
+     * @param <C> cell class type
+     * @return C cell with the most recent timestamp
+     * @throws CellExtractorException if error reading cell auxiliary value
+     */
     public <C> C getCellWithMostRecentTimestamp(List<C> cells, final String tsfieldName)
             throws CellExtractorException{
         Collection<C> cellsWithTimestamp = getCellsWithTimestamp(cells, tsfieldName);
@@ -49,13 +65,29 @@ public class CommonAuxiliaryFieldsCellExtractor implements CellExtractor{
         });
     }
 
-
+    /**
+     *
+     *
+     * @param cell to parse timestamp
+     * @param tsFieldName  auxiliary field name for timestamp
+     * @param <C> cell class type
+     * @return long timestamp
+     * @throws CellExtractorException if error reading cell auxiliary value
+     */
     public <C> Long getTimestamp(C cell, String tsFieldName)
             throws CellExtractorException{
         Long result = getNamedAuxiliaryValue(Long.class, cell, tsFieldName);
         return result;
     }
 
+    /**
+     * general purpose filter method to return only cells matching the supplied predicate.
+     *
+     * @param cells to filter
+     * @param predicate to filter on
+     * @param <C> cell class type
+     * @return filtered cells.
+     */
     public <C> Collection<C> filterCellsByPredicate(List<C> cells, Predicate<? super C> predicate) {
         return Collections2.filter(cells, predicate);
     }

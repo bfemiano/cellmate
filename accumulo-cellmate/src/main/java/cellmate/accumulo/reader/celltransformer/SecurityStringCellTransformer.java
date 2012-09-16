@@ -10,9 +10,12 @@ import org.apache.accumulo.core.data.Value;
 import java.util.Map;
 
 /**
- * User: bfemiano
- * Date: 9/5/12
- * Time: 1:15 AM
+ * Cell transformer for String value contents.
+ * Qualifer is written as label.</br></br>
+ *
+ *  Optional flags to ignore column family, column visibility, and timestamp
+ *
+ * {@link AccumuloCellTransformers}
  */
 public class SecurityStringCellTransformer
         implements CellTransformer<Map.Entry<Key,Value>, SecurityStringValueCell>{

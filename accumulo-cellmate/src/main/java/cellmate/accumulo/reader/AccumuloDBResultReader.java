@@ -23,9 +23,11 @@ import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 /**
- * User: bfemiano
- * Date: 9/4/12
- * Time: 11:21 PM
+ * Handles reading Accumulo parameters, performing scans over Accumulo,
+ * and using the supplied CellTransformer to build CellGroups to return.
+ *
+ *
+ * @param <C> cell type.
  */
 public class AccumuloDBResultReader<C>
         implements DBResultReader<Map.Entry<Key,Value>,C> {
@@ -51,6 +53,14 @@ public class AccumuloDBResultReader<C>
         this.baseReader = baseReader;
     }
 
+    /**
+     * Constructor
+     *
+     * builds an Accumulo instance by expecting to find the instance name and comma-delimted zookepers in the parameter list.
+     * Defaults the delegate reader to the {@link BasicCellGroupingDBResultReader}
+     *
+     * @param parameters
+     */
     public AccumuloDBResultReader(AccumuloParameters parameters){
         try {
             String instanceName = parameters.getInstanceName();
@@ -62,23 +72,50 @@ public class AccumuloDBResultReader<C>
         }
     }
 
+    /**
+     *  Constructor
+     *
+     * @param baseReader injectable reader instance to delegte operations to.
+     * @param parameters scan parameters.
+     */
     public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, AccumuloParameters parameters) {
         this(parameters);
         this.baseReader = baseReader;
     }
 
+    /**
+     *  Constructor
+     *
+     * @param baseReader injectable reader instance to delegte operations to.
+     * @param instanceName Accumulo instance
+     * @param zookeepers comma-delimited zookeeper list.
+     */
     public AccumuloDBResultReader(DBResultReader<Map.Entry<Key,Value>, C> baseReader, String instanceName, String zookeepers){
         instance = new ZooKeeperInstance(instanceName, zookeepers);
         this.baseReader = baseReader;
     }
 
+    /**
+     * Constructor
+     *
+     * @param instanceName Accumulo instance name.
+     * @param zookeepers comma-delimited list.
+     */
     public AccumuloDBResultReader(String instanceName, String zookeepers){
         instance = new ZooKeeperInstance(instanceName, zookeepers);
         baseReader = new BasicCellGroupingDBResultReader<Map.Entry<Key, Value>, C>();
     }
 
 
-
+    /**
+     *  Expects AccumuloParameters. Builds the connection instance and performs the scan
+     *  with the supplied parameters.
+     *
+     * @param params query parameters specific to Accumulo.
+     * @param transformer responsible for building cells and cell groups from DB scan results.
+     * @return list of cell groups generated.
+     * @throws IllegalArgumentException if no table present or table not found.
+     */
     public List<CellGroup<C>> read(Parameters params, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
         AccumuloParameters parameters = AccumuloParameterOps.checkParamType(params);
         Connector connector = AccumuloParameterOps.getConnectorFromParameters(instance, parameters);
@@ -103,6 +140,15 @@ public class AccumuloDBResultReader<C>
         return scan;
     }
 
+    /**
+     * Delegates to baseReader read(), which by default is {@link BasicCellGroupingDBResultReader}
+     * unless otherwise changed by the client at construction.
+     *
+     * @param dbItems items to scan.
+     * @param parameters query scan parameters.
+     * @param transformer cell generation function.
+     * @return  list of cell groups.
+     */
     public List<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
                                    Parameters parameters,
                                    CellTransformer<Map.Entry<Key, Value>, C> transformer) {

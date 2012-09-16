@@ -6,9 +6,11 @@ import java.io.BufferedReader;
 import java.util.Arrays;
 
 /**
- * User: bfemiano
- * Date: 8/26/12
- * Time: 10:57 AM
+ *
+ * Holds its value as a String instance. Not extendable.
+ *
+ * Fields must be read using Reflection. See {@link cellmate.extractor.CellReflector}
+ *
  */
 @Beta
 @Cell

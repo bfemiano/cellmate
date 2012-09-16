@@ -3,9 +3,9 @@ package cellmate.cell;
 import com.google.common.annotations.Beta;
 
 /**
- * User: bfemiano
- * Date: 8/28/12
- * Time: 9:25 PM
+ * Holds its content as a integer. Not extendable
+ *
+ * Fields must be read using Reflection. See {@link cellmate.extractor.CellReflector}
  */
 @Beta
 @Cell

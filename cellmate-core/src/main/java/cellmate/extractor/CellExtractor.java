@@ -7,9 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * User: bfemiano
- * Date: 8/27/12
- * Time: 7:03 PM
+ * Interface CellExtractor.
+ *
  */
 @Beta
 public interface CellExtractor {

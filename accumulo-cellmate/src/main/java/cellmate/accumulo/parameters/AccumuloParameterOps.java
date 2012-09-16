@@ -10,14 +10,21 @@ import org.apache.accumulo.core.security.Authorizations;
 import java.util.NoSuchElementException;
 
 /**
- * User: bfemiano
- * Date: 9/12/12
- * Time: 2:09 PM
+ * Static helper methods to generate Accumulo components from user-provided parameters
  */
 public class AccumuloParameterOps {
 
 
-
+    /**
+     *  Given an instance and a set of parameters, return a Connector for
+     *  the given instance. The parameters are required to have user/pass.
+     *
+     * @param instance Accumulo instance reference.
+     * @param parameters query options containing user/pass.
+     * @return Connector for the given user.
+     * @throws IllegalArgumentException if missing user/pass
+     * @throws RuntimeException if AccumuloSecurityException or general AccumuloException occurs.
+     */
     public static Connector getConnectorFromParameters(Instance instance, AccumuloParameters parameters) {
         Connector connector;
         try {
@@ -34,6 +41,13 @@ public class AccumuloParameterOps {
         return connector;
     }
 
+    /**
+     * Given a connector, lookup and return the user Authorizations.
+     *
+     * @param connector
+     * @return Authorizations for the given user.
+     * @throws RuntimeException if AccumuloSecurityException or general AccumuloException occurs.
+     */
     public static Authorizations getAuthsFromConnector(Connector connector) {
         try {
             return connector.securityOperations().getUserAuthorizations(connector.whoami());
@@ -44,6 +58,13 @@ public class AccumuloParameterOps {
         }
     }
 
+    /**
+     * Verify the supplied Parameters instance is of type {@link cellmate.accumulo.parameters.AccumuloParameters}
+     *
+     * @param params query parameters
+     * @return AccumuloParameters
+     * @throws IllegalArgumentException if parameter type is not  {@link cellmate.accumulo.parameters.AccumuloParameters}
+     */
     public static AccumuloParameters checkParamType(Parameters params){
         if(!(params instanceof AccumuloParameters)){
             throw new IllegalArgumentException("ReadParameter implementation must be " +

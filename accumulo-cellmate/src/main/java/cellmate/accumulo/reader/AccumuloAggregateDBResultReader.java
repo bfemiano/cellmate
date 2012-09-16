@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * User: bfemiano
- * Date: 9/12/12
- * Time: 1:04 AM
+ * Accumulo specific DB implementation that delegates to the core
+ * Accumulo DB result reader with an injected instance of
+ * AggregateCellGroupingDBResultReader to handle cell aggregations over Accumulo
+ * records.
+ *
+ * @param <C> cell type class.
  */
 public class AccumuloAggregateDBResultReader<C>
         implements DBResultReader<Map.Entry<Key,Value>,C> {
@@ -49,11 +52,26 @@ public class AccumuloAggregateDBResultReader<C>
     }
 
 
+    /**
+     * {@link AccumuloDBResultReader #read()}
+     *
+     * @param dbItems
+     * @param parameters
+     * @param transformer
+     * @return List of cells
+     */
     public List<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
                                    Parameters parameters, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
          return coreResultReader.read(dbItems, parameters, transformer);
     }
 
+    /**
+     * {@link AccumuloDBResultReader #read()}
+     *
+     * @param parameters
+     * @param transformer
+     * @return List of cells
+     */
     public List<CellGroup<C>> read(Parameters parameters, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
         return coreResultReader.read(parameters, transformer);
     }

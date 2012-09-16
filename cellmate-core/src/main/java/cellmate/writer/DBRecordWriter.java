@@ -12,6 +12,13 @@ import cellmate.extractor.CellExtractorException;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
+/**
+ * Interface DBRecordWriter
+ *
+ *
+ * @param <D> db write object
+ * @param <C> cell class type
+ */
 @Beta
 public interface DBRecordWriter<D,C>  {
 

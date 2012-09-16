@@ -6,9 +6,13 @@ import cellmate.extractor.CellExtractorException;
 import java.util.List;
 
 /**
- * User: bfemiano
- * Date: 8/30/12
- * Time: 2:39 AM
+ * Iterface DBItemTransformer
+ *
+ * Transformers cells to db write objects.
+ *
+ *
+ * @param <D> datbase write object
+ * @param <C>  cell class type
  */
 public interface DBItemTransformer<D,C> {
 

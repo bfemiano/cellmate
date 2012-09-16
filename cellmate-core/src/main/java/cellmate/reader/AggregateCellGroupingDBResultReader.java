@@ -10,9 +10,12 @@ import com.google.common.collect.ImmutableList;
 import java.util.NoSuchElementException;
 
 /**
- * User: bfemiano
- * Date: 8/29/12
- * Time: 12:16 AM
+ * Iterates over database results and applies the transformer to
+ * produce cells.
+ *
+ *
+ * @param <D> database from a scan
+ * @param <C> cell class.
  */
 @Beta
 public class AggregateCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>{
@@ -24,6 +27,22 @@ public class AggregateCellGroupingDBResultReader<D,C> implements DBResultReader<
         throw new UnsupportedOperationException(UNSUPPORTED_OP);
     }
 
+    /**
+     *    Reads through database records that come back from scan, usually Key/Value pairs.
+     *    For each item, apply a cell transformer.
+     *
+     *    After the final iteration, one more application of the transformer is
+     *    passed with null. This serves as a flag that cell transformers can use to
+     *    return aggregate summaries of everything that occured during iteration.
+     *
+     *    If there was DB item iteration, add the final result to the list of cell groups
+     *    to return. Otherwise return an empty list.
+     *
+     * @param items database items produce during scan
+     * @param parameters scan parameters
+     * @param transformer  cell transformer to produce cells from db items
+     * @return ImmutableList
+     */
     public ImmutableList<CellGroup<C>> read(Iterable<D> items,
                                             Parameters parameters,
                                             CellTransformer<D, C> transformer) {

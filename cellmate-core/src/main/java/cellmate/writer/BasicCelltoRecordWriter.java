@@ -10,14 +10,24 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * User: bfemiano
- * Date: 8/29/12
- * Time: 12:18 PM
+ * Takes cell groups of class represented by the parameterized C
+ * and produces DB write objects.
+ *
+ * @param <D> database write objects
+ * @param <C> cell
  */
 @Beta
 public class BasicCelltoRecordWriter<D,C> implements DBRecordWriter<D,C> {
 
-
+    /**
+     *
+     *
+     * @param groups cells to persist
+     * @param parameters query options
+     * @param transformer function to produce DB write objects from cells.
+     * @return ImmutableList of DB write objects.
+     * @throws CellExtractorException error occured reading cell contents.
+     */
     public ImmutableList<D> write(Iterable<CellGroup<C>> groups, Parameters parameters, DBItemTransformer<D,C> transformer)
         throws CellExtractorException{
         ImmutableList.Builder<D> list = ImmutableList.builder();
