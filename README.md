@@ -1,5 +1,5 @@
 # Cellmate #
-<a href="https://cellmate-docs.s3.amazonaws.com/javadoc/">Java API </a>
+<a href="https://cellmate-docs.s3.amazonaws.com/javadoc/index.html">Java API </a>
 
 ## Data abstraction over Accumulo ##
 
