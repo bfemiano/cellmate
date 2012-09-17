@@ -11,6 +11,5 @@
     <modules>
         <module>cellmate-core</module>
         <module>accumulo-cellmate</module>
-        <module>hbase-cellmate</module>
     </modules>
 </project>
