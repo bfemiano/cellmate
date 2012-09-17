@@ -5,7 +5,7 @@
 
 <a href="www.http://accumulo.apache.org/">http://accumulo.apache.org/</a>
 
-The Cellmate API lets you build domain objects and DAO layers over a simple and concise API, while avoiding the internals of the raw Accumulo API. The net result is less biolerplate and strong decoupling between your domain objects and Accumulo operations.
+The Cellmate API lets you build domain objects and DAO layers over a simple and concise API, while avoiding the internals of the raw Accumulo API. The net result is less biolerplate code and a strong decoupling between your domain objects and Accumulo operations.
 
 Users can focus on their business logic and solving problems, and less on the Accumulo API details of setting up scans, connections, authorizations, filters, and other requirements. All of that is handled for you by Cellmate. 
 
