@@ -1,7 +1,5 @@
-## Simple to use ##
-
-<p><a href="https://github.com/bfemiano/cellmate/wiki">Getting Started</a></p>
-<p><a href="https://cellmate-docs.s3.amazonaws.com/javadoc/index.html">Javadocs API </a></p>
+### <p><a href="https://github.com/bfemiano/cellmate/wiki">Getting Started</a></p> ### 
+### <p><a href="https://cellmate-docs.s3.amazonaws.com/javadoc/index.html">Javadocs API </a></p> ###
 
 ## Data abstraction over Apache Accumulo ##
 
