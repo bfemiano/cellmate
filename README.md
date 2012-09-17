@@ -38,7 +38,7 @@ The core library contains a number of discrete components that help abstract Acc
 Licensed AS-IS under Apache License 2.0
 
 ## Apache Accumulo ##
-<a href="www.http://accumulo.apache.org/"/>
+<a href="www.http://accumulo.apache.org/">http://accumulo.apache.org/</a>
 
 
 
