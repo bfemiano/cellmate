@@ -1,9 +1,9 @@
-## Learn the basics ##
+## Simple to use ##
 
 <p><a href="https://github.com/bfemiano/cellmate/wiki">Getting Started</a></p>
 <p><a href="https://cellmate-docs.s3.amazonaws.com/javadoc/index.html">Javadocs API </a></p>
 
-## Data abstraction over Apache Accumulo(http://accumulo.apache.org/) ##
+## Data abstraction over Apache Accumulo ##
 
 The Cellmate API lets you build domain objects and DAO layers over its simple and concise cell API, instead of the raw Accumulo Key/Value pairs. The net result is less biolerplate and strong decoupling between your domain objects and Accumulo operations.
 
