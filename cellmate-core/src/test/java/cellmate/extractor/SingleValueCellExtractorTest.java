@@ -1,6 +1,7 @@
 package cellmate.extractor;
 
 import cellmate.cell.*;
+import com.google.common.base.Predicate;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
