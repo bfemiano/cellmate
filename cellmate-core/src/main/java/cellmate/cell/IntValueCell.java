@@ -3,7 +3,7 @@ package cellmate.cell;
 import com.google.common.annotations.Beta;
 
 /**
- * Holds its content as a integer. Not extendable
+ * Cell that holds its content as a integer. Not extendable
  *
  * Fields must be read using Reflection. See {@link cellmate.extractor.CellReflector}
  */

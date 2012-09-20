@@ -58,6 +58,10 @@ public class MockParameters implements Parameters {
         return commonParameters.getStrings(paramName);
     }
 
+    public boolean hasKey(String paramName) {
+        return propertyMap.containsKey(paramName);
+    }
+
     private Object checkAndGet(String paramName) {
         if(!propertyMap.containsKey(paramName))
             throw new NoSuchElementException(" no key found for property name: " + paramName);

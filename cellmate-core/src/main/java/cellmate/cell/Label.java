@@ -8,9 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * User: bfemiano
- * Date: 8/28/12
- * Time: 12:18 PM
+ * Required for use in {@link Cell} annotated classes by the Extractor API.
  */
 @Beta
 @Target(value={ElementType.FIELD})

@@ -6,9 +6,8 @@ import cellmate.extractor.CellExtractorException;
 import java.util.List;
 
 /**
- * Iterface DBItemTransformer
- *
- * Transformers cells to db write objects.
+ * Allows customizable database write object generation based on
+ * the contents of a particular cell group.
  *
  *
  * @param <D> datbase write object

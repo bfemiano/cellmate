@@ -10,20 +10,23 @@ import com.google.common.collect.ImmutableList;
 import java.util.NoSuchElementException;
 
 /**
- * Iterates over database results and applies the transformer to
+ * Iterates over key/value results and applies the transformer to
  * produce cells.
  *
+ * Unlike the {@link BasicCellGroupingDBResultReader}, this class calls
+ * the transformer one last time passing null. Cell transformers wishing to
+ * aggregate results can use this reader and the final null value it provides
+ * as a single to output one or more aggregate cells.
  *
- * @param <D> database from a scan
- * @param <C> cell class.
+ *
+ * @param <D> key/value pair from database scan
  */
 @Beta
-public class AggregateCellGroupingDBResultReader<D,C> implements DBResultReader<D,C>{
+public class AggregateCellGroupingDBResultReader<D> implements DBResultReader<D>{
 
-    private CellGroup<C> EMPTY_INITIAL_GROUP = CellGroup.emptyGroup();
     private static final String UNSUPPORTED_OP = "Aggregate cell reader needs to be sent an iterable and transformer";
 
-    public ImmutableList<CellGroup<C>> read(Parameters parameters, CellTransformer<D, C> transformer) {
+    public <C> ImmutableList<CellGroup<C>> read(Parameters parameters, CellTransformer<D, C> transformer) {
         throw new UnsupportedOperationException(UNSUPPORTED_OP);
     }
 
@@ -43,9 +46,10 @@ public class AggregateCellGroupingDBResultReader<D,C> implements DBResultReader<
      * @param transformer  cell transformer to produce cells from db items
      * @return ImmutableList
      */
-    public ImmutableList<CellGroup<C>> read(Iterable<D> items,
+    public <C> ImmutableList<CellGroup<C>> read(Iterable<D> items,
                                             Parameters parameters,
                                             CellTransformer<D, C> transformer) {
+        CellGroup<C> EMPTY_INITIAL_GROUP = CellGroup.emptyGroup();
         ImmutableList.Builder<CellGroup<C>> list = ImmutableList.builder();
         CellGroup<C> result = EMPTY_INITIAL_GROUP;
         CellGroup<C> previous = EMPTY_INITIAL_GROUP;

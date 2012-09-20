@@ -16,6 +16,6 @@
  * limitations under the License.
  */
 /**
- * reading and transforming database objects into cell groups.
+ * reading and transforming database key/value pairs into cell groups.
  */
 package cellmate.reader;

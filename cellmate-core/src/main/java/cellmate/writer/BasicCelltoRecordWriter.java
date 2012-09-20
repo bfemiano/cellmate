@@ -10,14 +10,17 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 /**
- * Takes cell groups of class represented by the parameterized C
- * and produces DB write objects.
+ * Takes cell groups and produces a list of database write objects.
  *
- * @param <D> database write objects
- * @param <C> cell
+ * This writer implementation simply adds all the database items that
+ * return from the transformer to a list. Once every cell group to be written
+ * has been processed, return the list of database objects.
+ *
+ *
+ * @param <D> database write objects.
  */
 @Beta
-public class BasicCelltoRecordWriter<D,C> implements DBRecordWriter<D,C> {
+public class BasicCelltoRecordWriter<D> implements DBRecordWriter<D> {
 
     /**
      *
@@ -26,9 +29,10 @@ public class BasicCelltoRecordWriter<D,C> implements DBRecordWriter<D,C> {
      * @param parameters query options
      * @param transformer function to produce DB write objects from cells.
      * @return ImmutableList of DB write objects.
+     * @param <C> cell class type
      * @throws CellExtractorException error occured reading cell contents.
      */
-    public ImmutableList<D> write(Iterable<CellGroup<C>> groups, Parameters parameters, DBItemTransformer<D,C> transformer)
+    public <C> ImmutableList<D> write(Iterable<CellGroup<C>> groups, Parameters parameters, DBItemTransformer<D,C> transformer)
         throws CellExtractorException{
         ImmutableList.Builder<D> list = ImmutableList.builder();
         List<D> dbItems = Lists.newArrayList();
@@ -40,7 +44,7 @@ public class BasicCelltoRecordWriter<D,C> implements DBRecordWriter<D,C> {
         return list.build();
     }
 
-    public ImmutableList<D> write(Parameters parameters, DBItemTransformer<D,C> transformer) {
+    public <C> ImmutableList<D> write(Parameters parameters, DBItemTransformer<D,C> transformer) {
         throw new UnsupportedOperationException("this implementation requires an iterable");
     }
 }

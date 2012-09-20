@@ -4,6 +4,8 @@ package cellmate.extractor;
  * Checked exception to capture detailed information about the type of
  * error which occured.
  *
+ * calling getType() will give a hint about the error that occured.
+ *
  * See {@link cellmate.extractor.ErrorType}
  */
 public class CellExtractorException extends Exception {

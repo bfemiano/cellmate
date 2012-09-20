@@ -9,7 +9,7 @@ import cellmate.cell.*;
  * ColumnFamily present.
  */
 @Cell
-public class SecurityDoubleValueCell {
+public final class SecurityDoubleValueCell {
 
     @Label
     private String label;

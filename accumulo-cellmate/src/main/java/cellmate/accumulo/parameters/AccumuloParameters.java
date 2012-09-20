@@ -24,7 +24,15 @@ public class AccumuloParameters implements Parameters {
     public static final String MAX_MEMORY_FOR_WRITE = "cellmate.write.max.memory";
     public static final String MAX_LATENCY_FOR_WRITE = "cellmate.write.max.latency";
     public static final String MAX_WRITE_THREADS = "cellmate.write.max.threads";
+    public static final String ROW_REGEX = "rowRegex";
+    public static final String COLF_REGEX = "colfRegex";
+    public static final String COLQ_REGEX = "colqRegex";
+    public static final String VALUE_REGEX = "valueRegex";
+    public static final String MULTI_RANGE = "cellmate.accumulo.multi.range";
+    public static final String NUM_QUERY_THREADS = "cellmate.accumulo.num.query.threads";
 
+
+    private static final int DEFAULT_NUM_QUERY_THREADS = 5;
     private static final long DEFAULT_MAX_MEMORY= 10000L;
     private static final long DEFAULT_MAX_LATENCY=1000L;
     private static final int DEFAULT_MAX_WRITE_THREADS = 4;
@@ -67,9 +75,22 @@ public class AccumuloParameters implements Parameters {
         return getString(INSTANCE_NAME);
     }
 
+    @SuppressWarnings(value="unchecked")
+    public Map<String, String> getStartEndKeys() {
+        return getMap(Map.class, MULTI_RANGE);
+    }
+
+    public int getNumQueryThreads() {
+        try {
+            return getInt(NUM_QUERY_THREADS);
+        } catch (NoSuchElementException e){
+            return DEFAULT_NUM_QUERY_THREADS;
+        }
+    }
+
     public long getMaxWriteMemory() {
         try {
-           return getLong(MAX_MEMORY_FOR_WRITE);
+            return getLong(MAX_MEMORY_FOR_WRITE);
         } catch (NoSuchElementException e){
             return DEFAULT_MAX_MEMORY;
         }
@@ -77,7 +98,7 @@ public class AccumuloParameters implements Parameters {
 
     public long getMaxWriteLatency() {
         try {
-           return getLong(MAX_LATENCY_FOR_WRITE);
+            return getLong(MAX_LATENCY_FOR_WRITE);
         } catch (NoSuchElementException e){
             return DEFAULT_MAX_LATENCY;
         }
@@ -85,7 +106,7 @@ public class AccumuloParameters implements Parameters {
 
     public int getMaxWriteThreads() {
         try {
-           return getInt(MAX_WRITE_THREADS);
+            return getInt(MAX_WRITE_THREADS);
         } catch (NoSuchElementException e){
             return DEFAULT_MAX_WRITE_THREADS;
         }
@@ -94,9 +115,9 @@ public class AccumuloParameters implements Parameters {
     public List<IteratorSetting> getIterators() {
         List<IteratorSetting> iterators = Lists.newArrayList();
         for(String key : propertyMap.keySet()) {
-             if(key.contains(ITERATOR_PREFIX)) {
-                 iterators.add(getObjectAs(IteratorSetting.class, key));
-             }
+            if(key.contains(ITERATOR_PREFIX)) {
+                iterators.add(getObjectAs(IteratorSetting.class, key));
+            }
         }
         return iterators;
     }
@@ -178,6 +199,19 @@ public class AccumuloParameters implements Parameters {
             return String[].class.cast(obj);
         } catch (ClassCastException e){
             throw new RuntimeException("could not cast value as String[]",e);
+        }
+    }
+
+    public boolean hasKey(String paramName) {
+        return propertyMap.containsKey(paramName) || commonParameters.hasKey(paramName);
+    }
+
+    public Map getMap(Class<Map> mapType, String paramName) {
+        try {
+            Object obj = checkAndGet(paramName);
+            return mapType.cast(obj);
+        } catch (ClassCastException e){
+            throw new RuntimeException("could not cast as value as map", e);
         }
     }
 
@@ -273,6 +307,36 @@ public class AccumuloParameters implements Parameters {
 
         public Builder addIteratorSetting(IteratorSetting iterator){
             propertyMap.put(ITERATOR_PREFIX + (iteratorPrefix++), iterator);
+            return this;
+        }
+
+        public Builder setRowRegex(String rowRegex){
+            propertyMap.put(ROW_REGEX, rowRegex);
+            return this;
+        }
+
+        public Builder setStartEndKeys(Map pairs) {
+            propertyMap.put(MULTI_RANGE, pairs);
+            return this;
+        }
+
+        public Builder setColFamRegex(String colFamRegex){
+            propertyMap.put(COLF_REGEX, colFamRegex);
+            return this;
+        }
+
+        public Builder setColQualRegex(String qualRegex){
+            propertyMap.put(COLQ_REGEX, qualRegex);
+            return this;
+        }
+
+        public Builder setValueRegex(String vRegex){
+            propertyMap.put(VALUE_REGEX, vRegex);
+            return this;
+        }
+
+        public Builder setNumQueryThreads(String queryThreads){
+            propertyMap.put(NUM_QUERY_THREADS, queryThreads);
             return this;
         }
 

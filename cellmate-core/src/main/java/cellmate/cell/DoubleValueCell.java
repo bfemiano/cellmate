@@ -9,7 +9,7 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 @Cell
-public class DoubleValueCell {
+public final class DoubleValueCell {
 
     @Label
     private String label;

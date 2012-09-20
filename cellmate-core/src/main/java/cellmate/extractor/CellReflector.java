@@ -10,9 +10,7 @@ import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 
 /**
- * Class CellReflector
- *
- * Collection of static methods to inspect Class instances that have been annotated with
+ *  Useful static methods to inspect Class instances that have been annotated with
  * {@link cellmate.cell.Cell} and read their contents.</br></br>
  *
  * This requires the class have annotated {@link cellmate.cell.Cell} and

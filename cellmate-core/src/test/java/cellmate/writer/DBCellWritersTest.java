@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class DBCellWritersTest {
 
-    private DBRecordWriter<MockMutation, StringValueCell> writer;
+    private DBRecordWriter<MockMutation> writer;
 
     ImmutableList<CellGroup<StringValueCell>> group1;
     ImmutableList<CellGroup<StringValueCell>> group2;
@@ -33,7 +33,7 @@ public class DBCellWritersTest {
 
     @BeforeClass
     public void setup() {
-        writer = new MockDBCellValueWriter<StringValueCell>();
+        writer = new MockDBCellValueWriter();
 
         StringValueCell cell1 = new StringValueCell("name", "brian", "info");
         StringValueCell cell2 = new StringValueCell("age", "11", "info");
@@ -137,7 +137,7 @@ public class DBCellWritersTest {
         assertEquals(group2.get(0).getInternalList().size(), 2);
         assertEquals(group2.get(1).getInternalList().size(), 2);
 
-        DBRecordWriter<MockMutation, StringValueCell> writer = new MockDBCellValueWriter<StringValueCell>();
+        DBRecordWriter<MockMutation> writer = new MockDBCellValueWriter();
         CommonParameters parameters = new CommonParameters.Builder().build();
 
         ImmutableList<MockMutation> mutations = null;
@@ -173,7 +173,7 @@ public class DBCellWritersTest {
 
         assertEquals(missingColFamGroup.size(), 1);
         assertEquals(missingColFamGroup.get(0).getInternalList().size(), 1);
-        DBRecordWriter<MockMutation, IntValueCell> writer = new MockDBCellValueWriter<IntValueCell>();
+        DBRecordWriter<MockMutation> writer = new MockDBCellValueWriter();
         CommonParameters parameters = new CommonParameters.Builder().build();
 
         try {
@@ -213,8 +213,7 @@ public class DBCellWritersTest {
 
         assertEquals(nullColFamGroup.size(), 1);
         assertEquals(nullColFamGroup.get(0).getInternalList().size(), 1);
-        DBRecordWriter<MockMutation, StringValueCell> writer =
-                new MockDBCellValueWriter<StringValueCell>();
+        DBRecordWriter<MockMutation> writer = new MockDBCellValueWriter();
         CommonParameters parameters = new CommonParameters.Builder().build();
 
         ImmutableList<MockMutation> mutations = null;

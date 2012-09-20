@@ -348,8 +348,8 @@ public class CellReflectorTest {
             IntValueCell cell = new IntValueCell("l", 1);
             Class<?> typeOfCellValue = CellReflector.getValueType(cell);
             assertEquals(typeOfCellValue.getClass(), Integer.class.getClass());
-            assertNotEquals(typeOfCellValue, String.class);
-            assertNotEquals(typeOfCellValue, Double.class);
+            assertNotSame(typeOfCellValue.getName(), String.class.getName());
+            assertNotSame(typeOfCellValue.getName(), Double.class.getName());
         } catch (Exception e){
             fail(e.getMessage(), e);
         }

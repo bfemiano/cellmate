@@ -11,13 +11,21 @@ import java.util.regex.Pattern;
 
 /**
  * Basic extractor implementation that offers cell filter capability by
- * provided Predicate rules.
+ * provided Predicate rules.</br>.
  *
- * @see {@link CellReflector}
+ * This class contains methods that look through a cell group and return one or more
+ * cell(s) that match a given label. Specifically, there are methods that expect to find
+ * a single cell matching the label before returning the value.
+ *
+ * This implementation works across any cell class type annotated with
+ * {@link cellmate.cell.Cell}, but most of the methods additionally require
+ * additioanlly annoting your cell class with {@link cellmate.cell.Label}
+ * and {@link cellmate.cell.Value}.
+ *
+ * {@link CellReflector}
  */
 @Beta
-public class SingleMultiValueCellExtractor
-        implements CellExtractor {
+public class SingleMultiValueCellExtractor implements CellExtractor {
 
     /**
      * Reads a list of cells and returns a filtered list containing
@@ -51,7 +59,7 @@ public class SingleMultiValueCellExtractor
      * @param <C> cell type class.
      * @return filtered collection.
      */
-    public <C> Collection<C> filterCellsByPredicate(List<C> cells, Predicate<? super C> predicate) {
+    public <C> Collection<C> filter(List<C> cells, Predicate<? super C> predicate) {
         return Collections2.filter(cells,predicate);
     }
 
@@ -66,12 +74,12 @@ public class SingleMultiValueCellExtractor
      * @throws RuntimeException if CellExtractionException is encountered
      */
     public <C> Collection<C> regexMatchLabel(List<C> cells, final String regex) {
-        return filterCellsByPredicate(cells, new Predicate<C>() {
+        return filter(cells, new Predicate<C>() {
             public boolean apply(C c) {
                 try {
-                    return  Pattern.matches(regex, CellReflector.getLabelAsString(c));
-                } catch (CellExtractorException e){
-                    throw new RuntimeException("Error during filtering " + e.getType().name(),e);
+                    return Pattern.matches(regex, CellReflector.getLabelAsString(c));
+                } catch (CellExtractorException e) {
+                    throw new RuntimeException("Error during filtering " + e.getType().name(), e);
                 }
             }
         });

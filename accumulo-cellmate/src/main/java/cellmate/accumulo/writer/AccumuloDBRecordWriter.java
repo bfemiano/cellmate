@@ -29,29 +29,26 @@ import java.util.regex.Pattern;
  *
  * Handles reading query parameters, applying DBTransformer operations to create
  * Mutations from different cell groups, and writing those Mutations to Accumulo.
- *
- * @param <C> cell class type
  */
 @Beta
-public class AccumuloDBRecordWriter<C>
-        implements DBRecordWriter<Mutation, C>{
+public class AccumuloDBRecordWriter implements DBRecordWriter<Mutation>{
 
     private Instance instance;
     private String instanceName;
     private String zookeepers;
     private static final Logger log = Logger.getLogger(AccumuloDBRecordWriter.class);
     private static final Pattern colon = Pattern.compile("[:]");
-    private DBRecordWriter<Mutation, C> baseWriter;
+    private DBRecordWriter<Mutation> baseWriter;
 
 
     @VisibleForTesting
     public AccumuloDBRecordWriter(Instance instance){
         this.instance = instance;
-        baseWriter = new BasicCelltoRecordWriter<Mutation, C>();
+        baseWriter = new BasicCelltoRecordWriter<Mutation>();
     }
 
     @VisibleForTesting
-    public AccumuloDBRecordWriter(DBRecordWriter<Mutation, C> baseWriter, Instance instance){
+    public AccumuloDBRecordWriter(DBRecordWriter<Mutation> baseWriter, Instance instance){
         this.instance = instance;
         this.baseWriter = baseWriter;
     }
@@ -68,7 +65,7 @@ public class AccumuloDBRecordWriter<C>
             String instanceName = parameters.getInstanceName();
             String zookeepers = parameters.getZookeepers();
             this.instance = new ZooKeeperInstance(instanceName, zookeepers);
-            this.baseWriter = new BasicCelltoRecordWriter<Mutation, C>();
+            this.baseWriter = new BasicCelltoRecordWriter<Mutation>();
         } catch (NoSuchElementException e){
             throw new IllegalArgumentException("missing zookeepers and/or instance id");
         }
@@ -82,7 +79,7 @@ public class AccumuloDBRecordWriter<C>
      * @param baseWriter injected writer to delegate operations.
      * @param parameters expected to have instance name and comma-delimted zookeeper list.
      */
-    public AccumuloDBRecordWriter(DBRecordWriter<Mutation, C> baseWriter,
+    public AccumuloDBRecordWriter(DBRecordWriter<Mutation> baseWriter,
                                   AccumuloParameters parameters) {
         this(parameters);
         this.baseWriter = baseWriter;
@@ -97,7 +94,7 @@ public class AccumuloDBRecordWriter<C>
      * @param instanceName Accumulo instance name
      * @param zookeepers comma-delimited zookeeper list
      */
-    public AccumuloDBRecordWriter(DBRecordWriter<Mutation, C> baseWriter,
+    public AccumuloDBRecordWriter(DBRecordWriter<Mutation> baseWriter,
                                   String instanceName,
                                   String zookeepers){
         this.baseWriter = baseWriter;
@@ -105,7 +102,7 @@ public class AccumuloDBRecordWriter<C>
     }
 
     public AccumuloDBRecordWriter(String instanceName, String zookeepers){
-        baseWriter = new BasicCelltoRecordWriter<Mutation, C>();
+        baseWriter = new BasicCelltoRecordWriter<Mutation>();
         instance = new ZooKeeperInstance(instanceName, zookeepers);
     }
 
@@ -115,10 +112,11 @@ public class AccumuloDBRecordWriter<C>
      * @param groups to generate mutations.
      * @param params to build write operation.
      * @param transformer to generate mutations from the cell groups.
+     * @param <C> cell type
      * @return ImmutableList of mutations.
      * @throws CellExtractorException if an error occurs in the DBItemTransformer
      */
-    public ImmutableList<Mutation> write(Iterable<CellGroup<C>> groups,
+    public <C> ImmutableList<Mutation> write(Iterable<CellGroup<C>> groups,
                                          Parameters params,
                                          DBItemTransformer<Mutation,C> transformer) throws CellExtractorException {
         AccumuloParameters parameters = AccumuloParameterOps.checkParamType(params);
@@ -147,10 +145,11 @@ public class AccumuloDBRecordWriter<C>
      *
      * @param params to build write operations.
      * @param transformer to generate mutations from cell groups.
+     * @param <C> cell type
      * @return ImmutableList of mutations.
      * @throws CellExtractorException if an error occurs in the DBItemTransformer
      */
-    public ImmutableList<Mutation> write(Parameters params,
+    public <C> ImmutableList<Mutation> write(Parameters params,
                                          DBItemTransformer<Mutation,C> transformer) throws CellExtractorException {
         return baseWriter.write(params, transformer);
     }

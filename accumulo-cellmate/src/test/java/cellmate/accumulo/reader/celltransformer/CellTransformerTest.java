@@ -112,8 +112,7 @@ public class CellTransformerTest {
     @Test
     public void stringSecurityCellAll() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
-        AccumuloDBResultReader<SecurityStringValueCell> reader =
-                new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+        AccumuloDBResultReader reader = new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityStringValueCell>> items =
                 reader.read(localParams, AccumuloCellTransformers.stringValueQualToLabelWithTime_ColVis_ColFam());
@@ -139,8 +138,7 @@ public class CellTransformerTest {
     @Test
     public void stringSecurityCellTimeColVis() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
-        AccumuloDBResultReader<SecurityStringValueCell> reader =
-                new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+        AccumuloDBResultReader reader = new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityStringValueCell>> items = reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabelWithTime_ColVis());
         String colVis = null;
@@ -166,8 +164,7 @@ public class CellTransformerTest {
     @Test
     public void stringSecurityCellColFam() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
-        AccumuloDBResultReader<SecurityStringValueCell> reader =
-                new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+        AccumuloDBResultReader reader = new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityStringValueCell>> items = reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabelWithColFam());
         String colFam = null;
@@ -190,8 +187,7 @@ public class CellTransformerTest {
     @Test
     public void stringSecurityCellLabelValue() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
-        AccumuloDBResultReader<SecurityStringValueCell> reader =
-                new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+        AccumuloDBResultReader reader = new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityStringValueCell>> items = reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
 
@@ -211,8 +207,7 @@ public class CellTransformerTest {
     @Test
     public void doubleSecurityCellLabelValue() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info:gpa"}).build();
-        AccumuloDBResultReader<SecurityDoubleValueCell> reader =
-                new AccumuloDBResultReader<SecurityDoubleValueCell>(mockInstance);
+        AccumuloDBResultReader reader =  new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityDoubleValueCell>> items = reader.read(localParams, AccumuloCellTransformers.doubleValueQualtoLabel());
 
@@ -228,8 +223,7 @@ public class CellTransformerTest {
     @Test
     public void longSecurityCellLabelValue() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info:lm"}).build();
-        AccumuloDBResultReader<SecurityLongValueCell> reader =
-                new AccumuloDBResultReader<SecurityLongValueCell>(mockInstance);
+        AccumuloDBResultReader reader = new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityLongValueCell>> items = reader.read(localParams, AccumuloCellTransformers.longValueQualtoLabel());
 
@@ -245,8 +239,7 @@ public class CellTransformerTest {
     @Test
     public void byteSecurityCellLabelValue() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info:name"}).build();
-        AccumuloDBResultReader<SecurityByteValueCell> reader =
-                new AccumuloDBResultReader<SecurityByteValueCell>(mockInstance);
+        AccumuloDBResultReader reader = new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityByteValueCell>> items = reader.read(localParams, AccumuloCellTransformers.bytesValueQualtoLabel());
 
@@ -262,8 +255,7 @@ public class CellTransformerTest {
     @Test
     public void intSecurityCellLabelValue() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info:age"}).build();
-        AccumuloDBResultReader<SecurityIntValueCell> reader =
-                new AccumuloDBResultReader<SecurityIntValueCell>(mockInstance);
+        AccumuloDBResultReader reader =  new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<SecurityIntValueCell>> items = reader.read(localParams, AccumuloCellTransformers.intValueQualtoLabel());
 
@@ -279,8 +271,7 @@ public class CellTransformerTest {
     @Test
     public void singleValueAgg() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info:age"}).build();
-        AccumuloAggregateDBResultReader<IntValueCell> reader =
-                new AccumuloAggregateDBResultReader<IntValueCell>(mockInstance);
+        AccumuloAggregateDBResultReader reader = new AccumuloAggregateDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<IntValueCell>> items = reader.read(localParams, AccumuloCellTransformers.aggregateSingleQual("age"));
         assertNotNull(items);
@@ -297,8 +288,7 @@ public class CellTransformerTest {
     @Test
     public void multiValueAgg() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info:age", "info:siblings"}).build();
-        AccumuloAggregateDBResultReader<IntValueCell> reader =
-                new AccumuloAggregateDBResultReader<IntValueCell>(mockInstance);
+        AccumuloAggregateDBResultReader reader = new AccumuloAggregateDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<IntValueCell>> items = reader.read(localParams, AccumuloCellTransformers.aggregateMultiQual("age", "siblings"));
         assertNotNull(items);
@@ -316,8 +306,8 @@ public class CellTransformerTest {
     @Test
     public void singleValueMean() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info:age"}).build();
-        AccumuloAggregateDBResultReader<DoubleValueCell> reader =
-                new AccumuloAggregateDBResultReader<DoubleValueCell>(mockInstance);
+        AccumuloAggregateDBResultReader reader =
+                new AccumuloAggregateDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<DoubleValueCell>> items = reader.read(localParams, AccumuloCellTransformers.averageSingleQual("age"));
         assertNotNull(items);
@@ -334,8 +324,7 @@ public class CellTransformerTest {
     @Test
     public void commonLabelFlatteningIfNecessary() {
        AccumuloParameters localParams = builder.setColumns(new String[]{"events", "info"}).build();
-       AccumuloDBResultReader<SecurityStringValueCell> reader =
-                new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+       AccumuloDBResultReader reader = new AccumuloDBResultReader(mockInstance);
         assertNotNull(reader);
         Map<String, String> commonLabels = new HashMap<String, String>();
         commonLabels.put("events", "event");
@@ -347,8 +336,7 @@ public class CellTransformerTest {
     @Test
     public void countTotalKeyValues() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
-        AccumuloAggregateDBResultReader<IntValueCell> reader =
-                new AccumuloAggregateDBResultReader<IntValueCell>(mockInstance);
+        AccumuloAggregateDBResultReader reader = new AccumuloAggregateDBResultReader(mockInstance);
         assertNotNull(reader);
         List<CellGroup<IntValueCell>> items = reader.read(localParams, AccumuloCellTransformers.totalKeyValueCount());
         assertNotNull(items);
@@ -365,8 +353,7 @@ public class CellTransformerTest {
     @Test
     public void countDistinctRows() {
         AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
-        AccumuloAggregateDBResultReader<IntValueCell> reader =
-                new AccumuloAggregateDBResultReader<IntValueCell>(mockInstance);
+        AccumuloAggregateDBResultReader reader = new AccumuloAggregateDBResultReader (mockInstance);
         assertNotNull(reader);
         List<CellGroup<IntValueCell>> items = reader.read(localParams, AccumuloCellTransformers.distinctRowIDCount());
         assertNotNull(items);

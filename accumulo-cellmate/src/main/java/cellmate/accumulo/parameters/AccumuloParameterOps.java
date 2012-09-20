@@ -1,19 +1,26 @@
 package cellmate.accumulo.parameters;
 
 import cellmate.cell.parameters.Parameters;
+import com.google.common.collect.Lists;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.Instance;
+import org.apache.accumulo.core.data.Range;
 import org.apache.accumulo.core.security.Authorizations;
+import org.apache.log4j.Logger;
 
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * Static helper methods to generate Accumulo components from user-provided parameters
+ * Static helper methods to generate Accumulo components from user-provided parameters.
+ *
  */
 public class AccumuloParameterOps {
 
+    private static final Logger log = Logger.getLogger(AccumuloParameterOps.class);
 
     /**
      *  Given an instance and a set of parameters, return a Connector for
@@ -30,6 +37,8 @@ public class AccumuloParameterOps {
         try {
             String user = parameters.getUser();
             String pass = parameters.getPassword();
+            if(log.isInfoEnabled())
+                log.info("Got connector for: " + user);
             connector = instance.getConnector(user, pass);
         } catch (NoSuchElementException e){
             throw new IllegalArgumentException("missing user/pass");
@@ -72,6 +81,24 @@ public class AccumuloParameterOps {
                     " instead found " + params.getClass().getName());
         }
         return (AccumuloParameters)params;
+    }
+
+    public static List<Range> getRangesFromParameters(AccumuloParameters parameters) {
+
+        List<Range> ranges = Lists.newArrayList();
+        Map<String, String> startEndPairs;
+        try {
+            startEndPairs = parameters.getStartEndKeys();
+        } catch (NoSuchElementException e) {
+                log.warn("No start/end keys specified for MultiRangeScan");
+            return ranges;
+        }
+
+        for(Map.Entry<String, String> pair : startEndPairs.entrySet()) {
+            Range range = new Range(pair.getKey(), pair.getValue());
+            ranges.add(range);
+        }
+        return ranges;
     }
 
 

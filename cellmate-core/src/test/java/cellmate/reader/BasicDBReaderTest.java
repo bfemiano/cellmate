@@ -20,12 +20,12 @@ import java.util.NoSuchElementException;
  */
 public class BasicDBReaderTest {
 
-    private DBResultReader<MockDBResult, StringValueCell> reader;
+    private DBResultReader<MockDBResult> reader;
     List<MockDBResult> dbResults;
 
     @BeforeClass
     public void setup() {
-        reader = new BasicCellGroupingDBResultReader<MockDBResult, StringValueCell>();
+        reader = new BasicCellGroupingDBResultReader<MockDBResult>();
         dbResults = Lists.newArrayList();
         dbResults.add(new MockDBResult("row1", "cf", "name", "brian"));
         dbResults.add(new MockDBResult("row1", "cf", "age", "13"));

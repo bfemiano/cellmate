@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 @Cell
-public class SecurityLongValueCell {
+public final class SecurityLongValueCell {
 
     @Label
     private String label;

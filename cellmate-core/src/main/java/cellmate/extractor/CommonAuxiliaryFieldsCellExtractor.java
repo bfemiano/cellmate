@@ -28,7 +28,7 @@ public class CommonAuxiliaryFieldsCellExtractor implements CellExtractor{
      * @return Collection of filtered cells
      */
     public <C> Collection<C> getCellsWithTimestamp(List<C> cells, final String tsfieldName) {
-        return filterCellsByPredicate(cells, new Predicate<C>() {
+        return filter(cells, new Predicate<C>() {
             public boolean apply(C c) {
                 try {
                     return getTimestamp(c, tsfieldName) != null;
@@ -88,7 +88,7 @@ public class CommonAuxiliaryFieldsCellExtractor implements CellExtractor{
      * @param <C> cell class type
      * @return filtered cells.
      */
-    public <C> Collection<C> filterCellsByPredicate(List<C> cells, Predicate<? super C> predicate) {
+    public <C> Collection<C> filter(List<C> cells, Predicate<? super C> predicate) {
         return Collections2.filter(cells, predicate);
     }
 

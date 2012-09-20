@@ -16,6 +16,6 @@
  * limitations under the License.
  */
 /**
- * reflective code and wrapper classes for reading contents from different cell values.
+ * reflective code and wrapper classes for reading contents from different cell implementations.
  */
 package cellmate.extractor;

@@ -22,31 +22,30 @@ import java.util.Map;
  * AggregateCellGroupingDBResultReader to handle cell aggregations over Accumulo
  * records.
  *
- * @param <C> cell type class.
  */
-public class AccumuloAggregateDBResultReader<C>
-        implements DBResultReader<Map.Entry<Key,Value>,C> {
+public class AccumuloAggregateDBResultReader
+        implements DBResultReader<Map.Entry<Key,Value>> {
 
-    private AccumuloDBResultReader<C> coreResultReader;
+    private AccumuloDBResultReader coreResultReader;
 
     @VisibleForTesting
     public AccumuloAggregateDBResultReader(Instance instance){
-        coreResultReader = new AccumuloDBResultReader<C>(
-                new AggregateCellGroupingDBResultReader<Map.Entry<Key, Value>, C>(),
+        coreResultReader = new AccumuloDBResultReader(
+                new AggregateCellGroupingDBResultReader<Map.Entry<Key, Value>>(),
                 instance);
     }
 
     public AccumuloAggregateDBResultReader(AccumuloParameters parameters){
-        coreResultReader = new AccumuloDBResultReader<C>(
-                new AggregateCellGroupingDBResultReader<Map.Entry<Key, Value>, C>(),
+        coreResultReader = new AccumuloDBResultReader(
+                new AggregateCellGroupingDBResultReader<Map.Entry<Key, Value>>(),
                 parameters);
     }
 
 
 
     public AccumuloAggregateDBResultReader(String instanceName, String zookeepers){
-        coreResultReader = new AccumuloDBResultReader<C>(
-                new AggregateCellGroupingDBResultReader<Map.Entry<Key, Value>, C>(),
+        coreResultReader = new AccumuloDBResultReader(
+                new AggregateCellGroupingDBResultReader<Map.Entry<Key, Value>>(),
                 instanceName,
                 zookeepers);
     }
@@ -60,7 +59,7 @@ public class AccumuloAggregateDBResultReader<C>
      * @param transformer
      * @return List of cells
      */
-    public List<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
+    public <C> List<CellGroup<C>> read(Iterable<Map.Entry<Key, Value>> dbItems,
                                    Parameters parameters, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
          return coreResultReader.read(dbItems, parameters, transformer);
     }
@@ -72,7 +71,7 @@ public class AccumuloAggregateDBResultReader<C>
      * @param transformer
      * @return List of cells
      */
-    public List<CellGroup<C>> read(Parameters parameters, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
+    public <C> List<CellGroup<C>> read(Parameters parameters, CellTransformer<Map.Entry<Key, Value>, C> transformer) {
         return coreResultReader.read(parameters, transformer);
     }
 }

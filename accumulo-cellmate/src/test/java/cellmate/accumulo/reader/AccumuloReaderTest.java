@@ -118,8 +118,8 @@ public class AccumuloReaderTest {
     public void readerTypeValidation() {
         try {
             CommonParameters badParameters = new CommonParameters.Builder().build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             reader.read(badParameters, AccumuloCellTransformers.stringValueQualtoLabel());
             fail("should have throw illegal argument");
         } catch (IllegalArgumentException e){
@@ -130,8 +130,8 @@ public class AccumuloReaderTest {
 
         try {
             parameters = builder.setZookeepers(null).setInstanceName(null).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
         } catch (IllegalArgumentException e){
             assertTrue(e.getMessage().contains("missing zookeepers and/or instance id"));
         }
@@ -142,8 +142,8 @@ public class AccumuloReaderTest {
 
         try {
             AccumuloParameters localParams = builder.setColumns(new String[]{"info", "events"}).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             List<CellGroup<SecurityStringValueCell>> items =
                     reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabelWithColFam());
@@ -165,8 +165,8 @@ public class AccumuloReaderTest {
             iter.addOption(RegExFilter.VALUE_REGEX, "brian");
             AccumuloParameters localParams = builder.setColumns(new String[]{"info:name"}).
                     addIteratorSetting(iter).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             List<CellGroup<SecurityStringValueCell>> items =
                     reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
@@ -188,8 +188,8 @@ public class AccumuloReaderTest {
     public void singleFamilyGetAsStrings() {
         try {
             AccumuloParameters localParams = builder.setColumns(new String[]{"info"}).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             List<CellGroup<SecurityStringValueCell>> items =
                     reader.read(localParams, AccumuloCellTransformers.stringValueQualToLabelWithTime_ColVis_ColFam());
@@ -222,8 +222,8 @@ public class AccumuloReaderTest {
     public void restrictedQuals() {
         try {
             AccumuloParameters localParams = builder.setColumns(new String[]{"info:name"}).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             List<CellGroup<SecurityStringValueCell>> items =
                     reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
@@ -260,8 +260,8 @@ public class AccumuloReaderTest {
                     setColumns(new String[]{"info"}).
                     setStartKey("row1").
                     setEndKey("row1").build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             List<CellGroup<SecurityStringValueCell>> items =
                     reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
@@ -279,8 +279,8 @@ public class AccumuloReaderTest {
     public void missingTable() {
         try {
             AccumuloParameters localParams = builder.setTable(null).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
             fail("reader should complain there is no table");
@@ -298,8 +298,8 @@ public class AccumuloReaderTest {
 
         try {
             AccumuloParameters localParams = builder.setUser(null).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
             fail("reader should complain there is no user");
@@ -314,8 +314,8 @@ public class AccumuloReaderTest {
     public void malforedColFamEntry() {
         try {
             AccumuloParameters localParams = builder.setColumns(new String[]{"cf:blah:blah"}).build();
-            AccumuloDBResultReader<SecurityStringValueCell> reader =
-                    new AccumuloDBResultReader<SecurityStringValueCell>(mockInstance);
+            AccumuloDBResultReader reader =
+                    new AccumuloDBResultReader(mockInstance);
             assertNotNull(reader);
             reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
             fail("reader should complain about malformed column family");

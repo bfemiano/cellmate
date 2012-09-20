@@ -2,7 +2,8 @@ package cellmate.extractor;
 
 /**
  *
- * Enum for different CellExtractionException types
+ * Enum for different the different types of CellExtractionExceptions
+ * that can occur.
  *
  */
 public enum ErrorType {

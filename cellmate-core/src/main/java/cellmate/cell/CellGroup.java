@@ -4,7 +4,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 
 /**
- * Container class for different Cell instances of type C.
+ * Container class that wraps an Immutable list builder and allows
+ * tagging the list with some identifying information. </C>
  *
  * @param <C> cell type found in the group.
  */

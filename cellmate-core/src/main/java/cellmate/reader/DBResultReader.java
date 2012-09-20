@@ -7,19 +7,18 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 
 /**
- * Iterface DBResultReader
+ * Template for how to read database scan results and apply a cell transformer.
  *
  * @param <D> database item
- * @param <C> cell class type
  */
 @Beta
-public interface DBResultReader<D, C> {
+public interface DBResultReader<D> {
 
-    public List<CellGroup<C>> read(Iterable<D> dbItems,
+    public <C> List<CellGroup<C>> read(Iterable<D> dbItems,
                                             Parameters parameters,
                                             CellTransformer<D, C> transformer);
 
-    public List<CellGroup<C>> read(Parameters parameters,
+    public <C> List<CellGroup<C>> read(Parameters parameters,
                                             CellTransformer<D, C> transformer);
 
 }

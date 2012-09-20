@@ -16,6 +16,6 @@
  * limitations under the License.
  */
 /**
- * reading and transforming cell groups into database objects.
+ * reading and transforming cell groups into database write objects.
  */
 package cellmate.writer;

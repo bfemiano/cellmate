@@ -7,14 +7,14 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Interface CellExtractor.
+ * basic template for custom extractors.
  *
  */
 @Beta
 public interface CellExtractor {
 
 
-    public <C> Collection<C> filterCellsByPredicate(List<C> cells,
-                                                    Predicate<? super C> predicate)
+    public <C> Collection<C> filter(List<C> cells,
+                                    Predicate<? super C> predicate)
                                                     throws CellExtractorException;
 }

@@ -14,4 +14,5 @@ public interface Parameters {
     public byte[] getBytes(String paramName);
     public <T> T getObjectAs(Class<T> cls, String paramName);
     public String[] getStrings(String paramName);
+    public boolean hasKey(String paramName);
 }

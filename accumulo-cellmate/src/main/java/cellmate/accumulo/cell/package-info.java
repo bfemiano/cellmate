@@ -16,6 +16,7 @@
  * limitations under the License.
  */
 /**
- * package of security-based cell implemenations for use with Accumulo.
+ * package of security-based cell implemenations for use with Accumulo. Cell contains
+ * column family, column visibility, and timestamp auxiliary cell fields.
  */
 package cellmate.accumulo.cell;
