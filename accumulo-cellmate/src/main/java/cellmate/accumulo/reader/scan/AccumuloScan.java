@@ -38,18 +38,18 @@ public abstract class AccumuloScan implements Scan {
     }
 
     protected ScannerBase addColFamsAndQuals(ScannerBase scan, AccumuloParameters parameters) {
-        String[] colfamsAndQuals = parameters.getColumns();
-        for(String pair : colfamsAndQuals) {
+        String[] colFamsAndQuals = parameters.getColumns();
+        for(String pair : colFamsAndQuals) {
             String[] colFamAndQual = colon.split(pair);
             if(colFamAndQual.length == 1){
                 scan.fetchColumnFamily(new Text(colFamAndQual[0]));
             } else if(colFamAndQual.length == 2){
                 scan.fetchColumn(new Text(colFamAndQual[0]), new Text(colFamAndQual[1]));
             } else {
-                throw new IllegalArgumentException("malformed colfam entry: " + pair);
+                throw new IllegalArgumentException("malformed colFam entry: " + pair);
             }
         }
-        if(colfamsAndQuals.length == 0 && log.isDebugEnabled())
+        if(colFamsAndQuals.length == 0 && log.isDebugEnabled())
             log.debug("no columns specified in parameters");
         return scan;
     }

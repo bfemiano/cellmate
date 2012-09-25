@@ -63,7 +63,7 @@ public class BasicDBReaderTest {
                     }
                     String label = dbItem.getQual();
                     String value = dbItem.getVal();
-                    if(dbItem.getColfam().equals("events")) {
+                    if(dbItem.getColFam().equals("events")) {
                         label = "event";
                         value = dbItem.getQual();
                     }
@@ -108,7 +108,7 @@ public class BasicDBReaderTest {
                     group = new CellGroup<StringValueCell>("common bag label");
                 String label = dbItem.getQual();
                 String value = dbItem.getVal();
-                if(dbItem.getColfam().equals("events")) {
+                if(dbItem.getColFam().equals("events")) {
                     label = "event";
                     value = dbItem.getQual();
                 }
@@ -185,7 +185,7 @@ public class BasicDBReaderTest {
             fail("didn't find the property");
         }
 
-        MockDBResult result = new MockDBResult("id1", "colfam", "qual", "val");
+        MockDBResult result = new MockDBResult("id1", "colFam", "qual", "val");
 
         parameters = new MockParameters.Builder().addNamedProperty("MOCK_RESULT", result).build();
         try {

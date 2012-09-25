@@ -35,7 +35,7 @@ public class BasicCelltoRecordWriter<D> implements DBRecordWriter<D> {
     public <C> ImmutableList<D> write(Iterable<CellGroup<C>> groups, Parameters parameters, DBItemTransformer<D,C> transformer)
         throws CellExtractorException{
         ImmutableList.Builder<D> list = ImmutableList.builder();
-        List<D> dbItems = Lists.newArrayList();
+        List<D> dbItems;
         for(CellGroup<C> cellGroup : groups){
             dbItems = transformer.apply(cellGroup);
             if(dbItems != null && dbItems.size() > 0)
