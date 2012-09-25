@@ -8,21 +8,21 @@ package cellmate.reader;
 public final class MockDBResult {
 
     private String id;
-    private String colfam;
+    private String colFam;
     private String qual;
     private String val;
     private long timestamp;
 
-    public MockDBResult(String id, String colfam, String qual, String val) {
+    public MockDBResult(String id, String colFam, String qual, String val) {
         this.id = id;
-        this.colfam = colfam;
+        this.colFam = colFam;
         this.qual = qual;
         this.val = val;
     }
 
-    public MockDBResult(String id, String colfam, String qual, String val, long timestamp) {
+    public MockDBResult(String id, String colFam, String qual, String val, long timestamp) {
         this.id = id;
-        this.colfam = colfam;
+        this.colFam = colFam;
         this.qual = qual;
         this.val = val;
         this.timestamp = timestamp;
@@ -40,8 +40,8 @@ public final class MockDBResult {
         return val;
     }
 
-    public String getColfam() {
-        return colfam;
+    public String getColFam() {
+        return colFam;
     }
 
     public long getTimestamp() {

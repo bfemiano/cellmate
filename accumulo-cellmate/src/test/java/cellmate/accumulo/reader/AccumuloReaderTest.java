@@ -320,7 +320,7 @@ public class AccumuloReaderTest {
             reader.read(localParams, AccumuloCellTransformers.stringValueQualtoLabel());
             fail("reader should complain about malformed column family");
         } catch (IllegalArgumentException e){
-            assertEquals(e.getMessage(), "malformed colfam entry: cf:blah:blah");
+            assertEquals(e.getMessage(), "malformed colFam entry: cf:blah:blah");
         }catch (Exception e){
             fail("failed with exception",e);
         }

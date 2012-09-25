@@ -33,9 +33,9 @@ public final class SecurityIntValueCell {
         this.value = value;
     }
 
-    public SecurityIntValueCell(String label, int value, String colfam) {
+    public SecurityIntValueCell(String label, int value, String colFam) {
         this(label, value);
-        this.colFam = colfam;
+        this.colFam = colFam;
     }
 
     public SecurityIntValueCell(String label, int value, long timestamp) {

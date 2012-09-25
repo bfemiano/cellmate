@@ -31,9 +31,9 @@ public final class SecurityDoubleValueCell {
         this.value = value;
     }
 
-    public SecurityDoubleValueCell(String label, double value, String colfam) {
+    public SecurityDoubleValueCell(String label, double value, String colFam) {
         this(label, value);
-        this.colFam = colfam;
+        this.colFam = colFam;
     }
 
     public SecurityDoubleValueCell(String label, double value, long timestamp) {
