@@ -21,7 +21,7 @@ public final class ByteValueCell {
 
     public ByteValueCell(String label, byte[] value) {
         this.label = label;
-        this.value = value;
+        this.value = value.clone();
     }
 
     @Override
