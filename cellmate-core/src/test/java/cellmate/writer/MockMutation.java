@@ -39,7 +39,7 @@ public class MockMutation {
         public MockColQualVal(String colFam, String qual, byte[] value) {
             this.colFam = colFam;
             this.qual = qual;
-            this.value = value;
+            this.value = value.clone();
         }
 
         public String getColFam() {
@@ -51,7 +51,7 @@ public class MockMutation {
         }
 
         public byte[] getValue() {
-            return value;
+            return value.clone();
         }
     }
 }

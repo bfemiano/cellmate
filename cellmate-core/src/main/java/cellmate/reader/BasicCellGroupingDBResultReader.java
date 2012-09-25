@@ -53,7 +53,7 @@ public class BasicCellGroupingDBResultReader<D> implements DBResultReader<D>{
                                             CellTransformer<D, C> transformer) {
         ImmutableList.Builder<CellGroup<C>> list = ImmutableList.builder();
         CellGroup<C> EMPTY_GROUP = CellGroup.emptyGroup();
-        CellGroup<C> result = EMPTY_GROUP;
+        CellGroup<C> result;
         CellGroup<C> previous = EMPTY_GROUP;
         int maxResults = getMaxResults(parameters);
 

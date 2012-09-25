@@ -36,7 +36,7 @@ public class AggregateCellGroupingDBResultReader<D> implements DBResultReader<D>
      *
      *    After the final iteration, one more application of the transformer is
      *    passed with null. This serves as a flag that cell transformers can use to
-     *    return aggregate summaries of everything that occured during iteration.
+     *    return aggregate summaries of everything that occurred during iteration.
      *
      *    If there was DB item iteration, add the final result to the list of cell groups
      *    to return. Otherwise return an empty list.
@@ -51,7 +51,7 @@ public class AggregateCellGroupingDBResultReader<D> implements DBResultReader<D>
                                             CellTransformer<D, C> transformer) {
         CellGroup<C> EMPTY_INITIAL_GROUP = CellGroup.emptyGroup();
         ImmutableList.Builder<CellGroup<C>> list = ImmutableList.builder();
-        CellGroup<C> result = EMPTY_INITIAL_GROUP;
+        CellGroup<C> result;
         CellGroup<C> previous = EMPTY_INITIAL_GROUP;
         int maxResults = getMaxResults(parameters);
 

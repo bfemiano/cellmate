@@ -449,7 +449,7 @@ public class CellReflectorTest {
 
         public CellWithByteValue(String label, byte[] value) {
             this.label = label;
-            this.value = value;
+            this.value = value.clone();
         }
     }
 
@@ -469,7 +469,7 @@ public class CellReflectorTest {
 
         public TooManyLabelValueCell(String label, byte[] value) {
             this.label = label;
-            this.value = value;
+            this.value = value.clone();
         }
     }
 

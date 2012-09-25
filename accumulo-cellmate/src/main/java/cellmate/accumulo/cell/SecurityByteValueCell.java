@@ -30,12 +30,12 @@ public final class SecurityByteValueCell {
 
     public SecurityByteValueCell(String label, byte[] value) {
         this.label = label;
-        this.value = value;
+        this.value = value.clone();
     }
 
-    public SecurityByteValueCell(String label, byte[] value, String colfam) {
+    public SecurityByteValueCell(String label, byte[] value, String colFam) {
         this(label, value);
-        this.colFam = colfam;
+        this.colFam = colFam;
     }
 
     public SecurityByteValueCell(String label, byte[] value, long timestamp) {

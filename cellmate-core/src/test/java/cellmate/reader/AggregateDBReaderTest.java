@@ -1,11 +1,10 @@
 package cellmate.reader;
 
-import cellmate.cell.StringValueCell;
+import java.util.List;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
-
-import java.util.List;
 
 /**
  * User: bfemiano
